@@ -1,5 +1,7 @@
 # RECLAIM — Ukrainian reconstruction sandbox prototype
 
+Playable public build: https://larionadd.github.io/reclaim-game/
+
 Run with Node.js 20.19+ or 22.12+:
 
 ```bash

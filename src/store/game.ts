@@ -121,12 +121,15 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   name: 'reclaim-save-v1', version: 4,
   migrate: (persisted, version) => {
     const old = persisted as Partial<GameState>
-    if (version < 2) {
+    if (version < 4) {
       const hired = old.hired ?? []
-      return { ...initial, ...old, workers: Object.fromEntries(hired.map(id => [id, defaultWorker(id)])) }
+      const huts = Math.ceil(Math.max(0, hired.filter(id => old.workers?.[id]?.alive !== false).length - 1) / 2)
+      const workers = Object.fromEntries(hired.map((id, i) => { const w = old.workers?.[id] ?? defaultWorker(id); return [id, {
+        ...defaultWorker(id, w.contract), ...w, housing: (i === 0 ? 'cage' : 'hut') as Housing,
+        traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 }
+      }] }))
+      return { ...initial, ...old, cages: 1, huts, staffCapacity: 1 + huts * 2, vodka: 0, enterprises: ['farm'], workers }
     }
-    if (version < 3) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...defaultWorker(id, w.contract), ...w, agreedWage: w.contract === 'paid' ? 12 : 0, wageDebt: 0 }])) }
-    if (version < 4) return { ...initial, lang: old.lang ?? 'uk' }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
