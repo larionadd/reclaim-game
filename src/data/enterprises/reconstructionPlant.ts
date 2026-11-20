@@ -8,6 +8,5 @@ export const reconstructionPlant: EnterpriseDefinition = {
   startingCapacity: 6,
   workAreas: [
     { id: 'processing', name: { uk: 'Лінія переробки', ru: 'Линия переработки', en: 'Processing line' }, baseOutput: 16, baseInjuryRisk: 0.07, baseFatalityRisk: 0.003 }
-  ],
-  housing: { room: 0, bunk: 6, cell: 0, cage: 0 }
+  ]
 }

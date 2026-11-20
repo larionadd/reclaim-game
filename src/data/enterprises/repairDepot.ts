@@ -8,6 +8,5 @@ export const repairDepot: EnterpriseDefinition = {
   startingCapacity: 4,
   workAreas: [
     { id: 'workshop', name: { uk: 'Майстерня', ru: 'Мастерская', en: 'Workshop' }, baseOutput: 10, baseInjuryRisk: 0.05, baseFatalityRisk: 0.002 }
-  ],
-  housing: { room: 0, bunk: 4, cell: 0, cage: 0 }
+  ]
 }
