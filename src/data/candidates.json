@@ -25,7 +25,14 @@
     "traits": [
       "cautious",
       "compassionate"
-    ]
+    ],
+    "body": {
+      "heightCm": 166,
+      "weightKg": 56,
+      "chestCm": 85,
+      "waistCm": 65,
+      "hipsCm": 91
+    }
   },
   {
     "id": "ilyan",
@@ -53,7 +60,14 @@
     "traits": [
       "inventive",
       "stubborn"
-    ]
+    ],
+    "body": {
+      "heightCm": 178,
+      "weightKg": 69,
+      "chestCm": 94,
+      "waistCm": 75,
+      "hipsCm": 92
+    }
   },
   {
     "id": "mara",
@@ -81,7 +95,14 @@
     "traits": [
       "methodical",
       "protective"
-    ]
+    ],
+    "body": {
+      "heightCm": 171,
+      "weightKg": 64,
+      "chestCm": 92,
+      "waistCm": 72,
+      "hipsCm": 98
+    }
   },
   {
     "id": "tomas",
@@ -109,7 +130,14 @@
     "traits": [
       "principled",
       "resilient"
-    ]
+    ],
+    "body": {
+      "heightCm": 181,
+      "weightKg": 82,
+      "chestCm": 103,
+      "waistCm": 88,
+      "hipsCm": 101
+    }
   },
   {
     "id": "nora",
@@ -136,7 +164,14 @@
     "availableFromDay": 61,
     "traits": [
       "resilient"
-    ]
+    ],
+    "body": {
+      "heightCm": 168,
+      "weightKg": 61,
+      "chestCm": 89,
+      "waistCm": 70,
+      "hipsCm": 96
+    }
   },
   {
     "id": "olena",
@@ -163,7 +198,14 @@
     "availableFromDay": 31,
     "traits": [
       "resilient"
-    ]
+    ],
+    "body": {
+      "heightCm": 173,
+      "weightKg": 69,
+      "chestCm": 94,
+      "waistCm": 77,
+      "hipsCm": 99
+    }
   },
   {
     "id": "serhii",
@@ -190,6 +232,13 @@
     "availableFromDay": 31,
     "traits": [
       "resilient"
-    ]
+    ],
+    "body": {
+      "heightCm": 179,
+      "weightKg": 78,
+      "chestCm": 101,
+      "waistCm": 84,
+      "hipsCm": 98
+    }
   }
 ]

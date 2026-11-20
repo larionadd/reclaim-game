@@ -23,7 +23,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const tr = (key: string) => t(g.lang, key)
   const open = (next: View) => { setView(next); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const living = g.hired.filter(id => g.workers[id]?.alive).length
+  const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
 
   return <div className="game-shell">
     <aside className={`game-sidebar ${menuOpen ? 'open' : ''}`}>

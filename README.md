@@ -17,9 +17,11 @@ NPC development milestones and the future human-care annex are specified in the 
 
 NPC savings, wages, performance rewards, fines, and direct clinic grants are in live state. Goal and procedure definitions are in `src/data/npcGoals.json` and `src/data/medical/procedures.json`; procurement and surgery remain future gameplay.
 
+NPC records now include editable nicknames, height, weight, chest/waist/hip measurements, earnings generated for the player, money received from the player, days under contract, and a 30-day, 90-day, or lifetime consensual contract term. Measurements change gradually with food and housing; surgery adjustments are modeled in `src/mechanics/workerBody.ts` for future playable procedures. Existing saves migrate to the new schema without losing workers or balances.
+
 Production build: `npm run build`.
 
 
 Animal-farm visual concepts: [desktop](./concept-art/desktop-animal-farm.png), [tablet](./concept-art/tablet-animal-farm.png), [mobile](./concept-art/mobile-animal-farm.png). These are image-generated art references; the React screen is the working prototype.
 
-Current captures: [desktop](./qa-desktop.png), [tablet](./qa-tablet.png), [mobile](./qa-mobile.png). Visual QA notes: [design-qa.md](./design-qa.md). Verify with `npm run lint`, `npm run build`, `node scripts/smoke.mjs`, and `node scripts/risk-smoke.mjs`.
+Visual QA notes: [design-qa.md](./design-qa.md). Verify with `npm run lint`, `npm run build`, `node scripts/smoke.mjs`, `node scripts/manor-smoke.mjs`, `node scripts/worker-profile-smoke.mjs`, and `node scripts/risk-smoke.mjs`.

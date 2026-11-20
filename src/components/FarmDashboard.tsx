@@ -5,12 +5,13 @@ import { useGame } from '../store/game'
 import { t } from '../i18n'
 import type { Phase } from '../types'
 import { Portrait } from './Portrait'
+import { displayName } from '../mechanics/npcIdentity'
 
 const phases: Phase[] = ['morning', 'day', 'evening', 'night']
 
 export function FarmDashboard({ openDistribution, openPeople }: { openDistribution: () => void; openPeople: () => void }) {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
-  const featured = candidates.find(c => g.hired.includes(c.id) && g.workers[c.id]?.alive) ?? candidates[0]
+  const featured = candidates.find(c => g.hired.includes(c.id) && g.workers[c.id]?.alive && g.workers[c.id]?.active) ?? candidates[0]
   const worker = g.workers[featured.id]
   const daysUntilIntake = 30 - ((g.day - 1) % 30)
   const productive = Object.values(g.assignments).filter(job => job === 'production').length
@@ -35,7 +36,7 @@ export function FarmDashboard({ openDistribution, openPeople }: { openDistributi
     <div className="command-grid">
       <section className="command-card person-card">
         <Header icon={<Target size={21}/>} title={worker ? tr('worker') : tr('featuredCandidate')} action={<button className="icon-action" onClick={openPeople} aria-label={tr('people')}>›</button>}/>
-        <div className="person-content"><div className="person-art"><Portrait person={featured} lang={g.lang} outfit="work" status={worker ? 'active' : 'rest'}/></div><div className="person-details"><h2>{featured.name[g.lang]}</h2><span>{featured.role[g.lang]} · {featured.age}</span><div className="person-rule"/><div className="person-metric"><HeartPulse size={15}/>{tr('health')} <strong>{worker ? worker.health : 76}%</strong></div><div className="person-metric"><BadgeCheck size={15}/>{tr('status')} <strong>{worker ? tr('onStaff') : tr('candidateStatus')}</strong></div><div className="person-metric"><Coins size={15}/>{tr('savings')} <strong>{worker ? worker.savings : 0} {tr('credits')}</strong></div><div className="person-metric"><Target size={15}/>{tr('personalGoals')} <strong>{personGoals.length}</strong></div></div></div>
+        <div className="person-content"><div className="person-art"><Portrait person={featured} lang={g.lang} outfit="work" status={worker ? 'active' : 'rest'}/></div><div className="person-details"><h2>{displayName(featured, g.lang, worker?.nickname)}</h2><span>{featured.role[g.lang]} · {featured.age}</span><div className="person-rule"/><div className="person-metric"><HeartPulse size={15}/>{tr('health')} <strong>{worker ? worker.health : 76}%</strong></div><div className="person-metric"><BadgeCheck size={15}/>{tr('status')} <strong>{worker ? tr('onStaff') : tr('candidateStatus')}</strong></div><div className="person-metric"><Coins size={15}/>{tr('savings')} <strong>{worker ? worker.savings : 0} {tr('credits')}</strong></div><div className="person-metric"><Target size={15}/>{tr('personalGoals')} <strong>{personGoals.length}</strong></div></div></div>
         {worker ? <button className="card-cta" onClick={openPeople}>{tr('openPersonnel')} <ArrowRight size={16}/></button> : <button className="card-cta" onClick={openDistribution}>{tr('offer')} <ArrowRight size={16}/></button>}
       </section>
 
@@ -48,9 +49,9 @@ export function FarmDashboard({ openDistribution, openPeople }: { openDistributi
 
       <section className="command-card housing-card">
         <Header icon={<BedDouble size={21}/>} title={tr('housing')}/>
-        <div className="housing-option"><div className="housing-icon"><img src={`${import.meta.env.BASE_URL}art/housing-room.webp`} alt=""/></div><div><strong>{tr('cage')}</strong><small>{tr('cageEffect')}</small></div><span>{Object.values(g.workers).filter(w => w.alive && w.housing === 'cage').length} / {g.cages}</span></div>
-        <div className="housing-option"><div className="housing-icon"><img src={`${import.meta.env.BASE_URL}art/housing-bunk.webp`} alt=""/></div><div><strong>{tr('hut')}</strong><small>{tr('hutEffect')}</small></div><span>{Object.values(g.workers).filter(w => w.alive && w.housing === 'hut').length} / {g.huts * 2}</span></div>
-        <div className="housing-capacity"><span>{tr('freePlaces')}</span><strong>{Math.max(0, g.staffCapacity - Object.values(g.workers).filter(w => w.alive).length )} / {g.staffCapacity}</strong></div>
+        <div className="housing-option"><div className="housing-icon"><img src={`${import.meta.env.BASE_URL}art/housing-room.webp`} alt=""/></div><div><strong>{tr('cage')}</strong><small>{tr('cageEffect')}</small></div><span>{Object.values(g.workers).filter(w => w.alive && w.active && w.housing === 'cage').length} / {g.cages}</span></div>
+        <div className="housing-option"><div className="housing-icon"><img src={`${import.meta.env.BASE_URL}art/housing-bunk.webp`} alt=""/></div><div><strong>{tr('hut')}</strong><small>{tr('hutEffect')}</small></div><span>{Object.values(g.workers).filter(w => w.alive && w.active && w.housing === 'hut').length} / {g.huts * 2}</span></div>
+        <div className="housing-capacity"><span>{tr('freePlaces')}</span><strong>{Math.max(0, g.staffCapacity - Object.values(g.workers).filter(w => w.alive && w.active).length )} / {g.staffCapacity}</strong></div>
         <p>{tr('housingRule')}</p>
         <button className="expand-housing" disabled={g.money < 180} onClick={g.expandHousing}>{tr('expandHousing')}</button>
       </section>
