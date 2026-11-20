@@ -10,5 +10,7 @@ All 15 base traits affect production, injury risk, health, trust, or wellbeing. 
 
 The interface supports Ukrainian, Russian, and English; state is saved in local storage with migration from older versions. Run `npm run lint`, `npm run build`, `node scripts/smoke.mjs`, `node scripts/farm-market-smoke.mjs`, `node scripts/vet-traits-smoke.mjs`, `node scripts/manor-smoke.mjs`, `node scripts/worker-profile-smoke.mjs`, and `node scripts/risk-smoke.mjs` to verify the current build.
 
+Workers now receive either wages or food from the player's stores for each shift. The provision type can be changed in the personnel file. The morning report records each worker's health change, provisions received, and reasons such as housing, work, hunger, low pay, or injury. The office lets the player call a worker for rewards, disciplinary actions, or conversation; respect, fear, friendship, and love gate social choices. Intimate scenes remain unavailable while the player directly employs the worker. Housing cards show their full images on phone and desktop. Verify these flows with `node scripts/office-report-smoke.mjs`.
+
 
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

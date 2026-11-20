@@ -15,7 +15,7 @@ const errors = []
 page.on('pageerror', e => errors.push(e.message))
 await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
 assert.equal(await page.locator('.bottom-nav').getByRole('button', { name: 'Ветпункт' }).count(), 0)
-await page.getByRole('button', { name: 'Пропустити ¼ доби' }).click()
+await page.locator('.quarter-top').click()
 await page.evaluate(() => { const save = JSON.parse(localStorage.getItem('reclaim-save-v1')); save.state.day = 61; save.state.money = 500; save.state.huts = 1; save.state.staffCapacity = 3; localStorage.setItem('reclaim-save-v1', JSON.stringify(save)) })
 await page.reload({ waitUntil: 'networkidle' })
 await page.getByRole('button', { name: 'Кабінет' }).first().click()
