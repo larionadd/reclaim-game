@@ -17,5 +17,6 @@ export const traits: Record<string, { name: Localized; effect: string }> = {
   curious: { name: { uk: 'Допитливий', ru: 'Любознательный', en: 'Curious' }, effect: 'learning' },
   leader: { name: { uk: 'Лідерський', ru: 'Лидерский', en: 'Leader' }, effect: 'team' },
   strong_legs: { name: { uk: 'Сильні ноги', ru: 'Сильные ноги', en: 'Strong legs' }, effect: 'prosthesis' },
+  strong_arms: { name: { uk: 'Сильні руки', ru: 'Сильные руки', en: 'Strong arms' }, effect: 'prosthesis' },
   skilled_mechanic: { name: { uk: 'Майстер ремонту', ru: 'Мастер ремонта', en: 'Repair master' }, effect: 'learned' }
 }

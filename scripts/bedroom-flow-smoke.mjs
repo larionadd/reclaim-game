@@ -15,7 +15,7 @@ await page.locator('.bedroom-call .call-cards button').first().click()
 await page.screenshot({ path: 'qa-bedroom-call.png', fullPage: true })
 assert.equal(await page.getByRole('button', { name: /Запитати згоду/ }).isEnabled(), false)
 assert.equal(await page.getByRole('button', { name: /Ніжна близькість/ }).isEnabled(), false)
-assert.equal(await page.getByText('Чинний контракт: інтимні дії закриті.').count(), 1)
+assert.equal(await page.getByText('Поки діє контракт, близькість неможлива.').count(), 1)
 await page.evaluate(() => { const save = JSON.parse(localStorage.getItem('reclaim-save-v1')); save.state.workers.alisa.active = false; localStorage.setItem('reclaim-save-v1', JSON.stringify(save)) })
 await page.reload({ waitUntil: 'networkidle' })
 await page.getByRole('button', { name: 'Спальня' }).first().click()
@@ -47,3 +47,4 @@ assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > in
 for (const width of [768, 1280]) { await page.setViewportSize({ width, height: 900 }); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false) }
 await browser.close()
 console.log('Office cards, bedroom call, consent gate, intimacy and fear punishment passed')
+

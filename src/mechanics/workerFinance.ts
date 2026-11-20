@@ -1,11 +1,10 @@
 export type FineReason = 'documented_damage' | 'serious_safety_violation'
-export type FinanceEvent = { id: string; kind: 'wage' | 'bonus' | 'fine' | 'sponsorship' | 'procedure'; amount: number; note: string }
-export type WorkerFinance = { savings: number; medicalGrant: number; events: FinanceEvent[] }
+export type FinanceEvent = { id: string; kind: 'wage' | 'bonus' | 'fine' | 'procedure'; amount: number; note: string }
+export type WorkerFinance = { savings: number; events: FinanceEvent[] }
 
 const recorded = (state: WorkerFinance, id: string) => state.events.some(event => event.id === id)
 const addEvent = (state: WorkerFinance, event: FinanceEvent): WorkerFinance => recorded(state, event.id) ? state : {
   savings: Math.max(0, state.savings + event.amount),
-  medicalGrant: state.medicalGrant,
   events: [...state.events, event]
 }
 
@@ -22,15 +21,8 @@ export function applyFine(state: WorkerFinance, fineId: string, agreedWage: numb
   return addEvent(state, { id: fineId, kind: 'fine', amount: -amount, note: reason })
 }
 
-export function sponsorProcedure(state: WorkerFinance, sponsorshipId: string, amount: number): WorkerFinance {
-  if (recorded(state, sponsorshipId)) return state
-  if (!Number.isInteger(amount) || amount <= 0) throw new Error('Invalid sponsorship')
-  return { ...state, medicalGrant: state.medicalGrant + amount, events: [...state.events, { id: sponsorshipId, kind: 'sponsorship', amount, note: 'Non-repayable clinic grant' }] }
-}
-
 export function purchaseProcedure(state: WorkerFinance, purchaseId: string, price: number, consented: boolean): WorkerFinance {
   if (recorded(state, purchaseId)) return state
-  if (!consented || !Number.isInteger(price) || price < 0 || state.savings + state.medicalGrant < price) throw new Error('Purchase not authorized or affordable')
-  const grantSpent = Math.min(price, state.medicalGrant)
-  return { ...state, savings: state.savings - (price - grantSpent), medicalGrant: state.medicalGrant - grantSpent, events: [...state.events, { id: purchaseId, kind: 'procedure', amount: -price, note: 'Chosen procedure' }] }
+  if (!consented || !Number.isInteger(price) || price < 0 || state.savings < price) throw new Error('Purchase not authorized or affordable')
+  return { ...state, savings: state.savings - price, events: [...state.events, { id: purchaseId, kind: 'procedure', amount: -price, note: 'Chosen procedure' }] }
 }

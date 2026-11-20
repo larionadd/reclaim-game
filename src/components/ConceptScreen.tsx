@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, Banknote, BedDouble, CalendarDays, Droplets, Factory, HeartPulse, ShieldAlert, Target, Utensils } from 'lucide-react'
+import { AlertTriangle, Banknote, BedDouble, CalendarDays, Droplets, Factory, ShieldAlert, Target, Utensils } from 'lucide-react'
 import { candidates } from '../data/candidates'
 import goals from '../data/npcGoals.json'
 import { farm, repairDepot, reconstructionPlant } from '../data/enterprises'
@@ -26,7 +26,7 @@ export function ConceptScreen() {
       </div>
       <div className="concept-column">
         <section className="concept-panel personnel-panel"><div className="panel-title"><span className="portrait-label-dot"/><strong>{tr('candidates')}</strong><small>01 / 04</small></div><div className="concept-person"><Portrait person={person} lang={g.lang}/><div className="concept-person-copy"><div className="eyebrow">{tr('portraitLayers')}</div><h3>{person.name[g.lang]}</h3><span>{person.role[g.lang]} · {person.age}</span><p>{person.bio[g.lang]}</p><div className="tags"><span>{tr('language')}: {person.language}</span><span>{tr('motivation')}: {person.motivation}</span></div></div></div><div className="layer-note">{tr('season')} · {tr('status')} · {tr('portraitLayers')}</div></section>
-        <section className="concept-panel"><div className="panel-title"><Target size={18}/><strong>{tr('personalGoals')}</strong></div><div className="wallet-line"><span>{tr('personalSavings')}</span><strong>32 {tr('credits')}</strong></div>{goals[0].goals.map((goal, index)=><div className="goal-row" key={goal.id}><span>{goal.name[g.lang]}</span><small>{index===0?'24':'8'} / {goal.targetCredits} {tr('credits')}</small><div className="goal-meter"><i style={{width:`${Math.round((index===0?24:8)/goal.targetCredits*100)}%`}}/></div></div>)}<div className="medical-note"><HeartPulse size={15}/>{tr('medicalGrant')} · {tr('medicalGrantPreview')}</div></section>
+        <section className="concept-panel"><div className="panel-title"><Target size={18}/><strong>{tr('personalGoals')}</strong></div><div className="wallet-line"><span>{tr('personalSavings')}</span><strong>32 {tr('credits')}</strong></div>{goals[0].goals.map((goal, index)=><div className="goal-row" key={goal.id}><span>{goal.name[g.lang]}</span><small>{index===0?'24':'8'} / {goal.targetCredits} {tr('credits')}</small><div className="goal-meter"><i style={{width:`${Math.round((index===0?24:8)/goal.targetCredits*100)}%`}}/></div></div>)}</section>
         <section className="concept-panel"><div className="panel-title"><Utensils size={18}/><strong>{tr('conditions')}</strong></div><div className="setting-row"><div><Droplets size={17}/><span>{tr('food')}</span></div><strong>{food}</strong></div><input aria-label={tr('food')} type="range" min="0" max="5" value={food} onChange={e=>setFood(Number(e.target.value))}/><p className="setting-note">{tr('foodNote')}</p><div className="setting-row"><div><Banknote size={17}/><span>{tr('pay')}</span></div><strong>{contract==='paid'?pay:'—'}</strong></div><input aria-label={tr('pay')} type="range" min="0" max="30" value={pay} disabled={contract==='foodOnly'} onChange={e=>setPay(Number(e.target.value))}/><div className="choice-row"><button className={contract==='paid'?'chosen':''} onClick={()=>setContract('paid')}>{tr('paid')}</button><button className={contract==='foodOnly'?'chosen':''} onClick={()=>setContract('foodOnly')}>{tr('foodOnly')}</button></div></section>
       </div>
       <div className="concept-column">
@@ -36,3 +36,4 @@ export function ConceptScreen() {
     </div>
   </div>
 }
+

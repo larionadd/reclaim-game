@@ -10,6 +10,8 @@ import { farmGoods, humanFoods, purchasePrices, salePrices, type FarmGood, type 
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
 import { canAskConsent, canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
+import { personalFor } from '../data/npcPersonal'
+import procedures from '../data/medical/procedures.json'
 
 export type Housing = 'cage' | 'hut'
 export type Contract = 'paid' | 'foodOnly'
@@ -19,7 +21,7 @@ export const shopPrices: Record<ShopItem, number> = purchasePrices
 export interface SaleListing { good: FarmGood; quantity: number; price: number; listedDay: number; contributors: Record<string, number> }
 export interface WorkerDayReport { id: string; healthBefore: number; healthAfter: number; paid: number; eaten: number; reasons: string[] }
 export interface DayReport { day: number; sales: number; produced: number; workers: WorkerDayReport[] }
-export interface GameEvent { id: number; day: number; phase: Phase; workerId: string; action: string; storyKey: string; changes: Record<string, number> }
+export interface GameEvent { id: number; day: number; phase: Phase; workerId: string; action: string; storyKey: string; changes: Record<string, number>; detail?: string }
 export type Provenance = Record<FarmGood, Record<string, number>>
 export interface Worker {
   nickname: string
@@ -39,7 +41,8 @@ export interface Worker {
   wageDebt: number
   housing: Housing
   savings: number
-  medicalGrant: number
+  modificationConsentAtSigning: boolean
+  modificationDecision?: { procedureId: string; accepted: boolean; day: number }
   health: number
   alive: boolean
   injuredUntilDay?: number
@@ -66,7 +69,8 @@ interface GameState {
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
-  fine: (id: string, amount: number, reason: string) => void; sponsor: (id: string, amount: number) => void
+  fine: (id: string, amount: number, reason: string) => void
+  proposeModification: (id: string, procedureId: string) => void; performOperation: (id: string, procedureId: string) => void
   expandHousing: () => void; buildCage: () => void; buildHut: () => void; createEnterprise: (id: string, name: string) => void
   purchase: (items: Partial<Record<ShopItem, number>>) => void; sleep: () => void; advance: () => void; reset: () => void
   listForSale: (good: FarmGood, quantity: number) => void; buildVet: () => void; appointVet: (id: string) => void
@@ -79,15 +83,15 @@ const initial = {
   hired: [] as string[], workers: {} as Record<string, Worker>, assignments: {} as Record<string, Job>, message: 'msgStart'
 }
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n))
-const eventUpdate = (s: GameState, id: string, action: string, before: Worker, after: Worker, money = s.money, reputation = s.reputation) => {
+const eventUpdate = (s: GameState, id: string, action: string, before: Worker, after: Worker, money = s.money, reputation = s.reputation, detail?: string) => {
   const changes: Record<string, number> = {}
   for (const key of ['health', 'trust', 'respect', 'fear', 'friendship', 'love', 'debauchery', 'submission', 'savings'] as const) if (after[key] !== before[key]) changes[key] = after[key] - before[key]
   if (money !== s.money) changes.money = money - s.money
   if (reputation !== s.reputation) changes.reputation = reputation - s.reputation
-  const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes }
+  const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes, detail }
   return { journal: [...s.journal, event], activeEvent: event }
 }
-const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, housing: 'cage', savings: 0, medicalGrant: 0, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 } })
+const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 } })
 const occupied = (workers: Record<string, Worker>, housing: Housing, except?: string) => Object.entries(workers).filter(([id, w]) => id !== except && w.alive && w.active && w.housing === housing).length
 const takeProvenance = (source: Record<string, number>, amount: number) => {
   const remaining = { ...source }, contributors: Record<string, number> = {}
@@ -185,7 +189,25 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const w = s.workers[id]; if (!w?.alive || !w.active || w.contract !== 'paid' || reason.trim().length < 8 || amount < 1 || amount > Math.floor(w.wage * .2) || w.savings < amount) return {}
     return { workers: { ...s.workers, [id]: { ...w, savings: w.savings - amount, trust: clamp(w.trust - 8, 0, 100) } }, reputation: clamp(s.reputation - 2, 0, 100), message: 'msgFine' }
   }),
-  sponsor: (id, amount) => set(s => s.workers[id]?.alive && s.workers[id]?.active && amount > 0 && amount <= s.money ? { money: s.money - amount, workers: { ...s.workers, [id]: { ...s.workers[id], medicalGrant: s.workers[id].medicalGrant + amount, totalReceivedFromPlayer: s.workers[id].totalReceivedFromPlayer + amount } }, message: 'msgSponsor' } : {}),
+  proposeModification: (id, procedureId) => set(s => {
+    const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
+    if (!w?.alive || !w.active || !procedure || w.operations.some(op => op.id === procedureId)) return {}
+    const accepted = w.modificationConsentAtSigning || (w.love >= 70 && w.fear < 35) || (w.debauchery >= 70 && w.trust >= 55 && w.fear < 35)
+    const pressured = !accepted && w.fear >= 70
+    const next: Worker = { ...w, modificationDecision: { procedureId, accepted, day: s.day }, trust: pressured ? clamp(w.trust - 8, 0, 100) : w.trust }
+    const reputation = pressured ? clamp(s.reputation - 5, 0, 100) : s.reputation
+    const action = accepted ? 'procedureAccepted' : pressured ? 'procedurePressure' : 'procedureRefused'
+    return { workers: { ...s.workers, [id]: next }, reputation, ...eventUpdate(s, id, action, w, next, s.money, reputation, procedureId) }
+  }),
+  performOperation: (id, procedureId) => set(s => {
+    const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
+    if (!w?.alive || !w.active || !procedure || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits || w.operations.some(op => op.id === procedureId)) return {}
+    const complication = Math.random() < procedure.complicationRisk
+    const trait = procedureId === 'functional_prosthesis' ? 'strong_legs' : procedureId === 'powered_arm' ? 'strong_arms' : null
+    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day }], traits: trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, injuredUntilDay: s.day + procedure.recoveryDays + (complication ? 5 : 0), health: clamp(w.health - (complication ? 15 : 3), 0, 100), modificationDecision: undefined }
+    const reputation = clamp(s.reputation - (complication ? 2 : 0), 0, 100)
+    return { workers: { ...s.workers, [id]: next }, assignments: { ...s.assignments, [id]: 'rest' }, reputation, ...eventUpdate(s, id, complication ? 'operationComplication' : 'operationComplete', w, next, s.money, reputation, procedureId) }
+  }),
   expandHousing: () => get().buildHut(),
   buildCage: () => set(s => s.cages < 5 && s.money >= 90 ? { cages: s.cages + 1, staffCapacity: s.staffCapacity + 1, money: s.money - 90, message: 'msgHousingExpanded' } : {}),
   buildHut: () => set(s => s.money >= 180 ? { huts: s.huts + 1, staffCapacity: s.staffCapacity + 2, money: s.money - 180, message: 'msgHousingExpanded' } : {}),
@@ -271,7 +293,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 12,
+  name: 'reclaim-save-v1', version: 13,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -291,7 +313,12 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 9) old = { ...initial, ...old, lastReport: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, respect: w.trust ?? 25, fear: 10, friendship: 10, love: 0, diet: w.contract === 'paid' ? { bread: 0, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 } : w.diet, ration: w.contract === 'paid' ? 0 : w.ration }])) }
     if (version < 10) old = { ...initial, ...old, journal: [], activeEvent: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, debauchery: 20 }])) }
     if (version < 11) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, submission: 5 }])) }
-    if (version < 12) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, intimacyConsentDay: undefined }])) }
+    if (version < 12) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, intimacyConsentDay: undefined }])) }
+    if (version < 13) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => {
+      const legacy = w as Worker & { medicalGrant?: number }
+      const { medicalGrant, ...rest } = legacy
+      return [id, { ...rest, savings: (w.savings ?? 0) + (medicalGrant ?? 0), modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, modificationDecision: undefined }]
+    })) }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,

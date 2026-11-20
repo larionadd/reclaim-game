@@ -3,12 +3,14 @@ import { displayName } from '../mechanics/npcIdentity'
 import { useGame, type GameEvent } from '../store/game'
 import { t } from '../i18n'
 import { eventMarker } from '../mechanics/interactions'
+import procedures from '../data/medical/procedures.json'
 
 function EventBody({ event }: { event: GameEvent }) {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
   const person = candidates.find(c => c.id === event.workerId)
   const name = person ? displayName(person, g.lang, g.workers[event.workerId]?.nickname) : event.workerId
-  return <><span className="event-meta">{tr('dayLabel')} {event.day} · {tr(event.phase)} · {name}</span><h3><span aria-hidden="true">{eventMarker(event.action)}</span> {tr(event.action)}</h3><p>{tr(event.storyKey)}</p><div className="event-deltas">{Object.entries(event.changes).length ? Object.entries(event.changes).map(([key, value]) => <span className={value < 0 ? 'negative' : 'positive'} key={key}>{tr(key)} {value > 0 ? '+' : ''}{value}{['money','savings'].includes(key) ? ' ₴' : ''}</span>) : <span>{tr('noStatChange')}</span>}</div></>
+  const procedure = procedures.find(p => p.id === event.detail)
+  return <><span className="event-meta">{tr('dayLabel')} {event.day} · {tr(event.phase)} · {name}</span><h3><span aria-hidden="true">{eventMarker(event.action)}</span> {tr(event.action)}</h3>{procedure && <strong>{procedure.name[g.lang]}</strong>}<p>{tr(event.storyKey)}</p><div className="event-deltas">{Object.entries(event.changes).length ? Object.entries(event.changes).map(([key, value]) => <span className={value < 0 ? 'negative' : 'positive'} key={key}>{tr(key)} {value > 0 ? '+' : ''}{value}{['money','savings'].includes(key) ? ' ₴' : ''}</span>) : <span>{tr('noStatChange')}</span>}</div></>
 }
 
 export function GameJournal() {
