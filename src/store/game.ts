@@ -9,6 +9,7 @@ import { candidates } from '../data/candidates'
 import { farmGoods, humanFoods, purchasePrices, salePrices, type FarmGood, type FoodStocks, type HumanFood } from '../data/goods'
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
+import { canAskConsent, canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
 
 export type Housing = 'cage' | 'hut'
 export type Contract = 'paid' | 'foodOnly'
@@ -44,6 +45,7 @@ export interface Worker {
   injuredUntilDay?: number
   trust: number
   respect: number; fear: number; friendship: number; love: number; debauchery: number; submission: number
+  intimacyConsentDay?: number
   traits: string[]
   operations: { id: string; day: number }[]
   workDays: { production: number; maintenance: number }
@@ -62,6 +64,7 @@ interface GameState {
   setFoodPlan: (id: string, food: HumanFood, amount: number) => void
   setContract: (id: string, contract: Contract) => void
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
+  bedroomAction: (id: string, action: BedroomAction) => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
   fine: (id: string, amount: number, reason: string) => void; sponsor: (id: string, amount: number) => void
   expandHousing: () => void; buildCage: () => void; buildHut: () => void; createEnterprise: (id: string, name: string) => void
@@ -145,6 +148,26 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       case 'hug': add('friendship', 3); add('love', 2); break
       case 'kiss': add('love', 3); break
       case 'sex': break
+    }
+    changes.workers = { ...s.workers, [id]: next }
+    return { ...changes, ...eventUpdate(s, id, action, w, next, changes.money, changes.reputation) }
+  }),
+  bedroomAction: (id, action) => set(s => {
+    const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
+    if (!w || !canCallBedroom(w)) return {}
+    const intimate = action === 'gentleIntimacy' || action === 'passionateIntimacy' || action === 'privateNight'
+    if (action === 'askConsent' && (!canAskConsent(w, age) || w.intimacyConsentDay === s.day)) return {}
+    if (intimate && !canChooseIntimacy(w, age, s.day)) return {}
+    if ((action === 'reprimand' || action === 'extraDuty') && !canPunishInBedroom(w)) return {}
+    const next = { ...w }, changes: Partial<GameState> = {}
+    const add = (key: 'trust' | 'respect' | 'fear' | 'friendship' | 'love' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
+    switch (action) {
+      case 'askConsent': next.intimacyConsentDay = s.day; break
+      case 'gentleIntimacy': add('love', 2); add('friendship', 1); next.intimacyConsentDay = undefined; break
+      case 'passionateIntimacy': add('love', 3); add('trust', 1); next.intimacyConsentDay = undefined; break
+      case 'privateNight': add('love', 4); add('friendship', 2); next.intimacyConsentDay = undefined; break
+      case 'reprimand': add('fear', 3); add('submission', 2); add('respect', -4); add('trust', -2); changes.reputation = clamp(s.reputation - 1, 0, 100); break
+      case 'extraDuty': add('fear', 4); add('submission', 3); add('respect', -5); changes.assignments = { ...s.assignments, [id]: 'production' }; changes.reputation = clamp(s.reputation - 2, 0, 100); break
     }
     changes.workers = { ...s.workers, [id]: next }
     return { ...changes, ...eventUpdate(s, id, action, w, next, changes.money, changes.reputation) }
@@ -248,7 +271,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 11,
+  name: 'reclaim-save-v1', version: 12,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -267,7 +290,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 8) old = { ...initial, ...old, enterpriseNames: { farm: 'Ферма', ...(old.enterpriseNames ?? {}), ...(old.enterprises?.includes('depot') ? { depot: 'Ремонтне депо' } : {}), ...(old.enterprises?.includes('plant') ? { plant: 'Відновлювальний завод' } : {}) } }
     if (version < 9) old = { ...initial, ...old, lastReport: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, respect: w.trust ?? 25, fear: 10, friendship: 10, love: 0, diet: w.contract === 'paid' ? { bread: 0, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 } : w.diet, ration: w.contract === 'paid' ? 0 : w.ration }])) }
     if (version < 10) old = { ...initial, ...old, journal: [], activeEvent: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, debauchery: 20 }])) }
-    if (version < 11) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, submission: 5 }])) }
+    if (version < 11) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, submission: 5 }])) }
+    if (version < 12) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, intimacyConsentDay: undefined }])) }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,

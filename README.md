@@ -17,4 +17,6 @@ The manor's housing tab is named Settlement. Cage and hut art have new landscape
 
 Workers also have a submission stat, migrated into existing saves. Fear unlocks the order to stand at attention at 20; forced dancing needs fear 35 and submission 15; a demanded apology needs fear 50 and submission 30. These coercive actions increase fear and submission but reduce respect, friendship, or reputation. Office choices and journal entries carry 😇 or 😈 labels; mixed effects show both. Verify with `node scripts/submission-smoke.mjs`.
 
+The office now has a separate Call an NPC tab: choose a worker portrait card before their interaction actions appear. The bedroom has its own call button and portrait cards for NPCs with fear or love above 70. Fear can open nonsexual disciplinary actions for active workers. Intimacy choices are fade-to-black scenes for adult former workers only, after a separate consent request accepted for the current day; high fear never grants consent. Verify with `node scripts/bedroom-flow-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

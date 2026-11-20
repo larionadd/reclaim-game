@@ -9,6 +9,8 @@ await page.getByRole('button', { name: /Запропонувати контра�
 await page.evaluate(() => { const save = JSON.parse(localStorage.getItem('reclaim-save-v1')); save.version = 10; save.state.workers.alisa.fear = 35; delete save.state.workers.alisa.submission; localStorage.setItem('reclaim-save-v1', JSON.stringify(save)) })
 await page.reload({ waitUntil: 'networkidle' })
 await page.getByRole('button', { name: 'Кабінет' }).first().click()
+await page.getByRole('button', { name: 'Викликати NPC' }).first().click()
+await page.locator('.call-cards button').first().click()
 let state = await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state)
 assert.equal(state.workers.alisa.submission, 5)
 assert.equal(await page.getByRole('button', { name: 'Змусити танцювати' }).isEnabled(), false)
