@@ -6,6 +6,7 @@ import { MedicalScreen, PeopleScreen } from './components/LocationScreens'
 import { useGame } from './store/game'
 import { t } from './i18n'
 import { DailyReport } from './components/DailyReport'
+import { GameEventDialog } from './components/GameJournal'
 import './App.css'
 import './new-ui.css'
 
@@ -47,5 +48,6 @@ export default function App() {
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>
     <nav className="bottom-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)} aria-label={tr(item.key)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
+    <GameEventDialog/>
   </div>
 }
