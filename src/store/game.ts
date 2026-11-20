@@ -168,10 +168,10 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       case 'walk': add('friendship', 4); add('love', 1); break
       case 'hug': add('friendship', 3); add('love', 2); break
       case 'kiss': add('love', 3); break
-      case 'sex': break
+      case 'sex': if (w.fear > 80) { add('respect', -4); add('love', -6); next.trust = clamp(w.trust - 6, 0, 100); changes.reputation = clamp(s.reputation - 3, 0, 100) } break
     }
     changes.workers = { ...s.workers, [id]: next }
-    return { ...changes, ...eventUpdate(s, id, action, w, next, changes.money, changes.reputation) }
+    return { ...changes, ...eventUpdate(s, id, action === 'sex' && w.fear > 80 ? 'sexPressure' : action, w, next, changes.money, changes.reputation) }
   }),
   bedroomAction: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0

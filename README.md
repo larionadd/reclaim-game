@@ -26,4 +26,6 @@ The veterinary post now hosts the procedure list after construction and appointm
 
 Candidate applications now include individual letters and requested wages. The player can make a lower counteroffer; offers below each candidate's minimum are refused. Guilt and defiance influence unauthorized absence and refusal to work. These incidents cancel the shift's output and pay, appear in the daily report and journal, and can be handled through existing disciplinary actions. Successful oviposition or lactation modifications unlock separate assignments after recovery. They produce premium hen-girl eggs (45 ₴ each) and cow-girl milk (36 ₴ each), with separate inventory, images, and Promin listings. Save version 14 migrates older inventories and workers. Verify with `node scripts/letters-disobedience-premium-smoke.mjs`.
 
+The office intimacy proposal button opens when love or fear exceeds 80. A high-fear proposal is refused and harms trust, respect, and reputation; the proposal does not start an intimacy scene. Verify with `node scripts/office-proposal-threshold-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

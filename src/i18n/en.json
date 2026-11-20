@@ -519,6 +519,9 @@
   "story_unauthorizedAbsence": "The worker did not report for the assigned shift. No output or pay was recorded for it; the incident was logged.",
   "story_refuseDuty": "The worker reported but refused the assigned task. No output or pay was recorded for the shift.",
   "reportNoPayDiscipline": "No pay was accrued for the missed or refused shift",
-  "hintSex": "Friendship ≥75, love ≥80, fear <10",
-  "story_sex": "You raised the possibility of intimacy. The conversation ended there."
+  "hintSex": "Love >80 or fear >80",
+  "story_sex": "You raised the possibility of intimacy. The conversation ended there.",
+  "needsLoveOrFear81": "Requires love >80 or fear >80",
+  "sexPressure": "Proposal under pressure",
+  "story_sexPressure": "You proposed intimacy, but the worker was frightened and refused. Trust, respect, and reputation fell."
 }

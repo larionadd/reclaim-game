@@ -11,9 +11,9 @@ export type InteractionAction = typeof interactionGroups[keyof typeof interactio
 export const actionMarkers: Record<InteractionAction, string> = {
   bonus: '😇', dayOff: '😇', extraFood: '😇', fine: '😈', hit: '😈', dismiss: '😈',
   standOrder: '😈', forceDance: '😈', forceApology: '😈',
-  joke: '😇😈', adultJoke: '😇😈', flirt: '😇😈', romanceTalk: '😇', walk: '😇', hug: '😇', kiss: '😇', sex: '😈'
+  joke: '😇😈', adultJoke: '😇😈', flirt: '😇😈', romanceTalk: '😇', walk: '😇', hug: '😇', kiss: '😇', sex: '😇'
 }
-export const eventMarker = (action: string) => ['moveToHut', 'askConsent', 'gentleIntimacy', 'passionateIntimacy', 'privateNight'].includes(action) ? '😇' : ['moveToCage', 'reprimand', 'extraDuty'].includes(action) ? '😈' : actionMarkers[action as InteractionAction] ?? ''
+export const eventMarker = (action: string) => ['moveToHut', 'askConsent', 'gentleIntimacy', 'passionateIntimacy', 'privateNight'].includes(action) ? '😇' : ['moveToCage', 'reprimand', 'extraDuty', 'sexPressure'].includes(action) ? '😈' : actionMarkers[action as InteractionAction] ?? ''
 
 export function interactionRequirement(w: Worker, action: InteractionAction, money: number, bread: number): string | null {
   switch (action) {
@@ -31,7 +31,7 @@ export function interactionRequirement(w: Worker, action: InteractionAction, mon
     case 'walk': return w.friendship < 35 && w.respect < 50 ? 'needsWalk' : null
     case 'hug': return w.friendship < 55 ? 'needsFriendship55' : w.fear >= 35 ? 'needsFearBelow35' : null
     case 'kiss': return w.friendship < 70 ? 'needsFriendship70' : w.love < 55 ? 'needsLove55' : w.fear >= 20 ? 'needsFearBelow20' : null
-    case 'sex': return w.friendship < 75 ? 'needsFriendship75' : w.love < 80 ? 'needsLove80' : w.fear >= 10 ? 'needsFearBelow10' : null
+    case 'sex': return w.love > 80 || w.fear > 80 ? null : 'needsLoveOrFear81'
   }
 }
 
