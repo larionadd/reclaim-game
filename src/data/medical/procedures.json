@@ -1,0 +1,173 @@
+[
+  {
+    "id": "support_brace",
+    "category": "assistive",
+    "name": {
+      "uk": "Підтримувальний ортез",
+      "ru": "Поддерживающий ортез",
+      "en": "Support brace"
+    },
+    "costCredits": 8,
+    "supplyCost": 2,
+    "recoveryDays": 1,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_human_medic_present"
+    ],
+    "requiresConsent": true,
+    "effect": {
+      "applicableTaskInjuryRiskMultiplier": 0.9
+    },
+    "complicationRisk": 0.01,
+    "requiresPerson": [
+      "independent_assessment"
+    ],
+    "bodySlot": "external",
+    "maintenanceCreditsPer30Days": 0,
+    "requiresPersonalGoal": false
+  },
+  {
+    "id": "functional_prosthesis",
+    "category": "restorative",
+    "name": {
+      "uk": "Функціональний протез",
+      "ru": "Функциональный протез",
+      "en": "Functional prosthesis"
+    },
+    "costCredits": 60,
+    "supplyCost": 12,
+    "recoveryDays": 7,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_human_medic_present"
+    ],
+    "requiresConsent": true,
+    "effect": {
+      "injuryWorkCapacityRestored": 15
+    },
+    "complicationRisk": 0.04,
+    "requiresPerson": [
+      "specialist_consultation",
+      "independent_assessment"
+    ],
+    "bodySlot": "limb",
+    "maintenanceCreditsPer30Days": 2,
+    "requiresPersonalGoal": false
+  },
+  {
+    "id": "diagnostic_neural_interface",
+    "category": "experimental",
+    "name": {
+      "uk": "Діагностичний нейроінтерфейс",
+      "ru": "Диагностический нейроинтерфейс",
+      "en": "Diagnostic neural interface"
+    },
+    "costCredits": 90,
+    "supplyCost": 20,
+    "recoveryDays": 10,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_human_medic_present",
+      "experimental_program_approved"
+    ],
+    "requiresConsent": true,
+    "effect": {
+      "diagnosticSkillBonus": 2
+    },
+    "complicationRisk": 0.08,
+    "requiresPerson": [
+      "specialist_consultation",
+      "independent_assessment"
+    ],
+    "bodySlot": "neural",
+    "maintenanceCreditsPer30Days": 5,
+    "requiresPersonalGoal": false
+  },
+  {
+    "id": "powered_arm",
+    "category": "enhancement",
+    "name": {
+      "uk": "Силовий протез руки",
+      "ru": "Силовой протез руки",
+      "en": "Powered arm prosthesis"
+    },
+    "costCredits": 140,
+    "supplyCost": 18,
+    "recoveryDays": 14,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_surgical_center_access",
+      "cybernetics_program_approved"
+    ],
+    "requiresPerson": [
+      "independent_assessment",
+      "specialist_consultation"
+    ],
+    "requiresConsent": true,
+    "requiresPersonalGoal": true,
+    "bodySlot": "arm",
+    "maintenanceCreditsPer30Days": 4,
+    "effect": {
+      "applicableTaskOutputMultiplier": 1.12
+    },
+    "complicationRisk": 0.08
+  },
+  {
+    "id": "synthetic_lung",
+    "category": "organ",
+    "name": {
+      "uk": "Синтетична легеня",
+      "ru": "Синтетическое лёгкое",
+      "en": "Synthetic lung"
+    },
+    "costCredits": 180,
+    "supplyCost": 24,
+    "recoveryDays": 18,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_surgical_center_access",
+      "cybernetics_program_approved"
+    ],
+    "requiresPerson": [
+      "independent_assessment",
+      "specialist_consultation"
+    ],
+    "requiresConsent": true,
+    "requiresPersonalGoal": true,
+    "bodySlot": "lung",
+    "maintenanceCreditsPer30Days": 6,
+    "effect": {
+      "enduranceBonus": 15
+    },
+    "complicationRisk": 0.1
+  },
+  {
+    "id": "synthetic_heart",
+    "category": "organ",
+    "name": {
+      "uk": "Синтетичне серце",
+      "ru": "Синтетическое сердце",
+      "en": "Synthetic heart"
+    },
+    "costCredits": 260,
+    "supplyCost": 30,
+    "recoveryDays": 24,
+    "requiresAll": [
+      "human_care_annex_built",
+      "licensed_surgical_center_access",
+      "cybernetics_program_approved"
+    ],
+    "requiresPerson": [
+      "independent_assessment",
+      "specialist_consultation"
+    ],
+    "requiresConsent": true,
+    "requiresPersonalGoal": true,
+    "bodySlot": "heart",
+    "maintenanceCreditsPer30Days": 8,
+    "effect": {
+      "enduranceBonus": 25
+    },
+    "complicationRisk": 0.14
+  }
+]

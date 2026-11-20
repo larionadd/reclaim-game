@@ -1,0 +1,195 @@
+[
+  {
+    "id": "alisa",
+    "age": 18,
+    "name": {
+      "uk": "Аліса Морозова",
+      "ru": "Алиса Морозова",
+      "en": "Alisa Morozova"
+    },
+    "role": {
+      "uk": "Помічниця тваринника",
+      "ru": "Помощница животновода",
+      "en": "Livestock assistant"
+    },
+    "bio": {
+      "uk": "До війни жила з матір’ю у невеликому містечку. Після евакуації доглядала покинутих тварин у притулку. Їде за контрактом, щоб накопичити на навчання ветеринарії. Обережно ставиться до обіцянок і хоче бачити умови письмово.",
+      "ru": "До войны жила с матерью в небольшом городе. После эвакуации ухаживала за брошенными животными в приюте. Едет по контракту, чтобы накопить на обучение ветеринарии. Осторожно относится к обещаниям и хочет видеть условия письменно.",
+      "en": "She lived with her mother in a small town before the war. After evacuation, she cared for abandoned animals at a shelter. She wants to save for veterinary training and asks to see every term in writing."
+    },
+    "image": "/art/portraits/alisa.webp",
+    "skill": 2,
+    "language": 2,
+    "motivation": 73,
+    "availableFromDay": 1,
+    "traits": [
+      "cautious",
+      "compassionate"
+    ]
+  },
+  {
+    "id": "ilyan",
+    "age": 19,
+    "name": {
+      "uk": "Ілля Руденко",
+      "ru": "Илья Руденко",
+      "en": "Ilya Rudenko"
+    },
+    "role": {
+      "uk": "Помічник механіка",
+      "ru": "Помощник механика",
+      "en": "Mechanic assistant"
+    },
+    "bio": {
+      "uk": "Виріс біля залізничного депо, де навчився ремонтувати насоси й генератори зі списаних деталей. Після війни підтримував роботу місцевої майстерні. Хоче заробити на власний набір інструментів і не любить наказів без пояснення.",
+      "ru": "Вырос у железнодорожного депо, где научился чинить насосы и генераторы из списанных деталей. После войны поддерживал местную мастерскую. Хочет заработать на инструменты и не любит приказов без объяснений.",
+      "en": "Raised near a rail depot, he learned to repair pumps and generators from discarded parts. He kept a local workshop running after the war. He wants his own tools and resists unexplained orders."
+    },
+    "image": "/art/portraits/ilyan.webp",
+    "skill": 3,
+    "language": 2,
+    "motivation": 61,
+    "availableFromDay": 1,
+    "traits": [
+      "inventive",
+      "stubborn"
+    ]
+  },
+  {
+    "id": "mara",
+    "age": 29,
+    "name": {
+      "ru": "Мара Вейл",
+      "en": "Mara Vale",
+      "uk": "Мара Вейл"
+    },
+    "role": {
+      "uk": "Зоотехнікиня",
+      "ru": "Зоотехник",
+      "en": "Livestock specialist"
+    },
+    "bio": {
+      "uk": "Працювала зоотехнікинею на господарстві, яке втратило більшість стада під час післявоєнної епідемії. Врятувала племінних корів і веде точні записи лікування. Уклала контракт, щоб підтримати молодшу сестру й отримати офіційний допуск до навчання.",
+      "ru": "Работала зоотехником на ферме, потерявшей большую часть стада во время послевоенной эпидемии. Спасла племенных коров и ведёт точные записи лечения. Заключила контракт, чтобы помогать младшей сестре и получить допуск к обучению.",
+      "en": "She worked as a livestock specialist on a farm devastated by a postwar epidemic. She saved the breeding cattle and kept careful treatment records. She signed a contract to support her younger sister and qualify for further training."
+    },
+    "image": "/art/portraits/mara.webp",
+    "skill": 4,
+    "language": 3,
+    "motivation": 72,
+    "availableFromDay": 1,
+    "traits": [
+      "methodical",
+      "protective"
+    ]
+  },
+  {
+    "id": "tomas",
+    "age": 38,
+    "name": {
+      "uk": "Тимур Ковалевський",
+      "ru": "Тимур Ковалевский",
+      "en": "Timur Kovalevsky"
+    },
+    "role": {
+      "uk": "Досвідчений комірник",
+      "ru": "Опытный кладовщик",
+      "en": "Senior storekeeper"
+    },
+    "bio": {
+      "uk": "Дванадцять років вів облік продуктів і запчастин у зруйнованому промисловому районі. Його дружина й син живуть окремо; він хоче накопичити на спільне житло. Перевіряє кожну накладну і відстоює домовленості навіть перед керівником.",
+      "ru": "Двенадцать лет вёл учёт продуктов и деталей в разрушенном промышленном районе. Его жена и сын живут отдельно; он хочет накопить на общее жильё. Проверяет каждую накладную и отстаивает договорённости даже перед начальником.",
+      "en": "For twelve years he tracked food and spare parts in a damaged industrial district. His wife and son live elsewhere; he hopes to save for a shared home. He checks every delivery note and holds managers to their agreements."
+    },
+    "image": "/art/portraits/tomas.webp",
+    "skill": 4,
+    "language": 4,
+    "motivation": 67,
+    "availableFromDay": 31,
+    "traits": [
+      "principled",
+      "resilient"
+    ]
+  },
+  {
+    "id": "nora",
+    "age": 31,
+    "name": {
+      "ru": "Нора Сент",
+      "en": "Nora Sent",
+      "uk": "Нора Сент"
+    },
+    "role": {
+      "ru": "Медик",
+      "en": "Medic",
+      "uk": "Медикиня"
+    },
+    "bio": {
+      "ru": "Работала в полевом лазарете. Требует доступ к аптечке и журналу травм.",
+      "en": "Worked in a field clinic. Requires access to supplies and injury records.",
+      "uk": "Працювала в польовому шпиталі. Вимагає доступу до аптечки й журналу травм."
+    },
+    "image": "/art/portraits/nora.webp",
+    "skill": 4,
+    "language": 5,
+    "motivation": 78,
+    "availableFromDay": 61,
+    "traits": [
+      "resilient"
+    ]
+  },
+  {
+    "id": "olena",
+    "age": 39,
+    "name": {
+      "uk": "Олена Кравець",
+      "ru": "Елена Кравец",
+      "en": "Elena Kravets"
+    },
+    "role": {
+      "uk": "Механікиня ферми",
+      "ru": "Механик фермы",
+      "en": "Farm mechanic"
+    },
+    "bio": {
+      "uk": "Налагоджує кормороздавачі та генератори. Хоче навчати молодших працівників.",
+      "ru": "Налаживает кормораздатчики и генераторы. Хочет обучать младших работников.",
+      "en": "Repairs feeders and generators. Wants to train junior workers."
+    },
+    "image": "/art/portraits/olena.webp",
+    "skill": 4,
+    "language": 4,
+    "motivation": 70,
+    "availableFromDay": 31,
+    "traits": [
+      "resilient"
+    ]
+  },
+  {
+    "id": "serhii",
+    "age": 42,
+    "name": {
+      "uk": "Сергій Данін",
+      "ru": "Сергей Данин",
+      "en": "Sergei Danin"
+    },
+    "role": {
+      "uk": "Ветеринарний помічник",
+      "ru": "Ветеринарный помощник",
+      "en": "Veterinary assistant"
+    },
+    "bio": {
+      "uk": "Доглядає тварин і веде записи про здоров’я стада. Потребує чіткого графіка відпочинку.",
+      "ru": "Ухаживает за животными и ведёт записи о здоровье стада. Нуждается в чётком графике отдыха.",
+      "en": "Cares for animals and tracks herd health. Needs a clear rest schedule."
+    },
+    "image": "/art/portraits/serhii.webp",
+    "skill": 4,
+    "language": 3,
+    "motivation": 68,
+    "availableFromDay": 31,
+    "traits": [
+      "resilient"
+    ]
+  }
+]

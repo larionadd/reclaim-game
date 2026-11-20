@@ -1,0 +1,151 @@
+[
+  {
+    "npcId": "alisa",
+    "goals": [
+      {
+        "id": "alisa_vet_school",
+        "kind": "education",
+        "targetCredits": 150,
+        "priority": 1,
+        "name": {
+          "uk": "Навчання ветеринарії",
+          "ru": "Обучение ветеринарии",
+          "en": "Veterinary training"
+        },
+        "unlockFlag": "alisa_vet_school_revealed"
+      },
+      {
+        "id": "alisa_hut",
+        "kind": "housing",
+        "targetCredits": 80,
+        "priority": 2,
+        "name": {
+          "uk": "Безпечне житло",
+          "ru": "Безопасное жильё",
+          "en": "Safe housing"
+        },
+        "unlockFlag": "alisa_hut_revealed"
+      }
+    ]
+  },
+  {
+    "npcId": "mara",
+    "goals": [
+      {
+        "id": "mara_family_transfer",
+        "kind": "family",
+        "targetCredits": 60,
+        "priority": 1,
+        "name": {
+          "uk": "Переказ родині",
+          "ru": "Перевод семье",
+          "en": "Family transfer"
+        },
+        "unlockFlag": "mara_family_transfer_revealed"
+      },
+      {
+        "id": "mara_neural_interface",
+        "kind": "procedure",
+        "procedureId": "diagnostic_neural_interface",
+        "targetCredits": 90,
+        "priority": 2,
+        "name": {
+          "uk": "Діагностичний нейроінтерфейс",
+          "ru": "Диагностический нейроинтерфейс",
+          "en": "Diagnostic neural interface"
+        },
+        "unlockFlag": "mara_neural_interface_revealed"
+      }
+    ]
+  },
+  {
+    "npcId": "ilyan",
+    "goals": [
+      {
+        "id": "ilyan_workshop",
+        "kind": "project",
+        "targetCredits": 100,
+        "priority": 1,
+        "name": {
+          "uk": "Власна майстерня",
+          "ru": "Своя мастерская",
+          "en": "Own workshop"
+        },
+        "unlockFlag": "ilyan_workshop_revealed"
+      },
+      {
+        "id": "ilyan_powered_arm",
+        "kind": "procedure",
+        "procedureId": "powered_arm",
+        "targetCredits": 140,
+        "priority": 2,
+        "name": {
+          "uk": "Силовий протез руки",
+          "ru": "Силовой протез руки",
+          "en": "Powered arm prosthesis"
+        },
+        "unlockFlag": "ilyan_powered_arm_revealed"
+      }
+    ]
+  },
+  {
+    "npcId": "nora",
+    "goals": [
+      {
+        "id": "nora_clinic",
+        "kind": "project",
+        "targetCredits": 80,
+        "priority": 1,
+        "name": {
+          "uk": "Медичне відділення",
+          "ru": "Медицинское отделение",
+          "en": "Human care annex"
+        },
+        "unlockFlag": "nora_clinic_revealed"
+      },
+      {
+        "id": "nora_synthetic_lung",
+        "kind": "procedure",
+        "procedureId": "synthetic_lung",
+        "targetCredits": 180,
+        "priority": 2,
+        "name": {
+          "uk": "Синтетична легеня",
+          "ru": "Синтетическое лёгкое",
+          "en": "Synthetic lung"
+        },
+        "unlockFlag": "nora_synthetic_lung_revealed"
+      }
+    ]
+  },
+  {
+    "npcId": "tomas",
+    "goals": [
+      {
+        "id": "tomas_family_transfer",
+        "kind": "family",
+        "targetCredits": 120,
+        "priority": 1,
+        "name": {
+          "uk": "Возз’єднання з родиною",
+          "ru": "Воссоединение с семьёй",
+          "en": "Family reunion"
+        },
+        "unlockFlag": "tomas_family_transfer_revealed"
+      },
+      {
+        "id": "tomas_synthetic_heart",
+        "kind": "procedure",
+        "procedureId": "synthetic_heart",
+        "targetCredits": 260,
+        "priority": 2,
+        "name": {
+          "uk": "Синтетичне серце",
+          "ru": "Синтетическое сердце",
+          "en": "Synthetic heart"
+        },
+        "unlockFlag": "tomas_synthetic_heart_revealed"
+      }
+    ]
+  }
+]

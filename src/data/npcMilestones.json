@@ -1,0 +1,38 @@
+[
+  {
+    "id": "mara_biosecurity",
+    "npcId": "mara",
+    "name": {"uk": "Біозахист стада", "ru": "Биозащита стада", "en": "Herd biosecurity"},
+    "requiresAll": ["herd_outbreak_disclosed", "veterinary_lab_supplied", "mara_trust_50"],
+    "requiresChoice": "mara_accepts_biosecurity_role",
+    "effect": {"farmDiseaseRiskMultiplier": 0.75},
+    "repeatable": false
+  },
+  {
+    "id": "ilyan_safe_equipment",
+    "npcId": "ilyan",
+    "name": {"uk": "Безпечне обладнання", "ru": "Безопасное оборудование", "en": "Safer equipment"},
+    "requiresAll": ["feed_mixer_repaired", "five_safe_maintenance_shifts", "safety_audit_passed"],
+    "requiresChoice": "ilyan_accepts_engineering_role",
+    "effect": {"farmInjuryRiskMultiplier": 0.85},
+    "repeatable": false
+  },
+  {
+    "id": "nora_human_clinic",
+    "npcId": "nora",
+    "name": {"uk": "Медичне відділення для людей", "ru": "Медицинское отделение для людей", "en": "Human care annex"},
+    "requiresAll": ["hospital_overcrowding_event", "human_care_annex_built", "licensed_human_medic_present", "medical_supplies_20"],
+    "requiresChoice": "nora_accepts_clinic_role",
+    "effect": {"humanCareCapacity": 4},
+    "repeatable": false
+  },
+  {
+    "id": "tomas_distribution_network",
+    "npcId": "tomas",
+    "name": {"uk": "Мережа постачання", "ru": "Сеть снабжения", "en": "Supply network"},
+    "requiresAll": ["family_payments_transparent", "three_deliveries_reconciled", "tomas_trust_50"],
+    "requiresChoice": "tomas_accepts_logistics_role",
+    "effect": {"feedSpoilageMultiplier": 0.8},
+    "repeatable": false
+  }
+]

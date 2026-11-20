@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict'
+import { chromium } from 'playwright-core'
+
+const browser = await chromium.launch({ headless: true, executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' })
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+const errors = []
+page.on('pageerror', error => errors.push(error.message))
+await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
+assert.equal(await page.locator('html').evaluate(el => el.scrollWidth), 390)
+assert.equal(await page.getByRole('heading', { name: 'Тваринницька ферма № 7' }).count(), 1)
+await page.locator('.bottom-nav').getByRole('button', { name: 'Розподільник' }).click()
+assert.equal(await page.locator('.candidate-row').count(), 4)
+await page.getByRole('button', { name: /Запропонувати контракт/ }).first().click()
+await page.locator('.bottom-nav').getByRole('button', { name: 'Люди' }).click()
+await page.getByRole('combobox', { name: 'Призначення' }).selectOption('production')
+await page.locator('.bottom-nav').getByRole('button', { name: 'Головна' }).click()
+for (let i = 0; i < 4; i++) await page.getByRole('button', { name: /Продовжити/ }).click()
+assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state.day), 2)
+await page.locator('.bottom-nav').getByRole('button', { name: 'Люди' }).click()
+assert.equal(await page.locator('.sheet-chips').getByText(/12 кр\./).count(), 1)
+await page.locator('.bottom-nav').getByRole('button', { name: 'Ресурси' }).click()
+assert.ok(await page.getByText(/117 порцій/).count() >= 1)
+await page.locator('.bottom-nav').getByRole('button', { name: 'Головна' }).click()
+await page.getByRole('button', { name: 'Мова' }).click()
+assert.ok(await page.getByText('Восстановление Украины').count() >= 1)
+await page.getByRole('button', { name: 'Язык' }).click()
+assert.ok(await page.getByText('Rebuilding Ukraine').count() >= 1)
+await page.evaluate(() => {
+  const save = JSON.parse(localStorage.getItem('reclaim-save-v1'))
+  save.state.day = 31
+  save.state.money = 500
+  localStorage.setItem('reclaim-save-v1', JSON.stringify(save))
+})
+await page.reload({ waitUntil: 'networkidle' })
+await page.locator('.bottom-nav').getByRole('button', { name: 'Distribution' }).click()
+assert.equal(await page.locator('.candidate-row').count(), 6)
+await page.locator('.bottom-nav').getByRole('button', { name: 'Home' }).click()
+await page.getByRole('button', { name: /Add 2 places/ }).click()
+assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state.staffCapacity), 5)
+assert.deepEqual(errors, [])
+console.log('Mobile layout, hiring, work, payroll, rations, monthly offer, housing expansion, and UK/RU/EN passed')
+await browser.close()
