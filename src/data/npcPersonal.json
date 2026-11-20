@@ -1,9 +1,224 @@
 [
-  {"id":"alisa","orientation":"heterosexual","maritalStatus":"single","modificationConsentAtSigning":false,"relatives":{"mother":{"state":"known","people":[{"name":{"uk":"Наталія Морозова","ru":"Наталья Морозова","en":"Natalia Morozova"},"age":41}]},"father":{"state":"unknown","people":[]},"children":{"state":"none","people":[]}}},
-  {"id":"ilyan","orientation":"bisexual","maritalStatus":"single","modificationConsentAtSigning":true,"relatives":{"mother":{"state":"unknown","people":[]},"father":{"state":"known","people":[{"name":{"uk":"Павло Руденко","ru":"Павел Руденко","en":"Pavel Rudenko"},"age":48}]},"children":{"state":"none","people":[]}}},
-  {"id":"mara","orientation":"bisexual","maritalStatus":"divorced","modificationConsentAtSigning":true,"relatives":{"mother":{"state":"none","people":[]},"father":{"state":"unknown","people":[]},"children":{"state":"known","people":[{"name":{"uk":"Єва Вейл","ru":"Ева Вейл","en":"Eva Vale"},"age":7}]} }},
-  {"id":"tomas","orientation":"heterosexual","maritalStatus":"widowed","modificationConsentAtSigning":false,"relatives":{"mother":{"state":"none","people":[]},"father":{"state":"none","people":[]},"children":{"state":"known","people":[{"name":{"uk":"Данило Ковалевський","ru":"Даниил Ковалевский","en":"Danylo Kovalevsky"},"age":19}]} }},
-  {"id":"nora","orientation":"lesbian","maritalStatus":"single","modificationConsentAtSigning":true,"relatives":{"mother":{"state":"known","people":[{"name":{"uk":"Віра Сент","ru":"Вера Сент","en":"Vira Sent"},"age":57}]},"father":{"state":"none","people":[]},"children":{"state":"none","people":[]}}},
-  {"id":"olena","orientation":"heterosexual","maritalStatus":"married","modificationConsentAtSigning":false,"relatives":{"mother":{"state":"unknown","people":[]},"father":{"state":"unknown","people":[]},"children":{"state":"known","people":[{"name":{"uk":"Марко Кравець","ru":"Марк Кравец","en":"Marko Kravets"},"age":16}]} }},
-  {"id":"serhii","orientation":"gay","maritalStatus":"divorced","modificationConsentAtSigning":false,"relatives":{"mother":{"state":"none","people":[]},"father":{"state":"none","people":[]},"children":{"state":"none","people":[]}}}
+  {
+    "id": "alisa",
+    "orientation": "heterosexual",
+    "maritalStatus": "single",
+    "modificationConsentAtSigning": false,
+    "relatives": {
+      "mother": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Наталія Морозова",
+              "ru": "Наталья Морозова",
+              "en": "Natalia Morozova"
+            },
+            "age": 41
+          }
+        ]
+      },
+      "father": {
+        "state": "unknown",
+        "people": []
+      },
+      "children": {
+        "state": "none",
+        "people": []
+      }
+    },
+    "medicalEligibility": {
+      "breast": true,
+      "uterus": true
+    }
+  },
+  {
+    "id": "ilyan",
+    "orientation": "bisexual",
+    "maritalStatus": "single",
+    "modificationConsentAtSigning": true,
+    "relatives": {
+      "mother": {
+        "state": "unknown",
+        "people": []
+      },
+      "father": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Павло Руденко",
+              "ru": "Павел Руденко",
+              "en": "Pavel Rudenko"
+            },
+            "age": 48
+          }
+        ]
+      },
+      "children": {
+        "state": "none",
+        "people": []
+      }
+    },
+    "medicalEligibility": {
+      "breast": false,
+      "uterus": false
+    }
+  },
+  {
+    "id": "mara",
+    "orientation": "bisexual",
+    "maritalStatus": "divorced",
+    "modificationConsentAtSigning": true,
+    "relatives": {
+      "mother": {
+        "state": "none",
+        "people": []
+      },
+      "father": {
+        "state": "unknown",
+        "people": []
+      },
+      "children": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Єва Вейл",
+              "ru": "Ева Вейл",
+              "en": "Eva Vale"
+            },
+            "age": 7
+          }
+        ]
+      }
+    },
+    "medicalEligibility": {
+      "breast": true,
+      "uterus": true
+    }
+  },
+  {
+    "id": "tomas",
+    "orientation": "heterosexual",
+    "maritalStatus": "widowed",
+    "modificationConsentAtSigning": false,
+    "relatives": {
+      "mother": {
+        "state": "none",
+        "people": []
+      },
+      "father": {
+        "state": "none",
+        "people": []
+      },
+      "children": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Данило Ковалевський",
+              "ru": "Даниил Ковалевский",
+              "en": "Danylo Kovalevsky"
+            },
+            "age": 19
+          }
+        ]
+      }
+    },
+    "medicalEligibility": {
+      "breast": false,
+      "uterus": false
+    }
+  },
+  {
+    "id": "nora",
+    "orientation": "lesbian",
+    "maritalStatus": "single",
+    "modificationConsentAtSigning": true,
+    "relatives": {
+      "mother": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Віра Сент",
+              "ru": "Вера Сент",
+              "en": "Vira Sent"
+            },
+            "age": 57
+          }
+        ]
+      },
+      "father": {
+        "state": "none",
+        "people": []
+      },
+      "children": {
+        "state": "none",
+        "people": []
+      }
+    },
+    "medicalEligibility": {
+      "breast": true,
+      "uterus": true
+    }
+  },
+  {
+    "id": "olena",
+    "orientation": "heterosexual",
+    "maritalStatus": "married",
+    "modificationConsentAtSigning": false,
+    "relatives": {
+      "mother": {
+        "state": "unknown",
+        "people": []
+      },
+      "father": {
+        "state": "unknown",
+        "people": []
+      },
+      "children": {
+        "state": "known",
+        "people": [
+          {
+            "name": {
+              "uk": "Марко Кравець",
+              "ru": "Марк Кравец",
+              "en": "Marko Kravets"
+            },
+            "age": 16
+          }
+        ]
+      }
+    },
+    "medicalEligibility": {
+      "breast": true,
+      "uterus": true
+    }
+  },
+  {
+    "id": "serhii",
+    "orientation": "gay",
+    "maritalStatus": "divorced",
+    "modificationConsentAtSigning": false,
+    "relatives": {
+      "mother": {
+        "state": "none",
+        "people": []
+      },
+      "father": {
+        "state": "none",
+        "people": []
+      },
+      "children": {
+        "state": "none",
+        "people": []
+      }
+    },
+    "medicalEligibility": {
+      "breast": false,
+      "uterus": false
+    }
+  }
 ]

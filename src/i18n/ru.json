@@ -486,5 +486,22 @@
   "story_procedurePressure": "Работник отказался. Давление ухудшило доверие и репутацию.",
   "story_procedureRefused": "Работник выслушал предложение и отказался.",
   "story_operationComplete": "Операция проведена. Работник восстанавливается; стоимость оплачена из собственных сбережений.",
-  "story_operationComplication": "После операции возникло осложнение. Восстановление займёт больше времени."
+  "story_operationComplication": "После операции возникло осложнение. Восстановление займёт больше времени.",
+  "operationRisk": "Риск осложнений и травм",
+  "deathRisk": "Риск гибели",
+  "procedureUnavailable": "Сейчас недоступно",
+  "timesPerformed": "Проведено раз",
+  "permanentDisability": "Длительная утрата трудоспособности",
+  "operationFatal": "Смерть во время операции",
+  "operationDisability": "Тяжёлое повреждение после операции",
+  "outcome_success": "успешно",
+  "outcome_complication": "осложнение",
+  "outcome_disability": "утрата трудоспособности",
+  "outcome_death": "смерть",
+  "story_operationFatal": "Пациент погиб во время операции. Контракт прекращён; событие внесено в журнал.",
+  "story_operationDisability": "Операция привела к тяжёлому повреждению. Работник выжил, но его трудоспособность снизилась.",
+  "effectLactation": "Лактация: активна",
+  "effectOviposition": "Яйцекладка: активна",
+  "effectHairGrowth": "Рост волос: усилен",
+  "effectHairLoss": "Выпадение волос: усилено"
 }

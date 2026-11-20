@@ -4,10 +4,10 @@ import type { Worker } from '../store/game'
 export function productionForWorker(worker: Worker, teamSize: number): FarmStocks {
   const has = (trait: string) => worker.traits.includes(trait)
   return {
-    meat: 1 + Number(has('ambitious')) + Number(has('strong_legs')) + Number(has('strong_arms')),
-    milk: 2 + Number(has('observant')) + Number(worker.operations?.some(op => op.id === 'diagnostic_neural_interface') ?? false),
+    meat: 1 + Number(has('ambitious')) + Number(has('strong_legs')) + Number(has('strong_arms')) - Number(worker.disabled ? 1 : 0),
+    milk: 2 + Number(has('observant')) + Number(worker.operations?.some(op => op.id === 'diagnostic_neural_interface') ?? false) + Number(worker.medicalEffects?.lactation ?? false),
     cheese: 1 + Number(has('methodical')) + Number(has('curious')),
-    eggs: 4 + Number(has('inventive')) + (teamSize > 1 ? Number(has('leader')) : 0)
+    eggs: 4 + Number(has('inventive')) + (teamSize > 1 ? Number(has('leader')) : 0) + Number(worker.medicalEffects?.oviposition ?? false)
   }
 }
 

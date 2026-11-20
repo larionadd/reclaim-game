@@ -24,7 +24,11 @@
     ],
     "bodySlot": "external",
     "maintenanceCreditsPer30Days": 0,
-    "requiresPersonalGoal": false
+    "requiresPersonalGoal": false,
+    "disabilityRisk": 0.003,
+    "fatalityRisk": 0.001,
+    "repeatable": false,
+    "eligibility": "all"
   },
   {
     "id": "functional_prosthesis",
@@ -52,7 +56,11 @@
     ],
     "bodySlot": "limb",
     "maintenanceCreditsPer30Days": 2,
-    "requiresPersonalGoal": false
+    "requiresPersonalGoal": false,
+    "disabilityRisk": 0.01,
+    "fatalityRisk": 0.002,
+    "repeatable": false,
+    "eligibility": "all"
   },
   {
     "id": "diagnostic_neural_interface",
@@ -81,7 +89,11 @@
     ],
     "bodySlot": "neural",
     "maintenanceCreditsPer30Days": 5,
-    "requiresPersonalGoal": false
+    "requiresPersonalGoal": false,
+    "disabilityRisk": 0.02,
+    "fatalityRisk": 0.004,
+    "repeatable": false,
+    "eligibility": "all"
   },
   {
     "id": "powered_arm",
@@ -110,7 +122,11 @@
     "effect": {
       "applicableTaskOutputMultiplier": 1.12
     },
-    "complicationRisk": 0.08
+    "complicationRisk": 0.08,
+    "disabilityRisk": 0.02,
+    "fatalityRisk": 0.004,
+    "repeatable": false,
+    "eligibility": "all"
   },
   {
     "id": "synthetic_lung",
@@ -139,7 +155,11 @@
     "effect": {
       "enduranceBonus": 15
     },
-    "complicationRisk": 0.1
+    "complicationRisk": 0.1,
+    "disabilityRisk": 0.025,
+    "fatalityRisk": 0.005,
+    "repeatable": false,
+    "eligibility": "all"
   },
   {
     "id": "synthetic_heart",
@@ -168,6 +188,252 @@
     "effect": {
       "enduranceBonus": 25
     },
-    "complicationRisk": 0.14
+    "complicationRisk": 0.14,
+    "disabilityRisk": 0.035,
+    "fatalityRisk": 0.007,
+    "repeatable": false,
+    "eligibility": "all"
+  },
+  {
+    "id": "replacement_eyes",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна очей",
+      "ru": "Замена глаз",
+      "en": "Eye replacement"
+    },
+    "costCredits": 180,
+    "recoveryDays": 12,
+    "complicationRisk": 0.12,
+    "disabilityRisk": 0.05,
+    "fatalityRisk": 0.015,
+    "bodySlot": "eyes",
+    "repeatable": false,
+    "eligibility": "all",
+    "effect": {
+      "vision": 1
+    }
+  },
+  {
+    "id": "replacement_left_arm",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна лівої руки",
+      "ru": "Замена левой руки",
+      "en": "Left arm replacement"
+    },
+    "costCredits": 160,
+    "recoveryDays": 16,
+    "complicationRisk": 0.13,
+    "disabilityRisk": 0.06,
+    "fatalityRisk": 0.018,
+    "bodySlot": "left_arm",
+    "repeatable": false,
+    "eligibility": "all",
+    "effect": {
+      "arm": 1
+    }
+  },
+  {
+    "id": "replacement_right_arm",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна правої руки",
+      "ru": "Замена правой руки",
+      "en": "Right arm replacement"
+    },
+    "costCredits": 160,
+    "recoveryDays": 16,
+    "complicationRisk": 0.13,
+    "disabilityRisk": 0.06,
+    "fatalityRisk": 0.018,
+    "bodySlot": "right_arm",
+    "repeatable": false,
+    "eligibility": "all",
+    "effect": {
+      "arm": 1
+    }
+  },
+  {
+    "id": "replacement_left_leg",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна лівої ноги",
+      "ru": "Замена левой ноги",
+      "en": "Left leg replacement"
+    },
+    "costCredits": 175,
+    "recoveryDays": 18,
+    "complicationRisk": 0.14,
+    "disabilityRisk": 0.07,
+    "fatalityRisk": 0.02,
+    "bodySlot": "left_leg",
+    "repeatable": false,
+    "eligibility": "all",
+    "effect": {
+      "leg": 1
+    }
+  },
+  {
+    "id": "replacement_right_leg",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна правої ноги",
+      "ru": "Замена правой ноги",
+      "en": "Right leg replacement"
+    },
+    "costCredits": 175,
+    "recoveryDays": 18,
+    "complicationRisk": 0.14,
+    "disabilityRisk": 0.07,
+    "fatalityRisk": 0.02,
+    "bodySlot": "right_leg",
+    "repeatable": false,
+    "eligibility": "all",
+    "effect": {
+      "leg": 1
+    }
+  },
+  {
+    "id": "breast_replacement",
+    "category": "modification",
+    "name": {
+      "uk": "Заміна грудей",
+      "ru": "Замена груди",
+      "en": "Breast replacement"
+    },
+    "costCredits": 125,
+    "recoveryDays": 14,
+    "complicationRisk": 0.1,
+    "disabilityRisk": 0.025,
+    "fatalityRisk": 0.008,
+    "bodySlot": "breast",
+    "repeatable": false,
+    "eligibility": "breast",
+    "effect": {
+      "chestCm": 3,
+      "weightKg": 0.4
+    }
+  },
+  {
+    "id": "breast_enlargement",
+    "category": "modification",
+    "name": {
+      "uk": "Збільшення грудей",
+      "ru": "Увеличение груди",
+      "en": "Breast enlargement"
+    },
+    "costCredits": 90,
+    "recoveryDays": 10,
+    "complicationRisk": 0.08,
+    "disabilityRisk": 0.018,
+    "fatalityRisk": 0.005,
+    "bodySlot": "breast",
+    "repeatable": false,
+    "eligibility": "breast",
+    "effect": {
+      "chestCm": 4,
+      "weightKg": 0.3
+    }
+  },
+  {
+    "id": "oviposition_uterus",
+    "category": "modification",
+    "name": {
+      "uk": "Штучна матка для яйцекладки",
+      "ru": "Искусственная матка для яйцекладки",
+      "en": "Oviposition uterus"
+    },
+    "costCredits": 320,
+    "recoveryDays": 30,
+    "complicationRisk": 0.22,
+    "disabilityRisk": 0.12,
+    "fatalityRisk": 0.045,
+    "bodySlot": "uterus",
+    "repeatable": false,
+    "eligibility": "uterus",
+    "effect": {
+      "oviposition": 1
+    }
+  },
+  {
+    "id": "lactation_hormones",
+    "category": "modification",
+    "name": {
+      "uk": "Гормональний курс лактації",
+      "ru": "Гормональный курс лактации",
+      "en": "Lactation hormone course"
+    },
+    "costCredits": 36,
+    "recoveryDays": 3,
+    "complicationRisk": 0.07,
+    "disabilityRisk": 0.008,
+    "fatalityRisk": 0.002,
+    "bodySlot": "hormone_lactation",
+    "repeatable": true,
+    "eligibility": "breast",
+    "effect": {
+      "lactation": 1
+    }
+  },
+  {
+    "id": "hair_growth_hormones",
+    "category": "modification",
+    "name": {
+      "uk": "Гормони для росту волосся",
+      "ru": "Гормоны для роста волос",
+      "en": "Hair growth hormones"
+    },
+    "costCredits": 28,
+    "recoveryDays": 2,
+    "complicationRisk": 0.04,
+    "disabilityRisk": 0.003,
+    "fatalityRisk": 0.001,
+    "bodySlot": "hormone_hair_growth",
+    "repeatable": true,
+    "eligibility": "all",
+    "effect": {
+      "hairGrowth": 1
+    }
+  },
+  {
+    "id": "hair_loss_hormones",
+    "category": "modification",
+    "name": {
+      "uk": "Гормони для випадіння волосся",
+      "ru": "Гормоны для выпадения волос",
+      "en": "Hair loss hormones"
+    },
+    "costCredits": 28,
+    "recoveryDays": 2,
+    "complicationRisk": 0.04,
+    "disabilityRisk": 0.003,
+    "fatalityRisk": 0.001,
+    "bodySlot": "hormone_hair_loss",
+    "repeatable": true,
+    "eligibility": "all",
+    "effect": {
+      "hairLoss": 1
+    }
+  },
+  {
+    "id": "weight_gain_hormones",
+    "category": "modification",
+    "name": {
+      "uk": "Гормони для набору ваги",
+      "ru": "Гормоны для набора веса",
+      "en": "Weight gain hormones"
+    },
+    "costCredits": 32,
+    "recoveryDays": 4,
+    "complicationRisk": 0.08,
+    "disabilityRisk": 0.009,
+    "fatalityRisk": 0.002,
+    "bodySlot": "hormone_weight",
+    "repeatable": true,
+    "eligibility": "all",
+    "effect": {
+      "weightKg": 2
+    }
   }
 ]

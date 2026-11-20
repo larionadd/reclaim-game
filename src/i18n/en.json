@@ -486,5 +486,22 @@
   "story_procedurePressure": "The worker refused. The pressure harmed trust and reputation.",
   "story_procedureRefused": "The worker heard the proposal and declined.",
   "story_operationComplete": "The operation is complete. The worker is recovering, and paid for it from their own savings.",
-  "story_operationComplication": "A complication followed the operation. Recovery will take longer."
+  "story_operationComplication": "A complication followed the operation. Recovery will take longer.",
+  "operationRisk": "Complication and injury risk",
+  "deathRisk": "Death risk",
+  "procedureUnavailable": "Currently unavailable",
+  "timesPerformed": "Times performed",
+  "permanentDisability": "Long-term disability",
+  "operationFatal": "Death during surgery",
+  "operationDisability": "Severe injury after surgery",
+  "outcome_success": "successful",
+  "outcome_complication": "complication",
+  "outcome_disability": "disability",
+  "outcome_death": "death",
+  "story_operationFatal": "The patient died during surgery. Their contract ended, and the incident was logged.",
+  "story_operationDisability": "Surgery caused a severe injury. The worker survived, but their work capacity fell.",
+  "effectLactation": "Lactation: active",
+  "effectOviposition": "Oviposition: active",
+  "effectHairGrowth": "Hair growth: increased",
+  "effectHairLoss": "Hair loss: increased"
 }

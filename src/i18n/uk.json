@@ -486,5 +486,22 @@
   "story_procedurePressure": "Працівник відмовився. Тиск зіпсував довіру та репутацію.",
   "story_procedureRefused": "Працівник вислухав пропозицію та відмовився.",
   "story_operationComplete": "Операцію проведено. Працівник відновлюється, а її вартість сплачено з власних заощаджень.",
-  "story_operationComplication": "Після операції виникло ускладнення. Потрібен довший час відновлення."
+  "story_operationComplication": "Після операції виникло ускладнення. Потрібен довший час відновлення.",
+  "operationRisk": "Ризик ускладнень і травм",
+  "deathRisk": "Ризик загибелі",
+  "procedureUnavailable": "Наразі недоступно",
+  "timesPerformed": "Проведено разів",
+  "permanentDisability": "Тривала втрата працездатності",
+  "operationFatal": "Смерть під час операції",
+  "operationDisability": "Тяжке ушкодження після операції",
+  "outcome_success": "успішно",
+  "outcome_complication": "ускладнення",
+  "outcome_disability": "втрата працездатності",
+  "outcome_death": "смерть",
+  "story_operationFatal": "Пацієнт загинув під час операції. Контракт припинено; подію внесено до журналу.",
+  "story_operationDisability": "Операція призвела до тяжкого ушкодження. Працівник вижив, але його працездатність знизилася.",
+  "effectLactation": "Лактація: активна",
+  "effectOviposition": "Яйцекладка: активна",
+  "effectHairGrowth": "Ріст волосся: посилений",
+  "effectHairLoss": "Випадіння волосся: посилене"
 }

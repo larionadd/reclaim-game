@@ -8,6 +8,7 @@ export interface NpcPersonal {
   orientation: 'heterosexual' | 'bisexual' | 'gay' | 'lesbian' | 'asexual' | 'questioning'
   maritalStatus: 'single' | 'married' | 'divorced' | 'widowed'
   modificationConsentAtSigning: boolean
+  medicalEligibility: { breast: boolean; uterus: boolean }
   relatives: { mother: RelativeRecord; father: RelativeRecord; children: RelativeRecord }
 }
 

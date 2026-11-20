@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { BodyMeasurements, Job, Lang, Phase } from '../types'
-import { updateBodyForDay } from '../mechanics/workerBody'
+import { applyProcedureMeasurements, updateBodyForDay } from '../mechanics/workerBody'
 import { resolveDay } from '../mechanics/economy'
 import { canHire } from '../mechanics/hiring'
 import { phaseMessage } from '../mechanics/events'
@@ -12,6 +12,7 @@ import { interactionRequirement, type InteractionAction } from '../mechanics/int
 import { canAskConsent, canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
 import { personalFor } from '../data/npcPersonal'
 import procedures from '../data/medical/procedures.json'
+import { canReceiveProcedure, resolveOperationOutcome } from '../mechanics/medicalOperations'
 
 export type Housing = 'cage' | 'hut'
 export type Contract = 'paid' | 'foodOnly'
@@ -50,7 +51,9 @@ export interface Worker {
   respect: number; fear: number; friendship: number; love: number; debauchery: number; submission: number
   intimacyConsentDay?: number
   traits: string[]
-  operations: { id: string; day: number }[]
+  operations: { id: string; day: number; outcome?: 'success' | 'complication' | 'disability' | 'death' }[]
+  disabled?: boolean
+  medicalEffects?: { lactation: boolean; oviposition: boolean; hair: 'normal' | 'growth' | 'loss' }
   workDays: { production: number; maintenance: number }
 }
 type Livestock = { cattle: number; sheep: number; chickens: number }
@@ -191,7 +194,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   proposeModification: (id, procedureId) => set(s => {
     const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
-    if (!w?.alive || !w.active || !procedure || w.operations.some(op => op.id === procedureId)) return {}
+    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || !s.workers[s.vetDoctorId]?.alive || !s.workers[s.vetDoctorId]?.active) return {}
     const accepted = w.modificationConsentAtSigning || (w.love >= 70 && w.fear < 35) || (w.debauchery >= 70 && w.trust >= 55 && w.fear < 35)
     const pressured = !accepted && w.fear >= 70
     const next: Worker = { ...w, modificationDecision: { procedureId, accepted, day: s.day }, trust: pressured ? clamp(w.trust - 8, 0, 100) : w.trust }
@@ -201,12 +204,16 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   performOperation: (id, procedureId) => set(s => {
     const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
-    if (!w?.alive || !w.active || !procedure || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits || w.operations.some(op => op.id === procedureId)) return {}
-    const complication = Math.random() < procedure.complicationRisk
+    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || !s.workers[s.vetDoctorId]?.alive || !s.workers[s.vetDoctorId]?.active || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits) return {}
+    const outcome = resolveOperationOutcome(procedure, Math.random())
     const trait = procedureId === 'functional_prosthesis' ? 'strong_legs' : procedureId === 'powered_arm' ? 'strong_arms' : null
-    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day }], traits: trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, injuredUntilDay: s.day + procedure.recoveryDays + (complication ? 5 : 0), health: clamp(w.health - (complication ? 15 : 3), 0, 100), modificationDecision: undefined }
-    const reputation = clamp(s.reputation - (complication ? 2 : 0), 0, 100)
-    return { workers: { ...s.workers, [id]: next }, assignments: { ...s.assignments, [id]: 'rest' }, reputation, ...eventUpdate(s, id, complication ? 'operationComplication' : 'operationComplete', w, next, s.money, reputation, procedureId) }
+    const success = outcome === 'success', fatal = outcome === 'death', disabled = outcome === 'disability'
+    const effect = procedure.effect as unknown as Record<string, number>
+    const bodyDelta = success ? { weightKg: effect.weightKg ?? 0, chestCm: effect.chestCm ?? 0 } : {}
+    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day, outcome }], traits: success && trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, body: applyProcedureMeasurements(w.body, bodyDelta), medicalEffects: success ? { lactation: (w.medicalEffects?.lactation ?? false) || procedureId === 'lactation_hormones', oviposition: (w.medicalEffects?.oviposition ?? false) || procedureId === 'oviposition_uterus', hair: procedureId === 'hair_growth_hormones' ? 'growth' : procedureId === 'hair_loss_hormones' ? 'loss' : w.medicalEffects?.hair ?? 'normal' } : w.medicalEffects, disabled: w.disabled || disabled, alive: !fatal, active: !fatal && w.active, lastDayOnSite: fatal ? s.day : w.lastDayOnSite, injuredUntilDay: fatal ? undefined : s.day + procedure.recoveryDays + (outcome === 'complication' ? 5 : disabled ? 14 : 0), health: fatal ? 0 : disabled ? Math.min(w.health, 20) : clamp(w.health - (outcome === 'complication' ? 15 : 3), 0, 100), modificationDecision: undefined }
+    const reputation = clamp(s.reputation - (fatal ? 15 : disabled ? 8 : outcome === 'complication' ? 2 : 0), 0, 100)
+    const action = fatal ? 'operationFatal' : disabled ? 'operationDisability' : outcome === 'complication' ? 'operationComplication' : 'operationComplete'
+    return { workers: { ...s.workers, [id]: next }, assignments: { ...s.assignments, [id]: 'rest' }, reputation, ...eventUpdate(s, id, action, w, next, s.money, reputation, procedureId) }
   }),
   expandHousing: () => get().buildHut(),
   buildCage: () => set(s => s.cages < 5 && s.money >= 90 ? { cages: s.cages + 1, staffCapacity: s.staffCapacity + 1, money: s.money - 90, message: 'msgHousingExpanded' } : {}),

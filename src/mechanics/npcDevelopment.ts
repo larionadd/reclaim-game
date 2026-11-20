@@ -10,10 +10,10 @@ export function eligibleMilestones(npcId: string, flags: Set<string>, acceptedCh
 
 export function eligibleProcedures(npcId: string, worldFlags: Set<string>, npcFlags: Set<string>, activeProcedureGoals: Set<string>, consentedProcedureIds: Set<string>, installedSlots: Set<string>, completed: Set<string>): Procedure[] {
   return procedures.filter(p =>
-    !completed.has(`${npcId}:${p.id}`) &&
-    !installedSlots.has(`${npcId}:${p.bodySlot}`) &&
-    p.requiresAll.every(flag => worldFlags.has(flag)) &&
-    p.requiresPerson.every(flag => npcFlags.has(flag)) &&
+    (p.repeatable || !completed.has(`${npcId}:${p.id}`)) &&
+    (p.repeatable || !installedSlots.has(`${npcId}:${p.bodySlot}`)) &&
+    (p.requiresAll ?? []).every(flag => worldFlags.has(flag)) &&
+    (p.requiresPerson ?? []).every(flag => npcFlags.has(flag)) &&
     (!p.requiresPersonalGoal || activeProcedureGoals.has(`${npcId}:${p.id}`)) &&
     (!p.requiresConsent || consentedProcedureIds.has(`${npcId}:${p.id}`))
   )
