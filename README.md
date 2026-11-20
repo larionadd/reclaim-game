@@ -15,4 +15,6 @@ Workers now receive either wages or food from the player's stores for each shift
 
 The manor's housing tab is named Settlement. Cage and hut art have new landscape versions with intact bed geometry. Moving a worker into a hut immediately raises trust and respect by 5, friendship by 3, and lowers fear by 2; the daily stay also raises trust and respect. The opposite move harms those relationships. The worker file and office show a new debauchery/openness stat. Adult joke, flirt, and romance talk have visible relationship thresholds. Office interactions and housing moves show a narrative outcome with exact stat changes and are saved to the manor Journal. Verify with `node scripts/journal-interaction-smoke.mjs`.
 
+Workers also have a submission stat, migrated into existing saves. Fear unlocks the order to stand at attention at 20; forced dancing needs fear 35 and submission 15; a demanded apology needs fear 50 and submission 30. These coercive actions increase fear and submission but reduce respect, friendship, or reputation. Office choices and journal entries carry 😇 or 😈 labels; mixed effects show both. Verify with `node scripts/submission-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

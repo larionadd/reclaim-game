@@ -2,11 +2,18 @@ import type { Worker } from '../store/game'
 
 export const interactionGroups = {
   reward: ['bonus', 'dayOff', 'extraFood'],
-  punish: ['fine', 'hit', 'dismiss'],
+  punish: ['fine', 'hit', 'dismiss', 'standOrder', 'forceDance', 'forceApology'],
   talk: ['joke', 'adultJoke', 'flirt', 'romanceTalk', 'walk', 'hug', 'kiss', 'sex']
 } as const
 
 export type InteractionAction = typeof interactionGroups[keyof typeof interactionGroups][number]
+
+export const actionMarkers: Record<InteractionAction, string> = {
+  bonus: '😇', dayOff: '😇', extraFood: '😇', fine: '😈', hit: '😈', dismiss: '😈',
+  standOrder: '😈', forceDance: '😈', forceApology: '😈',
+  joke: '😇😈', adultJoke: '😇😈', flirt: '😇😈', romanceTalk: '😇', walk: '😇', hug: '😇', kiss: '😇', sex: '😈'
+}
+export const eventMarker = (action: string) => action === 'moveToHut' ? '😇' : action === 'moveToCage' ? '😈' : actionMarkers[action as InteractionAction] ?? ''
 
 export function interactionRequirement(w: Worker, action: InteractionAction, money: number, bread: number): string | null {
   switch (action) {
@@ -15,6 +22,9 @@ export function interactionRequirement(w: Worker, action: InteractionAction, mon
     case 'extraFood': return w.contract !== 'foodOnly' ? 'needsFoodContract' : bread < 1 ? 'needsBread' : null
     case 'fine': return w.contract !== 'paid' ? 'needsPaidContract' : w.savings < 1 ? 'needsSavings' : null
     case 'hit': case 'dismiss': case 'joke': return null
+    case 'standOrder': return w.fear < 20 ? 'needsFear20' : null
+    case 'forceDance': return w.fear < 35 ? 'needsFear35' : w.submission < 15 ? 'needsSubmission15' : null
+    case 'forceApology': return w.fear < 50 ? 'needsFear50' : w.submission < 30 ? 'needsSubmission30' : null
     case 'adultJoke': return w.friendship < 20 ? 'needsFriendship20' : w.debauchery < 25 ? 'needsDebauchery25' : w.fear >= 35 ? 'needsFearBelow35' : null
     case 'flirt': return w.friendship < 35 ? 'needsFriendship35' : w.debauchery < 35 ? 'needsDebauchery35' : w.fear >= 25 ? 'needsFearBelow25' : null
     case 'romanceTalk': return w.friendship < 45 ? 'needsFriendship45' : w.love < 15 ? 'needsLove15' : w.fear >= 25 ? 'needsFearBelow25' : null
@@ -26,5 +36,5 @@ export function interactionRequirement(w: Worker, action: InteractionAction, mon
 }
 
 export const thresholdHints: Partial<Record<InteractionAction, string>> = {
-  adultJoke: 'hintAdultJoke', flirt: 'hintFlirt', romanceTalk: 'hintRomanceTalk', walk: 'hintWalk', hug: 'hintHug', kiss: 'hintKiss', sex: 'hintSex'
+  standOrder: 'hintStandOrder', forceDance: 'hintForceDance', forceApology: 'hintForceApology', adultJoke: 'hintAdultJoke', flirt: 'hintFlirt', romanceTalk: 'hintRomanceTalk', walk: 'hintWalk', hug: 'hintHug', kiss: 'hintKiss', sex: 'hintSex'
 }

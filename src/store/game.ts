@@ -43,7 +43,7 @@ export interface Worker {
   alive: boolean
   injuredUntilDay?: number
   trust: number
-  respect: number; fear: number; friendship: number; love: number; debauchery: number
+  respect: number; fear: number; friendship: number; love: number; debauchery: number; submission: number
   traits: string[]
   operations: { id: string; day: number }[]
   workDays: { production: number; maintenance: number }
@@ -78,13 +78,13 @@ const initial = {
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n))
 const eventUpdate = (s: GameState, id: string, action: string, before: Worker, after: Worker, money = s.money, reputation = s.reputation) => {
   const changes: Record<string, number> = {}
-  for (const key of ['health', 'trust', 'respect', 'fear', 'friendship', 'love', 'debauchery', 'savings'] as const) if (after[key] !== before[key]) changes[key] = after[key] - before[key]
+  for (const key of ['health', 'trust', 'respect', 'fear', 'friendship', 'love', 'debauchery', 'submission', 'savings'] as const) if (after[key] !== before[key]) changes[key] = after[key] - before[key]
   if (money !== s.money) changes.money = money - s.money
   if (reputation !== s.reputation) changes.reputation = reputation - s.reputation
   const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes }
   return { journal: [...s.journal, event], activeEvent: event }
 }
-const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, housing: 'cage', savings: 0, medicalGrant: 0, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 } })
+const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, housing: 'cage', savings: 0, medicalGrant: 0, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 } })
 const occupied = (workers: Record<string, Worker>, housing: Housing, except?: string) => Object.entries(workers).filter(([id, w]) => id !== except && w.alive && w.active && w.housing === housing).length
 const takeProvenance = (source: Record<string, number>, amount: number) => {
   const remaining = { ...source }, contributors: Record<string, number> = {}
@@ -126,14 +126,17 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const w = s.workers[id]; if (!w?.alive || !w.active) return {}
     if (interactionRequirement(w, action, s.money, s.stocks.bread)) return {}
     const next = { ...w }, changes: Partial<GameState> = {}
-    const add = (key: 'health' | 'respect' | 'fear' | 'friendship' | 'love' | 'debauchery', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
+    const add = (key: 'health' | 'respect' | 'fear' | 'friendship' | 'love' | 'debauchery' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
     switch (action) {
       case 'bonus': next.savings += 5; next.totalReceivedFromPlayer += 5; add('respect', 2); changes.money = s.money - 5; break
       case 'dayOff': add('respect', 3); changes.assignments = { ...s.assignments, [id]: 'rest' }; break
       case 'extraFood': add('health', 2); add('friendship', 2); changes.stocks = { ...s.stocks, bread: s.stocks.bread - 1 }; break
-      case 'fine': next.savings--; add('respect', -5); add('fear', 6); changes.reputation = clamp(s.reputation - 2, 0, 100); break
-      case 'hit': add('health', -15); add('fear', 20); add('respect', -20); add('friendship', -20); add('love', -30); changes.reputation = clamp(s.reputation - 25, 0, 100); break
+      case 'fine': next.savings--; add('respect', -5); add('fear', 6); add('submission', 2); changes.reputation = clamp(s.reputation - 2, 0, 100); break
+      case 'hit': add('health', -15); add('fear', 20); add('submission', 5); add('respect', -20); add('friendship', -20); add('love', -30); changes.reputation = clamp(s.reputation - 25, 0, 100); break
       case 'dismiss': next.active = false; next.lastDayOnSite = s.day; changes.assignments = { ...s.assignments, [id]: 'rest' }; break
+      case 'standOrder': add('fear', 2); add('submission', 5); add('respect', -2); break
+      case 'forceDance': add('fear', 4); add('submission', 7); add('friendship', -4); add('respect', -2); changes.reputation = clamp(s.reputation - 3, 0, 100); break
+      case 'forceApology': add('fear', 3); add('submission', 5); add('respect', -6); break
       case 'joke': add('friendship', 2); add('debauchery', 1); break
       case 'adultJoke': add('friendship', 3); add('debauchery', 3); break
       case 'flirt': add('friendship', 2); add('love', 3); add('debauchery', 2); break
@@ -245,7 +248,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 10,
+  name: 'reclaim-save-v1', version: 11,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -263,7 +266,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 7) old = { ...initial, ...old, provenance: { meat: {}, milk: {}, cheese: {}, eggs: {} }, listings: [] }
     if (version < 8) old = { ...initial, ...old, enterpriseNames: { farm: 'Ферма', ...(old.enterpriseNames ?? {}), ...(old.enterprises?.includes('depot') ? { depot: 'Ремонтне депо' } : {}), ...(old.enterprises?.includes('plant') ? { plant: 'Відновлювальний завод' } : {}) } }
     if (version < 9) old = { ...initial, ...old, lastReport: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, respect: w.trust ?? 25, fear: 10, friendship: 10, love: 0, diet: w.contract === 'paid' ? { bread: 0, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 } : w.diet, ration: w.contract === 'paid' ? 0 : w.ration }])) }
-    if (version < 10) return { ...initial, ...old, journal: [], activeEvent: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, debauchery: 20 }])) }
+    if (version < 10) old = { ...initial, ...old, journal: [], activeEvent: null, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, debauchery: 20 }])) }
+    if (version < 11) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, submission: 5 }])) }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,

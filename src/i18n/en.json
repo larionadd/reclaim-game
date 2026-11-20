@@ -406,5 +406,21 @@
   "story_kiss": "You kissed with mutual consent.",
   "story_sex": "The proposal was discussed, but the intimate scene is unavailable during direct employment.",
   "story_moveToHut": "The worker moved into a hut. Privacy and a proper bed improved their feelings toward you.",
-  "story_moveToCage": "The worker was moved to a cage. Trust fell and fear rose."
+  "story_moveToCage": "The worker was moved to a cage. Trust fell and fear rose.",
+  "submission": "Submission",
+  "standOrder": "Order to stand at attention",
+  "forceDance": "Force to dance",
+  "forceApology": "Demand an apology",
+  "hintStandOrder": "Fear ≥20",
+  "hintForceDance": "Fear ≥35, submission ≥15",
+  "hintForceApology": "Fear ≥50, submission ≥30",
+  "needsFear20": "Needs fear 20",
+  "needsFear35": "Needs fear 35",
+  "needsFear50": "Needs fear 50",
+  "needsSubmission15": "Needs submission 15",
+  "needsSubmission30": "Needs submission 30",
+  "markerLegend": "😇 raises friendship, respect, or love. 😈 raises fear, sexual openness, or submission. Two markers mean a mixed effect.",
+  "story_standOrder": "You ordered the worker to stand at attention. They complied out of fear, but respect fell.",
+  "story_forceDance": "You forced the worker to dance. They complied, but friendship, respect, and reputation suffered.",
+  "story_forceApology": "You demanded an apology. The worker complied, but their respect fell."
 }
