@@ -13,6 +13,8 @@ await page.getByRole('button', { name: 'Викликати NPC' }).first().click
 await page.locator('.call-cards button').first().click()
 assert.equal(await page.getByRole('button', { name: 'Дорослий жарт' }).isEnabled(), true)
 assert.equal(await page.getByRole('button', { name: 'Флірт' }).isEnabled(), false)
+assert.equal(await page.getByRole('button', { name: 'Запропонувати близькість' }).count(), 1)
+assert.equal(await page.getByText('Близькість потребує вільної згоди', { exact: false }).count(), 0)
 await page.getByRole('button', { name: 'Дорослий жарт' }).click()
 assert.equal(await page.getByRole('dialog', { name: 'Наслідок дії' }).count(), 1)
 assert.equal(await page.getByRole('dialog').getByText('Дружба +3').count(), 1)
