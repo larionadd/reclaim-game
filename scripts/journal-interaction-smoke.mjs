@@ -26,7 +26,7 @@ await page.locator('.bottom-nav').getByRole('button', { name: 'Люди' }).clic
 await page.getByRole('combobox', { name: 'Розміщення' }).selectOption('hut')
 const state = await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state)
 assert.equal(state.workers.alisa.housing, 'hut')
-assert.equal(state.workers.alisa.respect, 30)
+assert.equal(state.workers.alisa.respect, 35)
 assert.equal(state.journal.length, 2)
 assert.equal(state.journal[1].action, 'moveToHut')
 assert.equal(await page.getByRole('dialog').getByText('Переїзд до хатинки').count(), 1)

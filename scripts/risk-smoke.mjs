@@ -12,6 +12,7 @@ for (const [roll, expected] of [[0.02, 'injury'], [0, 'fatality']]) {
   await page.locator('.side-nav').first().getByRole('button', { name: 'Люди' }).click()
   await page.getByRole('combobox', { name: 'Призначення' }).selectOption('production')
   await page.locator('.side-nav').first().getByRole('button', { name: 'Тваринництво' }).click()
+  await page.evaluate(value => { let n = 0; Math.random = () => n++ === 0 ? .99 : value }, roll)
   for (let i = 0; i < 4; i++) await page.locator('.quarter-top').click()
   const state = await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state)
   if (expected === 'injury') {

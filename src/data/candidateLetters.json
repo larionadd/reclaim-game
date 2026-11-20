@@ -1,0 +1,86 @@
+[
+  {
+    "id": "alisa",
+    "requestedWage": 14,
+    "minimumWage": 10,
+    "guilt": 65,
+    "defiance": 20,
+    "letter": {
+      "uk": "Я розумію, чому вашій країні потрібні мої руки. Хочу 14 ₴ за зміну й безпечне місце для сну. Не прошу поблажок.",
+      "ru": "Я понимаю, почему вашей стране нужны мои руки. Прошу 14 ₴ за смену и безопасное место для сна.",
+      "en": "I understand why your country needs my labor. I ask for 14 ₴ per shift and a safe place to sleep."
+    }
+  },
+  {
+    "id": "ilyan",
+    "requestedWage": 13,
+    "minimumWage": 8,
+    "guilt": 45,
+    "defiance": 65,
+    "letter": {
+      "uk": "Я не починав цю війну, але знаю, звідки прийшла руйнація. Умію ремонтувати техніку. Хочу 13 ₴ за зміну.",
+      "ru": "Я не начинал эту войну, но знаю, откуда пришло разрушение. Прошу 13 ₴ за смену.",
+      "en": "I did not start this war, but I know where the destruction came from. I ask for 13 ₴ per shift."
+    }
+  },
+  {
+    "id": "mara",
+    "requestedWage": 18,
+    "minimumWage": 13,
+    "guilt": 60,
+    "defiance": 40,
+    "letter": {
+      "uk": "Я працюватиму сумлінно. Мені потрібні гроші для дитини, тому прошу 18 ₴ за зміну. Прошу не міняти умови без розмови.",
+      "ru": "Мне нужны деньги для ребёнка, поэтому прошу 18 ₴ за смену. Не меняйте условия без разговора.",
+      "en": "I need money for my child, so I ask for 18 ₴ per shift. Please discuss any changes with me."
+    }
+  },
+  {
+    "id": "tomas",
+    "requestedWage": 16,
+    "minimumWage": 11,
+    "guilt": 30,
+    "defiance": 75,
+    "letter": {
+      "uk": "За чужі накази відповідати важко, але відбудову я розумію. За важку роботу хочу 16 ₴ за зміну.",
+      "ru": "Мне трудно отвечать за чужие приказы, но необходимость восстановления я понимаю. Прошу 16 ₴.",
+      "en": "It is hard to answer for others’ orders, but I understand the need to rebuild. I ask for 16 ₴."
+    }
+  },
+  {
+    "id": "nora",
+    "requestedWage": 20,
+    "minimumWage": 16,
+    "guilt": 70,
+    "defiance": 30,
+    "letter": {
+      "uk": "Польовий медик. Після того, що сталося, маю допомогти відновленню. Для роботи з людьми прошу 20 ₴ та належні матеріали.",
+      "ru": "Полевой медик. После случившегося хочу помогать восстановлению. Прошу 20 ₴ и материалы.",
+      "en": "Field medic. After what happened, I want to help with recovery. I ask for 20 ₴ and supplies."
+    }
+  },
+  {
+    "id": "olena",
+    "requestedWage": 17,
+    "minimumWage": 12,
+    "guilt": 55,
+    "defiance": 50,
+    "letter": {
+      "uk": "Знаю ціну зруйнованих міст. Можу вести облік і доглядати тварин. Прошу 17 ₴ за зміну.",
+      "ru": "Знаю цену разрушенных городов. Могу вести учёт и ухаживать за животными. Прошу 17 ₴.",
+      "en": "I know the cost of ruined cities. I can keep records and tend animals. I ask for 17 ₴."
+    }
+  },
+  {
+    "id": "serhii",
+    "requestedWage": 15,
+    "minimumWage": 10,
+    "guilt": 40,
+    "defiance": 70,
+    "letter": {
+      "uk": "Не вважаю себе винним за кожне рішення уряду, але готовий відпрацювати свою частку відбудови. Прошу 15 ₴.",
+      "ru": "Не считаю себя виновным за каждое решение правительства, но готов работать на восстановлении. Прошу 15 ₴.",
+      "en": "I do not claim every government decision as mine, but I will do my share in rebuilding. I ask for 15 ₴."
+    }
+  }
+]
