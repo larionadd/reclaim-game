@@ -15,7 +15,7 @@ for (let i = 0; i < 18; i++) {
   const img = images.nth(i)
   await img.scrollIntoViewIfNeeded()
   await img.evaluate(el => el.decode())
-  assert.equal(await img.evaluate(el => el.naturalWidth === 640 && el.naturalHeight === 360), true)
+  assert.equal(await img.evaluate(el => el.naturalWidth === 960 && el.naturalHeight === 540), true)
 }
 assert.equal(new Set(await images.evaluateAll(els => els.map(el => new URL(el.src).pathname))).size, 18)
 assert.equal(await page.locator('body').evaluate(el => el.scrollWidth <= innerWidth), true)

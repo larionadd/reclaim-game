@@ -29,7 +29,7 @@
     "fatalityRisk": 0.001,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/support_brace.svg"
+    "image": "/art/procedures/support_brace.webp"
   },
   {
     "id": "functional_prosthesis",
@@ -62,7 +62,7 @@
     "fatalityRisk": 0.002,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/functional_prosthesis.svg"
+    "image": "/art/procedures/functional_prosthesis.webp"
   },
   {
     "id": "diagnostic_neural_interface",
@@ -96,7 +96,7 @@
     "fatalityRisk": 0.004,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/diagnostic_neural_interface.svg"
+    "image": "/art/procedures/diagnostic_neural_interface.webp"
   },
   {
     "id": "powered_arm",
@@ -130,7 +130,7 @@
     "fatalityRisk": 0.004,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/powered_arm.svg"
+    "image": "/art/procedures/powered_arm.webp"
   },
   {
     "id": "synthetic_lung",
@@ -164,7 +164,7 @@
     "fatalityRisk": 0.005,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/synthetic_lung.svg"
+    "image": "/art/procedures/synthetic_lung.webp"
   },
   {
     "id": "synthetic_heart",
@@ -198,7 +198,7 @@
     "fatalityRisk": 0.007,
     "repeatable": false,
     "eligibility": "all",
-    "image": "/art/procedures/synthetic_heart.svg"
+    "image": "/art/procedures/synthetic_heart.webp"
   },
   {
     "id": "replacement_eyes",
@@ -219,7 +219,7 @@
     "effect": {
       "vision": 1
     },
-    "image": "/art/procedures/replacement_eyes.svg"
+    "image": "/art/procedures/replacement_eyes.webp"
   },
   {
     "id": "replacement_left_arm",
@@ -240,7 +240,7 @@
     "effect": {
       "arm": 1
     },
-    "image": "/art/procedures/replacement_left_arm.svg"
+    "image": "/art/procedures/replacement_left_arm.webp"
   },
   {
     "id": "replacement_right_arm",
@@ -261,7 +261,7 @@
     "effect": {
       "arm": 1
     },
-    "image": "/art/procedures/replacement_right_arm.svg"
+    "image": "/art/procedures/replacement_right_arm.webp"
   },
   {
     "id": "replacement_left_leg",
@@ -282,7 +282,7 @@
     "effect": {
       "leg": 1
     },
-    "image": "/art/procedures/replacement_left_leg.svg"
+    "image": "/art/procedures/replacement_left_leg.webp"
   },
   {
     "id": "replacement_right_leg",
@@ -303,7 +303,7 @@
     "effect": {
       "leg": 1
     },
-    "image": "/art/procedures/replacement_right_leg.svg"
+    "image": "/art/procedures/replacement_right_leg.webp"
   },
   {
     "id": "breast_replacement",
@@ -325,7 +325,7 @@
       "chestCm": 3,
       "weightKg": 0.4
     },
-    "image": "/art/procedures/breast_replacement.svg"
+    "image": "/art/procedures/breast_replacement.webp"
   },
   {
     "id": "breast_enlargement",
@@ -347,7 +347,7 @@
       "chestCm": 4,
       "weightKg": 0.3
     },
-    "image": "/art/procedures/breast_enlargement.svg"
+    "image": "/art/procedures/breast_enlargement.webp"
   },
   {
     "id": "oviposition_uterus",
@@ -368,7 +368,7 @@
     "effect": {
       "oviposition": 1
     },
-    "image": "/art/procedures/oviposition_uterus.svg"
+    "image": "/art/procedures/oviposition_uterus.webp"
   },
   {
     "id": "lactation_hormones",
@@ -389,7 +389,7 @@
     "effect": {
       "lactation": 1
     },
-    "image": "/art/procedures/lactation_hormones.svg"
+    "image": "/art/procedures/lactation_hormones.webp"
   },
   {
     "id": "hair_growth_hormones",
@@ -410,7 +410,7 @@
     "effect": {
       "hairGrowth": 1
     },
-    "image": "/art/procedures/hair_growth_hormones.svg"
+    "image": "/art/procedures/hair_growth_hormones.webp"
   },
   {
     "id": "hair_loss_hormones",
@@ -431,7 +431,7 @@
     "effect": {
       "hairLoss": 1
     },
-    "image": "/art/procedures/hair_loss_hormones.svg"
+    "image": "/art/procedures/hair_loss_hormones.webp"
   },
   {
     "id": "weight_gain_hormones",
@@ -452,6 +452,6 @@
     "effect": {
       "weightKg": 2
     },
-    "image": "/art/procedures/weight_gain_hormones.svg"
+    "image": "/art/procedures/weight_gain_hormones.webp"
   }
 ]
