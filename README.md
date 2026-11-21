@@ -40,4 +40,6 @@ An NPC with an amputated arm or leg and no fitted prosthesis cannot be assigned 
 
 Two more adult candidates are available from day one: Sofia Hryn, a 20-year-old agronomy student, and Vira Danyliuk, an 18-year-old former actress. Both have separate portraits, application letters, and personal records.
 
+The Promin sale screen shows only goods currently in stock. Each product offers 1, 5, and Max quantity buttons; quantities are capped by available stock and products disappear from the sale form when fully listed. Verify at mobile width with `node scripts/market-quantity-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

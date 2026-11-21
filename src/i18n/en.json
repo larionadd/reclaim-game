@@ -282,6 +282,8 @@
   "marketHint": "List warehouse products. Buyers pay overnight.",
   "totalSales": "Sales revenue",
   "saleQuantity": "Quantity to list",
+  "saleMax": "Max",
+  "noGoodsToSell": "There are no goods in stock to sell yet.",
   "listForSale": "List for sale",
   "activeListings": "Active listings",
   "noListings": "No listings yet.",
