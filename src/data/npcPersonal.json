@@ -220,5 +220,8 @@
       "breast": false,
       "uterus": false
     }
-  }
+  },
+  { "id": "kateryna", "orientation": "heterosexual", "maritalStatus": "single", "modificationConsentAtSigning": false, "relatives": { "mother": { "state": "unknown", "people": [] }, "father": { "state": "unknown", "people": [] }, "children": { "state": "none", "people": [] } }, "medicalEligibility": { "breast": true, "uterus": true } },
+  { "id": "amara", "orientation": "bisexual", "maritalStatus": "single", "modificationConsentAtSigning": false, "relatives": { "mother": { "state": "unknown", "people": [] }, "father": { "state": "unknown", "people": [] }, "children": { "state": "none", "people": [] } }, "medicalEligibility": { "breast": true, "uterus": true } },
+  { "id": "mei", "orientation": "asexual", "maritalStatus": "single", "modificationConsentAtSigning": false, "relatives": { "mother": { "state": "unknown", "people": [] }, "father": { "state": "unknown", "people": [] }, "children": { "state": "none", "people": [] } }, "medicalEligibility": { "breast": true, "uterus": true } }
 ]

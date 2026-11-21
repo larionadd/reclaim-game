@@ -240,5 +240,38 @@
       "waistCm": 84,
       "hipsCm": 98
     }
+  },
+  {
+    "id": "kateryna",
+    "age": 19,
+    "name": { "uk": "Катерина Лісова", "ru": "Екатерина Лесовая", "en": "Kateryna Lisova" },
+    "role": { "uk": "Помічниця тваринника", "ru": "Помощница животновода", "en": "Livestock assistant" },
+    "bio": { "uk": "Працювала у притулку для тварин після евакуації. Шукає постійну роботу й хоче навчитися доглядати велику отару.", "ru": "Работала в приюте для животных после эвакуации. Ищет постоянную работу и хочет научиться ухаживать за большой отарой.", "en": "She worked at an animal shelter after evacuation. She wants steady work and hopes to learn how to care for a large flock." },
+    "image": "/art/portraits/kateryna.webp",
+    "skill": 2, "language": 3, "motivation": 74, "availableFromDay": 1,
+    "traits": ["compassionate", "cautious"],
+    "body": { "heightCm": 165, "weightKg": 58, "chestCm": 86, "waistCm": 67, "hipsCm": 92 }
+  },
+  {
+    "id": "amara",
+    "age": 23,
+    "name": { "uk": "Амара Окойє", "ru": "Амара Окойе", "en": "Amara Okoye" },
+    "role": { "uk": "Механікиня", "ru": "Механик", "en": "Mechanic" },
+    "bio": { "uk": "Після руйнування майстерні ремонтувала трактори для сусідніх господарств. Веде точний облік деталей і сперечається, коли ремонт відкладають.", "ru": "После разрушения мастерской ремонтировала тракторы для соседних хозяйств. Ведёт точный учёт деталей и спорит, когда ремонт откладывают.", "en": "After her workshop was destroyed, she repaired tractors for nearby farms. She keeps careful parts records and speaks up when repairs are delayed." },
+    "image": "/art/portraits/amara.webp",
+    "skill": 4, "language": 4, "motivation": 69, "availableFromDay": 1,
+    "traits": ["inventive", "principled"],
+    "body": { "heightCm": 172, "weightKg": 67, "chestCm": 91, "waistCm": 72, "hipsCm": 97 }
+  },
+  {
+    "id": "mei",
+    "age": 25,
+    "name": { "uk": "Мей Чен", "ru": "Мэй Чен", "en": "Mei Chen" },
+    "role": { "uk": "Медикиня", "ru": "Медик", "en": "Medic" },
+    "bio": { "uk": "Працювала у польовому медпункті й доглядала травмованих працівників. Наполягає на чистому інструменті та записі кожного випадку.", "ru": "Работала в полевом медпункте и ухаживала за травмированными работниками. Требует чистых инструментов и записи каждого случая.", "en": "She worked at a field aid post and cared for injured workers. She insists on clean instruments and a record of every case." },
+    "image": "/art/portraits/mei.webp",
+    "skill": 4, "language": 4, "motivation": 82, "availableFromDay": 1,
+    "traits": ["methodical", "compassionate"],
+    "body": { "heightCm": 162, "weightKg": 55, "chestCm": 84, "waistCm": 64, "hipsCm": 89 }
   }
 ]

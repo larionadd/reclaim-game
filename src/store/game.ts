@@ -10,11 +10,12 @@ import { letterFor } from '../data/candidateLetters'
 import { farmGoods, humanFoods, purchasePrices, salePrices, sellableGoods, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
-import { canAskConsent, canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
+import { canAskConsent, canAskOfficeConsent, canCallBedroom, canChooseIntimacy, canChooseOfficeIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
 import { personalFor } from '../data/npcPersonal'
 import procedures from '../data/medical/procedures.json'
 import { canReceiveProcedure, resolveOperationOutcome } from '../mechanics/medicalOperations'
 import { resolveDisobedience, type Disobedience } from '../mechanics/disobedience'
+import { prostheticFor, type LimbSlot } from '../data/prosthetics'
 
 export type Housing = 'cage' | 'hut'
 export type Contract = 'paid' | 'foodOnly'
@@ -60,12 +61,15 @@ export interface Worker {
   operations: { id: string; day: number; outcome?: 'success' | 'complication' | 'disability' | 'death' }[]
   disabled?: boolean
   medicalEffects?: { lactation: boolean; oviposition: boolean; hair: 'normal' | 'growth' | 'loss' }
+  prostheticInventory: string[]
+  equippedProsthetics: Partial<Record<LimbSlot, string>>
   workDays: { production: number; maintenance: number }
 }
 type Livestock = { cattle: number; sheep: number; chickens: number }
 interface GameState {
   lang: Lang; day: number; phase: Phase; output: number; wellbeing: number; reputation: number
   money: number; food: number; feedDays: number; livestock: Livestock; staffCapacity: number; cages: number; huts: number; vodka: number; enterprises: string[]; enterpriseNames: Record<string,string>
+  prostheticStock: Record<string, number>
   stocks: FoodStocks; provenance: Provenance; listings: SaleListing[]; totalSales: number; vetBuilt: boolean; vetDoctorId: string | null
   lastReport: DayReport | null
   journal: GameEvent[]; activeEvent: GameEvent | null
@@ -77,9 +81,11 @@ interface GameState {
   setContract: (id: string, contract: Contract) => void
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
+  officeIntimacy: (id: string, action: 'officeAskConsent' | 'officeTender' | 'officePassionate' | 'officeQuiet') => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
   fine: (id: string, amount: number, reason: string) => void
   proposeModification: (id: string, procedureId: string) => void; performOperation: (id: string, procedureId: string) => void
+  buyProsthetic: (itemId: string) => void; issueProsthetic: (workerId: string, itemId: string) => void; equipProsthetic: (workerId: string, itemId: string) => void; removeProsthetic: (workerId: string, slot: LimbSlot) => void
   expandHousing: () => void; buildCage: () => void; buildHut: () => void; createEnterprise: (id: string, name: string) => void
   purchase: (items: Partial<Record<ShopItem, number>>) => void; sleep: () => void; advance: () => void; reset: () => void
   listForSale: (good: SaleGood, quantity: number) => void; buildVet: () => void; appointVet: (id: string) => void
@@ -88,6 +94,7 @@ const order: Phase[] = ['morning', 'day', 'evening', 'night']
 const initial = {
   lang: 'uk' as Lang, day: 1, phase: 'morning' as Phase, output: 0, wellbeing: 76, reputation: 58,
   money: 120, food: 18, feedDays: 8, livestock: { cattle: 18, sheep: 26, chickens: 120 }, staffCapacity: 1, cages: 1, huts: 0, vodka: 0, enterprises: ['farm'], enterpriseNames: { farm: 'Ферма' },
+  prostheticStock: {} as Record<string, number>,
   stocks: { bread: 18, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0, girlEggs: 0, girlMilk: 0 }, provenance: { meat: {}, milk: {}, cheese: {}, eggs: {}, girlEggs: {}, girlMilk: {} } as Provenance, listings: [] as SaleListing[], totalSales: 0, vetBuilt: false, vetDoctorId: null as string | null, lastReport: null as DayReport | null, journal: [] as GameEvent[], activeEvent: null as GameEvent | null,
   hired: [] as string[], workers: {} as Record<string, Worker>, assignments: {} as Record<string, Job>, message: 'msgStart'
 }
@@ -100,7 +107,7 @@ const eventUpdate = (s: GameState, id: string, action: string, before: Worker, a
   const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes, detail }
   return { journal: [...s.journal, event], activeEvent: event }
 }
-const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], workDays: { production: 0, maintenance: 0 } })
+const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 4, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, contract, ration: contract === 'paid' ? 0 : 4, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], prostheticInventory: [], equippedProsthetics: {}, workDays: { production: 0, maintenance: 0 } })
 const occupied = (workers: Record<string, Worker>, housing: Housing, except?: string) => Object.entries(workers).filter(([id, w]) => id !== except && w.alive && w.active && w.housing === housing).length
 const takeProvenance = (source: Record<string, number>, amount: number) => {
   const remaining = { ...source }, contributors: Record<string, number> = {}
@@ -193,6 +200,18 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     changes.workers = { ...s.workers, [id]: next }
     return { ...changes, ...eventUpdate(s, id, action, w, next, changes.money, changes.reputation) }
   }),
+  officeIntimacy: (id, action) => set(s => {
+    const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
+    if (!w?.alive || !canAskOfficeConsent(w, age)) return {}
+    if (action === 'officeAskConsent') {
+      if (w.intimacyConsentDay === s.day) return {}
+      const next = { ...w, intimacyConsentDay: s.day }
+      return { workers: { ...s.workers, [id]: next }, ...eventUpdate(s, id, action, w, next) }
+    }
+    if (!canChooseOfficeIntimacy(w, age, s.day)) return {}
+    const next = { ...w, intimacyConsentDay: undefined, love: clamp(w.love + (action === 'officeTender' ? 2 : action === 'officePassionate' ? 3 : 1), 0, 100), friendship: clamp(w.friendship + (action === 'officeQuiet' ? 3 : 1), 0, 100) }
+    return { workers: { ...s.workers, [id]: next }, ...eventUpdate(s, id, action, w, next) }
+  }),
   dismissEvent: () => set({ activeEvent: null }),
   setWage: (id, amount) => set(s => s.workers[id]?.alive && s.workers[id]?.active && s.workers[id].contract === 'paid' ? { workers: { ...s.workers, [id]: { ...s.workers[id], wage: clamp(Math.round(amount), 0, 30) } } } : {}),
   setHousing: (id, housing) => set(s => {
@@ -224,11 +243,18 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const success = outcome === 'success', fatal = outcome === 'death', disabled = outcome === 'disability'
     const effect = procedure.effect as unknown as Record<string, number>
     const bodyDelta = success ? { weightKg: effect.weightKg ?? 0, chestCm: effect.chestCm ?? 0 } : {}
-    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day, outcome }], traits: success && trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, body: applyProcedureMeasurements(w.body, bodyDelta), medicalEffects: success ? { lactation: (w.medicalEffects?.lactation ?? false) || procedureId === 'lactation_hormones', oviposition: (w.medicalEffects?.oviposition ?? false) || procedureId === 'oviposition_uterus', hair: procedureId === 'hair_growth_hormones' ? 'growth' : procedureId === 'hair_loss_hormones' ? 'loss' : w.medicalEffects?.hair ?? 'normal' } : w.medicalEffects, disabled: w.disabled || disabled, alive: !fatal, active: !fatal && w.active, lastDayOnSite: fatal ? s.day : w.lastDayOnSite, injuredUntilDay: fatal ? undefined : s.day + procedure.recoveryDays + (outcome === 'complication' ? 5 : disabled ? 14 : 0), health: fatal ? 0 : disabled ? Math.min(w.health, 20) : clamp(w.health - (outcome === 'complication' ? 15 : 3), 0, 100), modificationDecision: undefined }
+    const defaultProsthesis: Record<string, string> = { replacement_left_arm: 'arm_left_standard', replacement_right_arm: 'arm_right_standard', replacement_left_leg: 'leg_left_standard', replacement_right_leg: 'leg_right_standard' }
+    const issued = success ? defaultProsthesis[procedureId] : undefined
+    const slot = issued ? prostheticFor(issued)?.slot : undefined
+    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day, outcome }], traits: success && trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, body: applyProcedureMeasurements(w.body, bodyDelta), medicalEffects: success ? { lactation: (w.medicalEffects?.lactation ?? false) || procedureId === 'lactation_hormones', oviposition: (w.medicalEffects?.oviposition ?? false) || procedureId === 'oviposition_uterus', hair: procedureId === 'hair_growth_hormones' ? 'growth' : procedureId === 'hair_loss_hormones' ? 'loss' : w.medicalEffects?.hair ?? 'normal' } : w.medicalEffects, prostheticInventory: w.prostheticInventory ?? [], equippedProsthetics: slot && issued ? { ...w.equippedProsthetics, [slot]: issued } : w.equippedProsthetics ?? {}, disabled: w.disabled || disabled, alive: !fatal, active: !fatal && w.active, lastDayOnSite: fatal ? s.day : w.lastDayOnSite, injuredUntilDay: fatal ? undefined : s.day + procedure.recoveryDays + (outcome === 'complication' ? 5 : disabled ? 14 : 0), health: fatal ? 0 : disabled ? Math.min(w.health, 20) : clamp(w.health - (outcome === 'complication' ? 15 : 3), 0, 100), modificationDecision: undefined }
     const reputation = clamp(s.reputation - (fatal ? 15 : disabled ? 8 : outcome === 'complication' ? 2 : 0), 0, 100)
     const action = fatal ? 'operationFatal' : disabled ? 'operationDisability' : outcome === 'complication' ? 'operationComplication' : 'operationComplete'
     return { workers: { ...s.workers, [id]: next }, assignments: { ...s.assignments, [id]: 'rest' }, reputation, ...eventUpdate(s, id, action, w, next, s.money, reputation, procedureId) }
   }),
+  buyProsthetic: itemId => set(s => { const item = prostheticFor(itemId); return item && s.money >= item.price ? { money: s.money - item.price, prostheticStock: { ...s.prostheticStock, [itemId]: (s.prostheticStock[itemId] ?? 0) + 1 } } : {} }),
+  issueProsthetic: (workerId, itemId) => set(s => { const w = s.workers[workerId]; if (!w?.alive || !w.active || !prostheticFor(itemId) || (s.prostheticStock[itemId] ?? 0) < 1) return {}; return { prostheticStock: { ...s.prostheticStock, [itemId]: s.prostheticStock[itemId] - 1 }, workers: { ...s.workers, [workerId]: { ...w, prostheticInventory: [...(w.prostheticInventory ?? []), itemId] } } } }),
+  equipProsthetic: (workerId, itemId) => set(s => { const w = s.workers[workerId], item = prostheticFor(itemId); if (!w?.alive || !w.active || !item || !(w.prostheticInventory ?? []).includes(itemId) || !w.operations.some(op => op.id === `replacement_${item.slot}` && (!op.outcome || op.outcome === 'success'))) return {}; const old = w.equippedProsthetics?.[item.slot]; return { workers: { ...s.workers, [workerId]: { ...w, prostheticInventory: [...(w.prostheticInventory ?? []).filter((id, index) => id !== itemId || index !== w.prostheticInventory.indexOf(itemId)), ...(old ? [old] : [])], equippedProsthetics: { ...w.equippedProsthetics, [item.slot]: itemId } } } } }),
+  removeProsthetic: (workerId, slot) => set(s => { const w = s.workers[workerId], old = w?.equippedProsthetics?.[slot]; if (!w?.alive || !w.active || !old) return {}; const equipped = { ...w.equippedProsthetics }; delete equipped[slot]; return { workers: { ...s.workers, [workerId]: { ...w, prostheticInventory: [...(w.prostheticInventory ?? []), old], equippedProsthetics: equipped } } } }),
   expandHousing: () => get().buildHut(),
   buildCage: () => set(s => s.cages < 5 && s.money >= 90 ? { cages: s.cages + 1, staffCapacity: s.staffCapacity + 1, money: s.money - 90, message: 'msgHousingExpanded' } : {}),
   buildHut: () => set(s => s.money >= 180 ? { huts: s.huts + 1, staffCapacity: s.staffCapacity + 2, money: s.money - 180, message: 'msgHousingExpanded' } : {}),
@@ -250,7 +276,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const { remaining, contributors } = takeProvenance(s.provenance[good], count)
     return { stocks: { ...s.stocks, [good]: s.stocks[good] - count }, provenance: { ...s.provenance, [good]: remaining }, listings: [...s.listings, { good, quantity: count, price: salePrices[good], listedDay: s.day, contributors }], message: 'msgListed' }
   }),
-  buildVet: () => set(s => !s.vetBuilt && s.money >= 200 ? { money: s.money - 200, vetBuilt: true, message: 'msgVetBuilt' } : {}),
+  buildVet: () => set(s => { if (s.vetBuilt || s.money < 200) return {}; const medic = candidates.find(c => c.role.en === 'Medic' && s.workers[c.id]?.alive && s.workers[c.id]?.active); return { money: s.money - 200, vetBuilt: true, vetDoctorId: medic?.id ?? null, assignments: medic ? { ...s.assignments, [medic.id]: 'rest' as Job } : s.assignments, message: 'msgVetBuilt' } }),
   appointVet: id => set(s => s.vetBuilt && candidates.find(c => c.id === id)?.role.en === 'Medic' && s.workers[id]?.alive && s.workers[id]?.active ? { vetDoctorId: id, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgVetAppointed' } : {}),
   sleep: () => { const startDay = get().day; while (get().day === startDay) get().advance() },
   advance: () => {
@@ -320,7 +346,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 14,
+  name: 'reclaim-save-v1', version: 15,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -346,9 +372,10 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       const { medicalGrant, ...rest } = legacy
       return [id, { ...rest, savings: (w.savings ?? 0) + (medicalGrant ?? 0), modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, modificationDecision: undefined }]
     })) }
-    if (version < 14) return { ...initial, ...old, stocks: { ...initial.stocks, ...(old.stocks ?? {}) }, provenance: { ...initial.provenance, ...(old.provenance ?? {}) }, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0 }])) }
+    if (version < 14) old = { ...initial, ...old, stocks: { ...initial.stocks, ...(old.stocks ?? {}) }, provenance: { ...initial.provenance, ...(old.provenance ?? {}) }, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0 }])) }
+    if (version < 15) return { ...initial, ...old, prostheticStock: {}, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => { const equippedProsthetics: Partial<Record<LimbSlot, string>> = {}; for (const [operationId, itemId] of Object.entries({ replacement_left_arm: 'arm_left_standard', replacement_right_arm: 'arm_right_standard', replacement_left_leg: 'leg_left_standard', replacement_right_leg: 'leg_right_standard' })) if (w.operations?.some(op => op.id === operationId && (!op.outcome || op.outcome === 'success'))) { const slot = prostheticFor(itemId)?.slot; if (slot) equippedProsthetics[slot] = itemId } return [id, { ...w, prostheticInventory: [], equippedProsthetics }] })) }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
-    money: s.money, food: s.food, feedDays: s.feedDays, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, journal: s.journal, activeEvent: s.activeEvent, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message })
+    money: s.money, food: s.food, feedDays: s.feedDays, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, prostheticStock: s.prostheticStock, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, journal: s.journal, activeEvent: s.activeEvent, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message })
 }))

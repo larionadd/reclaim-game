@@ -14,7 +14,8 @@ type View = 'manor' | 'overview' | 'people' | 'medical'
 const menu: { id: View; icon: React.ReactNode; key: string }[] = [
   { id: 'manor', icon: <Home size={20}/>, key: 'home' },
   { id: 'overview', icon: <Wheat size={20}/>, key: 'farmType' },
-  { id: 'people', icon: <Users size={20}/>, key: 'people' }
+  { id: 'people', icon: <Users size={20}/>, key: 'people' },
+  { id: 'medical', icon: <Stethoscope size={20}/>, key: 'vetPost' }
 ]
 
 export default function App() {
@@ -24,7 +25,7 @@ export default function App() {
   const tr = (key: string) => t(g.lang, key)
   const open = (next: View) => { setView(next); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
-  const visibleMenu = g.vetBuilt ? [...menu, { id: 'medical' as View, icon: <Stethoscope size={20}/>, key: 'vetPost' }] : menu
+  const visibleMenu = menu
 
   return <div className="game-shell">
     <aside className={`game-sidebar ${menuOpen ? 'open' : ''}`}>
@@ -43,7 +44,7 @@ export default function App() {
         {view === 'manor' && <ManorScreen openFarm={() => open('overview')} openPeople={() => open('people')}/>}
         {view === 'overview' && <FarmDashboard openManor={() => open('manor')} openPeople={() => open('people')}/>}
         {view === 'people' && <PeopleScreen/>}
-        {view === 'medical' && g.vetBuilt && <MedicalScreen/>}
+        {view === 'medical' && <MedicalScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>

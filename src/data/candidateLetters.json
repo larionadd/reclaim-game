@@ -82,5 +82,8 @@
       "ru": "Не считаю себя виновным за каждое решение правительства, но готов работать на восстановлении. Прошу 15 ₴.",
       "en": "I do not claim every government decision as mine, but I will do my share in rebuilding. I ask for 15 ₴."
     }
-  }
+  },
+  { "id": "kateryna", "requestedWage": 12, "minimumWage": 9, "guilt": 48, "defiance": 30, "letter": { "uk": "Доглядала тварин у притулку. Готова працювати на фермі за 12 ₴ за зміну, якщо матиму час вчитися.", "ru": "Ухаживала за животными в приюте. Готова работать на ферме за 12 ₴ за смену, если смогу учиться.", "en": "I cared for animals at a shelter. I can work on the farm for 12 ₴ per shift if I have time to learn." } },
+  { "id": "amara", "requestedWage": 17, "minimumWage": 12, "guilt": 35, "defiance": 72, "letter": { "uk": "Я поверну ваші машини до роботи. Прошу 17 ₴ за зміну й доступ до складу деталей.", "ru": "Я верну ваши машины к работе. Прошу 17 ₴ за смену и доступ к складу деталей.", "en": "I can get your machines running again. I ask 17 ₴ per shift and access to the parts store." } },
+  { "id": "mei", "requestedWage": 19, "minimumWage": 14, "guilt": 40, "defiance": 58, "letter": { "uk": "Можу вести медпункт. Прошу 19 ₴ за зміну, чисте приміщення й право зупинити небезпечну процедуру.", "ru": "Могу вести медпункт. Прошу 19 ₴ за смену, чистое помещение и право остановить опасную процедуру.", "en": "I can run the medical post. I ask 19 ₴ per shift, a clean room, and the authority to stop an unsafe procedure." } }
 ]

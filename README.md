@@ -6,7 +6,7 @@ Playable public build: https://larionadd.github.io/reclaim-game/
 
 The player begins at the manor with one animal farm and one cage. The office PC contains monthly state applications (authored batches on days 1, 31, and 61), the ATBЇB shop with a cart and animal feed, and the Promin marketplace. Workers assigned to the farm produce meat, milk, cheese, and eggs when feed is available. The player chooses each worker's daily food from owned stocks. Listed farm products sell at the end of the day; their proceeds are attributed to the workers who produced them. The day phase indicator advances through the four phases, and bedroom sleep completes the day. The sandbox has no final day.
 
-All 15 base traits affect production, injury risk, health, trust, or wellbeing. The vet post is hidden until built and needs a hired medic to operate. There is one farm; other enterprises receive player-chosen names. Their production loops, unlimited monthly candidate generation, full enterprise production loops and story arcs are planned but not playable yet. Basic medical modification proposals and operations are playable in the worker file.
+All 15 base traits affect production, injury risk, health, trust, or wellbeing. The vet post is visible in navigation before construction and needs a hired medic to operate. A hired medic is assigned automatically when the post is built; staff can also be selected on the clinic screen. There is one farm; other enterprises receive player-chosen names. Their production loops, unlimited monthly candidate generation, full enterprise production loops and story arcs are planned but not playable yet. Basic medical modification proposals and operations are playable in the worker file.
 
 The interface supports Ukrainian, Russian, and English; state is saved in local storage with migration from older versions. Run `npm run lint`, `npm run build`, `node scripts/smoke.mjs`, `node scripts/farm-market-smoke.mjs`, `node scripts/vet-traits-smoke.mjs`, `node scripts/manor-smoke.mjs`, `node scripts/worker-profile-smoke.mjs`, and `node scripts/risk-smoke.mjs` to verify the current build.
 
@@ -31,5 +31,7 @@ The office intimacy proposal button opens when love or fear exceeds 80. A high-f
 The manor bedroom and office now have distinct generated interior artwork on their room cards and destination screens. Verify both at mobile width with `node scripts/manor-room-art-smoke.mjs`.
 
 All 18 clinic procedures now render as illustrated responsive cards; each image path lives in the procedure JSON. The illustrations are reproducible with `python scripts/generate_procedure_art.py`. Verify mobile image loading with `node scripts/clinic-card-art-smoke.mjs`.
+
+Successful modifications appear as named states in the NPC file. Mechanical prosthetics are sold at ATBЇB, kept in storage, issued to an NPC, and fitted or removed in their inventory. Three additional adult candidates have portraits, application letters, and personal records; Mei Chen is a medic available from day one. The office offers three fade-to-black intimacy choices for adult former workers after separate same-day consent. Numeric relationship thresholds remain in effect; fear does not create consent.
 
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).
