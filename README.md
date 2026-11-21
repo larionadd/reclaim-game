@@ -36,4 +36,6 @@ All 18 clinic procedures now render as illustrated responsive cards; each image 
 
 Successful modifications appear as named states in the NPC file. Mechanical prosthetics are sold at ATBЇB, kept in storage, issued to an NPC, and fitted or removed in their inventory. Three additional adult candidates have portraits, application letters, and personal records; Mei Chen is a medic available from day one. The office offers three fade-to-black intimacy choices for adult former workers after separate same-day consent. Numeric relationship thresholds remain in effect; fear does not create consent.
 
+An NPC with an amputated arm or leg and no fitted prosthesis cannot be assigned to work or travel to another room. Removing a prosthesis immediately takes them off duty; they produce nothing until a compatible prosthesis is fitted and recovery is complete. The NPC file has a workplace check button for active workers. It opens their assigned location with an illustrated working scene, their portrait, and five illustrated actions: inspect, praise, punish, threaten, and give a day off. Inspection and one response can be used per worker per day. Verify with `node scripts/workplace-visit-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

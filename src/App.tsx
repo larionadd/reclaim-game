@@ -21,9 +21,11 @@ const menu: { id: View; icon: React.ReactNode; key: string }[] = [
 export default function App() {
   const g = useGame()
   const [view, setView] = useState<View>('manor')
+  const [workplaceWorkerId, setWorkplaceWorkerId] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const tr = (key: string) => t(g.lang, key)
-  const open = (next: View) => { setView(next); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const open = (next: View) => { setView(next); setWorkplaceWorkerId(null); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const openWorkplace = (workerId: string) => { setView('overview'); setWorkplaceWorkerId(workerId); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
   const visibleMenu = menu
 
@@ -42,8 +44,8 @@ export default function App() {
       <main className="game-content">
         {g.phase === 'morning' && <DailyReport/>}
         {view === 'manor' && <ManorScreen openFarm={() => open('overview')} openPeople={() => open('people')}/>}
-        {view === 'overview' && <FarmDashboard openManor={() => open('manor')} openPeople={() => open('people')}/>}
-        {view === 'people' && <PeopleScreen/>}
+        {view === 'overview' && <FarmDashboard openManor={() => open('manor')} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
+        {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>

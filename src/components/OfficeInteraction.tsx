@@ -6,11 +6,12 @@ import { useGame } from '../store/game'
 import { t } from '../i18n'
 import { Portrait } from './Portrait'
 import { canAskOfficeConsent, canChooseOfficeIntimacy } from '../mechanics/bedroom'
+import { hasUnfittedLimb } from '../mechanics/mobility'
 
 export function OfficeInteraction() {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const staff = candidates.filter(c => g.workers[c.id]?.alive)
+  const staff = candidates.filter(c => g.workers[c.id]?.alive && !hasUnfittedLimb(g.workers[c.id]))
   const person = staff.find(c => c.id === selectedId)
   const w = person ? g.workers[person.id] : undefined
 

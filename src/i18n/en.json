@@ -551,5 +551,21 @@
   "story_officeQuiet": "You stayed together in the quiet office. The closeness strengthened your bond.",
   "chooseProsthesisAfterSurgery": "Choose a prosthesis after surgery",
   "fitPurchasedProsthesis": "Fit purchased prosthesis",
-  "buyCompatibleProsthesis": "No compatible prosthesis is in storage. Buy one at ATBЇB."
+  "buyCompatibleProsthesis": "No compatible prosthesis is in storage. Buy one at ATBЇB.",
+  "unfittedCannotMove": "Without a prosthesis, this NPC cannot move around or work.",
+  "unfittedCannotWork": "Cannot work without a prosthesis",
+  "checkAtWorkplace": "Check at workplace",
+  "workplaceVisit": "At the workplace",
+  "closeWorkplace": "Close visit",
+  "workplaceSceneIntro": "The worker is carrying out their assignment. You can intervene during the shift.",
+  "inspectWork": "Inspect work",
+  "praiseWork": "Praise",
+  "punishWork": "Discipline",
+  "threatenWork": "Threaten",
+  "giveDayOff": "Give a day off",
+  "story_inspectWork": "You inspected the completed task and the shift records. The worker noticed your attention.",
+  "story_praiseWork": "You praised the worker for the job. Trust and respect increased.",
+  "story_punishWork": "You issued a reprimand at the workplace. The worker took it hard; trust and respect fell.",
+  "story_threatenWork": "You threatened consequences for poor work. Fear rose, while trust and reputation suffered.",
+  "story_giveDayOff": "You excused the worker from the rest of the shift. They are resting today."
 }

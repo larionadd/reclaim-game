@@ -13,7 +13,7 @@ export const actionMarkers: Record<InteractionAction, string> = {
   standOrder: '😈', forceDance: '😈', forceApology: '😈',
   joke: '😇😈', adultJoke: '😇😈', flirt: '😇😈', romanceTalk: '😇', walk: '😇', hug: '😇', kiss: '😇', sex: '😇'
 }
-export const eventMarker = (action: string) => ['moveToHut', 'askConsent', 'gentleIntimacy', 'passionateIntimacy', 'privateNight', 'officeAskConsent', 'officeTender', 'officePassionate', 'officeQuiet'].includes(action) ? '😇' : ['moveToCage', 'reprimand', 'extraDuty', 'sexPressure'].includes(action) ? '😈' : actionMarkers[action as InteractionAction] ?? ''
+export const eventMarker = (action: string) => ['moveToHut', 'askConsent', 'gentleIntimacy', 'passionateIntimacy', 'privateNight', 'officeAskConsent', 'officeTender', 'officePassionate', 'officeQuiet', 'praiseWork', 'giveDayOff'].includes(action) ? '😇' : ['moveToCage', 'reprimand', 'extraDuty', 'sexPressure', 'punishWork', 'threatenWork'].includes(action) ? '😈' : actionMarkers[action as InteractionAction] ?? ''
 
 export function interactionRequirement(w: Worker, action: InteractionAction, money: number, bread: number): string | null {
   switch (action) {
