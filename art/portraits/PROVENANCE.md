@@ -19,3 +19,7 @@ Generated with the built-in image generation tool on 2026-11-21 for Reclaim. Fic
 All prompts requested one adult person in a vertical composition without text or logos. The two newest portraits use a more seductive but non-nude, non-explicit tone.
 
 The clothing variants were edited from the corresponding base portraits with the built-in image generation tool on 2026-11-21 and normalized to 650 × 867 WebP. A first lingerie edit was rejected by the generator. The later accepted variants use opaque, nonsexual cotton underclothes with visible farm dirt.
+
+## Daria
+
+`daria.jpg`, `daria-lactation.jpg`, and `daria-enlargement.jpg` were supplied by the user on 2026-11-21 as the base portrait, the portrait after lactation treatment, and the portrait after breast enlargement, respectively. The files are stored unchanged.
