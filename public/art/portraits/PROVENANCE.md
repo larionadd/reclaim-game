@@ -13,7 +13,9 @@ Generated with the built-in image generation tool on 2026-11-21 for Reclaim. Fic
 | `vira-dirty-work.webp` | Vira in mud-stained farm overalls after a work shift, same farm background. |
 | `sofia-sleepwear.webp` | Sofia in opaque cotton sleepwear and a robe, same farm background. |
 | `vira-sleepwear.webp` | Vira in opaque cotton sleepwear and a robe, same farm background. |
+| `sofia-dirty-underwear.webp` | Sofia in dust- and mud-stained opaque cotton underclothes, same farm background. |
+| `vira-dirty-underwear.webp` | Vira in dust- and mud-stained opaque cotton underclothes, same farm background. |
 
 All prompts requested one adult person in a vertical composition without text or logos. The two newest portraits use a more seductive but non-nude, non-explicit tone.
 
-The four clothing variants were edited from the corresponding base portraits with the built-in image generation tool on 2026-11-21 and normalized to 650 × 867 WebP. The requested lingerie edits were rejected by the generator; the available alternate outfits are opaque sleepwear.
+The clothing variants were edited from the corresponding base portraits with the built-in image generation tool on 2026-11-21 and normalized to 650 × 867 WebP. A first lingerie edit was rejected by the generator. The later accepted variants use opaque, nonsexual cotton underclothes with visible farm dirt.

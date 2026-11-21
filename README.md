@@ -40,7 +40,7 @@ An NPC with an amputated arm or leg and no fitted prosthesis cannot be assigned 
 
 Two more adult candidates are available from day one: Sofia Hryn, a 20-year-old agronomy student, and Vira Danyliuk, an 18-year-old former actress. Both have separate portraits, application letters, and personal records.
 
-Sofia and Vira have additional portraits with the same farm background: dirty workwear appears during assigned daytime/evening shifts, and opaque sleepwear appears in bedroom scenes. The requested lingerie images could not be generated. The phone is accessible from the bottom navigation on mobile and the side navigation on desktop; farm shortcuts open the relevant phone tab. Verify with `node scripts/smartphone-portraits-smoke.mjs`.
+Sofia and Vira have additional portraits with the same farm background: dirty workwear appears during assigned daytime/evening shifts, dirty opaque cotton underclothes appear in bedroom scenes after work during evening/night, and clean sleepwear appears otherwise. The phone is accessible from the bottom navigation on mobile and the side navigation on desktop; farm shortcuts open the relevant phone tab. Verify with `node scripts/smartphone-portraits-smoke.mjs`.
 
 The Promin sale screen shows only goods currently in stock. Each product offers 1, 5, and Max quantity buttons; quantities are capped by available stock and products disappear from the sale form when fully listed. Verify at mobile width with `node scripts/market-quantity-smoke.mjs`.
 

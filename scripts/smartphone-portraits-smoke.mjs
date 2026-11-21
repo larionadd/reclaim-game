@@ -47,7 +47,7 @@ try {
   await page.getByRole('button', { name: 'Викликати NPC до спальні' }).click()
   for (const [name, id] of [['Софія Гринь', 'sofia'], ['Віра Данилюк', 'vira']]) {
     const portrait = page.locator('.call-cards button').filter({ hasText: name }).locator('.portrait-base')
-    assert.match(await portrait.getAttribute('src'), new RegExp(`${id}-sleepwear\\.webp$`))
+    assert.match(await portrait.getAttribute('src'), new RegExp(`${id}-dirty-underwear\\.webp$`))
     assert.equal(await portrait.evaluate(img => img.complete && img.naturalWidth > 0), true)
   }
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
