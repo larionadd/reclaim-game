@@ -28,4 +28,6 @@ Candidate applications now include individual letters and requested wages. The p
 
 The office intimacy proposal button opens when love or fear exceeds 80. A high-fear proposal is refused and harms trust, respect, and reputation; the proposal does not start an intimacy scene. Verify with `node scripts/office-proposal-threshold-smoke.mjs`.
 
+The manor bedroom and office now have distinct generated interior artwork on their room cards and destination screens. Verify both at mobile width with `node scripts/manor-room-art-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).
