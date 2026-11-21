@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BookOpen, CalendarDays, ClipboardList, Coins, Globe2, HeartPulse, Home, MapPin, Menu, Moon, Settings2, ShieldCheck, Smartphone, Stethoscope, Sun, Sunrise, Sunset, Users, Wheat } from 'lucide-react'
-import { FarmDashboard } from './components/FarmDashboard'
+import { EnterprisesScreen } from './components/EnterprisesScreen'
 import { ManorScreen } from './components/ManorScreen'
 import { SmartphoneScreen } from './components/SmartphoneScreen'
 import { MedicalScreen, PeopleScreen } from './components/LocationScreens'
@@ -11,10 +11,10 @@ import { GameEventDialog } from './components/GameJournal'
 import './App.css'
 import './new-ui.css'
 
-type View = 'manor' | 'overview' | 'people' | 'medical' | 'smartphone'
+type View = 'manor' | 'enterprises' | 'people' | 'medical' | 'smartphone'
 const menu: { id: View; icon: React.ReactNode; key: string }[] = [
   { id: 'manor', icon: <Home size={20}/>, key: 'home' },
-  { id: 'overview', icon: <Wheat size={20}/>, key: 'farmType' },
+  { id: 'enterprises', icon: <Wheat size={20}/>, key: 'enterprises' },
   { id: 'people', icon: <Users size={20}/>, key: 'people' },
   { id: 'medical', icon: <Stethoscope size={20}/>, key: 'vetPost' },
   { id: 'smartphone', icon: <Smartphone size={20}/>, key: 'smartphone' }
@@ -29,7 +29,7 @@ export default function App() {
   const tr = (key: string) => t(g.lang, key)
   const open = (next: View) => { setView(next); setWorkplaceWorkerId(null); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const openSmartphone = (tab: 'inbox' | 'shop' | 'market' = 'inbox') => { setSmartphoneTab(tab); open('smartphone') }
-  const openWorkplace = (workerId: string) => { setView('overview'); setWorkplaceWorkerId(workerId); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const openWorkplace = (workerId: string) => { setView('enterprises'); setWorkplaceWorkerId(workerId); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
   const visibleMenu = menu
 
@@ -38,7 +38,7 @@ export default function App() {
       <div className="game-logo"><div className="logo-mark"><Wheat size={29}/></div><div><strong>RECLAIM</strong><small>{tr('rebuildingUkraine')}</small></div></div>
       <nav className="side-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
       <div className="side-rule"/><div className="nav-section-title">{tr('management')}</div>
-      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('overview')}><MapPin size={20}/><span>{tr('farmMap')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}</nav>
+      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}</nav>
       <div className="sidebar-footer"><span>{tr('sandbox')}</span><p>{tr('sideMotto')}</p><button onClick={g.toggleLang}><Globe2 size={17}/>{g.lang.toUpperCase()} ↔ {g.lang === 'uk' ? 'RU' : g.lang === 'ru' ? 'EN' : 'UK'}</button></div>
     </aside>
 
@@ -47,8 +47,8 @@ export default function App() {
       <div className="time-track"><div className="time-phases">{(['morning','day','evening','night'] as const).map((phase, index) => <span key={phase} className={g.phase === phase ? 'current' : ''}>{index === 0 ? <Sunrise/> : index === 1 ? <Sun/> : index === 2 ? <Sunset/> : <Moon/>}{tr(phase)}</span>)}</div><button className="quarter-top" onClick={g.advance}>{tr('nextPhase')} →</button></div>
       <main className="game-content">
         {g.phase === 'morning' && <DailyReport/>}
-        {view === 'manor' && <ManorScreen openFarm={() => open('overview')} openPeople={() => open('people')}/>}
-        {view === 'overview' && <FarmDashboard openSmartphone={openSmartphone} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
+        {view === 'manor' && <ManorScreen openFarm={() => open('enterprises')} openPeople={() => open('people')}/>}
+        {view === 'enterprises' && <EnterprisesScreen openSmartphone={openSmartphone} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
         {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
         {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}

@@ -4,8 +4,8 @@ const round2 = (n: number) => Math.round(n * 100) / 100
 const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n))
 
 // Small daily shifts reflect nutrition and housing. Height remains fixed for adult NPCs.
-export function updateBodyForDay(current: BodyMeasurements, baseline: BodyMeasurements, eaten: number, housing: 'cage' | 'hut'): BodyMeasurements {
-  const delta = (eaten < 2 ? -0.12 : eaten < 3 ? -0.05 : eaten >= 4 ? 0.06 : 0) + (housing === 'cage' ? -0.03 : 0.02)
+export function updateBodyForDay(current: BodyMeasurements, baseline: BodyMeasurements, calorieRatio: number, housing: 'cage' | 'hut'): BodyMeasurements {
+  const delta = clamp((calorieRatio - 1) * 0.16, -0.16, 0.24) + (housing === 'cage' ? -0.01 : 0.01)
   const weightKg = round2(clamp(current.weightKg + delta, baseline.weightKg * .75, baseline.weightKg * 1.35))
   const difference = weightKg - current.weightKg
   return {
