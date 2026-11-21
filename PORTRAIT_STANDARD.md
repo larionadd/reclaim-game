@@ -3,10 +3,10 @@
 - Базовий майстер: вертикальний 3:4, не менш як 1024×1365; WebP для гри, PNG як архівний оригінал.
 - Погрудний або поясний кадр, камера на рівні очей, обличчя в центральних 45% ширини. Волосся, плечі та руки не обрізати випадково.
 - Реалістичний живописний стиль, природна анатомія, тепле бокове світло, приглушена оливкова, охриста й коричнева палітра, розмитий фон тваринницької ферми.
-- Без написів, рамок, логотипів, сексуалізації та випадкових символів. Вік лише дорослий; зовнішність відповідає віку й біографії.
+- Без написів, рамок, логотипів та випадкових символів. Усі персонажі повнолітні; зовнішність відповідає віку й біографії. Для нових зображень RECLAIM використовувати більш звабливу, серйозну позу без грайливої міміки; зберігати придатність портрета до картки NPC.
 - Ідентичність персонажа фіксують референсним базовим портретом. Нові сезони й одяг редагують від цього референсу зі збереженням рис обличчя. Файли називати `id/season-outfit-status.webp` або використовувати базовий `id.webp` за відсутності варіанта.
 - Поточний компонент `Portrait` приймає `outfit` і `status`; стан відображається значком. Окремі зображення для сезону, одягу та післяопераційного стану потрібно створювати як варіанти базового портрета перед підключенням.
 
-Шаблон запиту: `One adult [age]-year-old [description], [name], [character traits], practical [outfit]. Waist-up vertical 3:4 editorial portrait, eye-level 50mm camera, centered face and shoulders, blurred rustic animal farm, warm late-afternoon light, realistic painterly game art, restrained olive/ochre/brown palette, natural anatomy, no lettering, no logo, preserve identity from supplied reference.`
+Шаблон запиту: `One clearly adult [age]-year-old [description], [name], [character traits], fitted practical [outfit], confident seductive but serious editorial pose. Waist-up vertical 3:4 portrait, eye-level 50mm camera, centered face and shoulders, blurred rustic animal farm, warm late-afternoon light, realistic painterly game art, restrained olive/ochre/brown palette, natural anatomy, no playful expression, no lettering, no logo, preserve identity from supplied reference.`
 
 Стартові портрети: `alisa.webp`, `ilyan.webp`, `mara.webp`; Тимур (`tomas.webp`) з’являється в наступній пропозиції. Кожен має окреме зображення.

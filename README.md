@@ -38,4 +38,6 @@ Successful modifications appear as named states in the NPC file. Mechanical pros
 
 An NPC with an amputated arm or leg and no fitted prosthesis cannot be assigned to work or travel to another room. Removing a prosthesis immediately takes them off duty; they produce nothing until a compatible prosthesis is fitted and recovery is complete. The NPC file has a workplace check button for active workers. It opens their assigned location with an illustrated working scene, their portrait, and five illustrated actions: inspect, praise, punish, threaten, and give a day off. Inspection and one response can be used per worker per day. Verify with `node scripts/workplace-visit-smoke.mjs`.
 
+Two more adult candidates are available from day one: Sofia Hryn, a 20-year-old agronomy student, and Vira Danyliuk, an 18-year-old former actress. Both have separate portraits, application letters, and personal records.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).
