@@ -12,11 +12,19 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
   const phase = useGame(state => state.phase)
   const job = useGame(state => state.assignments[person.id])
   const working = useGame(state => !!state.workers[person.id]?.active)
+  const operations = useGame(state => state.workers[person.id]?.operations)
   const variants = portraitVariants[person.id]
-  const image = variants && outfit === 'sleepwear'
+  const dariaOperationImage = person.id === 'daria'
+    ? operations?.some(op => op.id === 'breast_enlargement' && op.outcome === 'success')
+      ? '/art/portraits/daria-enlargement.jpg'
+      : operations?.some(op => op.id === 'lactation_hormones' && op.outcome === 'success')
+        ? '/art/portraits/daria-lactation.jpg'
+        : null
+    : null
+  const image = dariaOperationImage ?? (variants && outfit === 'sleepwear'
     ? working && job && job !== 'rest' && (phase === 'evening' || phase === 'night') ? variants.dirtyUnderwear : variants.sleepwear
     : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
-      : person.image
+      : person.image)
   return <div className={`portrait-stack season-${season} status-${status}`} role="img" aria-label={person.name[lang]}>
     <img className="portrait-base" src={`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`} alt="" />
     {outfit === 'work' && person.image.endsWith('.svg') && <img className="portrait-outfit" src={`${import.meta.env.BASE_URL}portraits/workwear.svg`} alt="" />}

@@ -14,3 +14,6 @@ export type FoodStocks = Record<HumanFood | PremiumGood, number>
 export type FarmStocks = Record<FarmGood, number>
 export const emptyFarmStocks = (): FarmStocks => ({ meat: 0, milk: 0, cheese: 0, eggs: 0 })
 export const emptyFoodStocks = (): FoodStocks => ({ bread: 0, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0, girlEggs: 0, girlMilk: 0 })
+
+export const foodCalories: Record<HumanFood | PremiumGood, number> = { bread: 250, lard: 450, meat: 300, milk: 150, cheese: 350, eggs: 140, girlEggs: 140, girlMilk: 150 }
+export const goodsCalories: Record<HumanFood | PremiumGood | 'grain' | 'vodka', number> = { ...foodCalories, grain: 340, vodka: 230 }

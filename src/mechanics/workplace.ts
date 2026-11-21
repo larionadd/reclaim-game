@@ -21,5 +21,5 @@ export const workplaceLocation: Record<Exclude<Job, 'rest'>, { name: Record<Lang
 }
 
 export function canVisitWorkplace(worker: Worker | undefined, job: Job | undefined, day: number, phase: string, isVetDoctor: boolean): boolean {
-  return !!worker && !!job && job !== 'rest' && !isVetDoctor && (phase === 'morning' || phase === 'day') && canWorkAtFarm(worker, day)
+  return !!worker && !!job && job !== 'rest' && !isVetDoctor && (worker.routine?.[phase as import('../types').Phase] ?? (phase === 'day' ? 'work' : 'rest')) === 'work' && canWorkAtFarm(worker, day)
 }

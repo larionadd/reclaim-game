@@ -28,3 +28,4 @@ qa/
 *.njsproj
 *.sln
 *.sw?
+!public/art/prosthetics/*.png
