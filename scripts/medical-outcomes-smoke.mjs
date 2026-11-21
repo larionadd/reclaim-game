@@ -6,7 +6,7 @@ for (const { roll, outcome } of [{ roll: 0, outcome: 'death' }, { roll: 0.08, ou
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
   await page.addInitScript(value => { Math.random = () => value }, roll)
   await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
-  await page.getByRole('button', { name: 'ПК' }).first().click()
+  await page.getByRole('button', { name: 'Смартфон' }).first().click()
   await page.getByRole('button', { name: /Запропонувати контракт/ }).first().click()
   const save = await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')))
   save.state.vetBuilt = true; save.state.vetDoctorId = 'nora'; save.state.hired.push('nora')

@@ -3,7 +3,7 @@ import { chromium } from 'playwright-core'
 const browser = await chromium.launch({ headless: true, executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' })
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 })
 await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
-await page.getByRole('button', { name: 'ПК' }).first().click()
+await page.getByRole('button', { name: 'Смартфон' }).first().click()
 await page.getByRole('button', { name: /Промінь/ }).first().click()
 for (const good of ['Яйця куро-дів', 'Молоко корово-дів']) {
   const card = page.locator('.market-products article').filter({ hasText: good })

@@ -7,7 +7,7 @@ try {
   const errors = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('http://127.0.0.1:5173/reclaim-game/')
-  await page.getByRole('button', { name: 'ПК', exact: true }).click()
+  await page.getByRole('button', { name: 'Смартфон', exact: true }).click()
   await page.getByRole('button', { name: 'Промінь' }).click()
   assert.equal(await page.locator('.market-products .shop-product').count(), 0)
   assert.equal(await page.locator('.market-empty').count(), 1)
@@ -20,7 +20,7 @@ try {
     localStorage.setItem('reclaim-save-v1', JSON.stringify(save))
   })
   await page.reload()
-  await page.getByRole('button', { name: 'ПК', exact: true }).click()
+  await page.getByRole('button', { name: 'Смартфон', exact: true }).click()
   await page.getByRole('button', { name: 'Промінь' }).click()
   const cards = page.locator('.market-products .shop-product')
   assert.equal(await cards.count(), 2)

@@ -5,7 +5,7 @@ const browser = await chromium.launch({ headless: true, executablePath: 'C:/Prog
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
 page.on('pageerror', error => { throw error })
 await page.goto('http://127.0.0.1:5173/reclaim-game/')
-await page.getByRole('button', { name: 'ПК', exact: true }).click()
+await page.getByRole('button', { name: 'Смартфон', exact: true }).click()
 await page.locator('.candidate-row').first().getByRole('button', { name: /Запропонувати контракт/ }).click()
 await page.locator('.bottom-nav').getByRole('button', { name: 'Люди' }).click()
 await page.getByRole('combobox', { name: 'Призначення' }).selectOption('production')

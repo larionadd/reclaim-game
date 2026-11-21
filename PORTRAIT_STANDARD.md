@@ -5,6 +5,7 @@
 - Реалістичний живописний стиль, природна анатомія, тепле бокове світло, приглушена оливкова, охриста й коричнева палітра, розмитий фон тваринницької ферми.
 - Без написів, рамок, логотипів та випадкових символів. Усі персонажі повнолітні; зовнішність відповідає віку й біографії. Для нових зображень RECLAIM використовувати більш звабливу, серйозну позу без грайливої міміки; зберігати придатність портрета до картки NPC.
 - Ідентичність персонажа фіксують референсним базовим портретом. Нові сезони й одяг редагують від цього референсу зі збереженням рис обличчя. Файли називати `id/season-outfit-status.webp` або використовувати базовий `id.webp` за відсутності варіанта.
+- Для Софії та Віри є `id-dirty-work.webp` після призначеної фермерської зміни в денну або вечірню фазу та `id-sleepwear.webp` у спальні. Обидва варіанти зберігають фон базового портрета.
 - Поточний компонент `Portrait` приймає `outfit` і `status`; стан відображається значком. Окремі зображення для сезону, одягу та післяопераційного стану потрібно створювати як варіанти базового портрета перед підключенням.
 
 Шаблон запиту: `One clearly adult [age]-year-old [description], [name], [character traits], fitted practical [outfit], confident seductive but serious editorial pose. Waist-up vertical 3:4 portrait, eye-level 50mm camera, centered face and shoulders, blurred rustic animal farm, warm late-afternoon light, realistic painterly game art, restrained olive/ochre/brown palette, natural anatomy, no playful expression, no lettering, no logo, preserve identity from supplied reference.`

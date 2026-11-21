@@ -7,7 +7,7 @@ for (const [roll, expected] of [[0.02, 'injury'], [0, 'fatality']]) {
   await page.addInitScript(value => { Math.random = () => value }, roll)
   await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
   await page.locator('.side-nav').first().getByRole('button', { name: 'Маєток' }).click()
-  await page.getByRole('button', { name: 'ПК' }).first().click()
+  await page.getByRole('button', { name: 'Смартфон' }).first().click()
   await page.getByRole('button', { name: /Запропонувати контракт/ }).first().click()
   await page.locator('.side-nav').first().getByRole('button', { name: 'Люди' }).click()
   await page.getByRole('combobox', { name: 'Призначення' }).selectOption('production')

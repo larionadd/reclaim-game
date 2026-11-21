@@ -14,7 +14,7 @@ const errors = []
 page.on('pageerror', e => errors.push(e.message))
 await page.addInitScript(() => { Math.random = () => .9 })
 await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
-await page.getByRole('button', { name: 'ПК' }).first().click()
+await page.getByRole('button', { name: 'Смартфон' }).first().click()
 await page.getByRole('combobox', { name: 'Строк контракту' }).selectOption('30')
 await page.getByRole('button', { name: /Запропонувати контракт/ }).first().click()
 await page.locator('.bottom-nav').getByRole('button', { name: 'Люди' }).click()

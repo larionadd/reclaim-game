@@ -1,0 +1,35 @@
+import { useState } from 'react'
+import { ArrowRight, ClipboardList, Minus, Package, Plus, ShoppingCart, Smartphone } from 'lucide-react'
+import { shopPrices, useGame, type ShopItem } from '../store/game'
+import { salePrices, sellableGoods, type SaleGood } from '../data/goods'
+import { t } from '../i18n'
+import { DistributionScreen } from './LocationScreens'
+import { prosthetics } from '../data/prosthetics'
+
+const products: { id: ShopItem; units: number }[] = [{ id: 'bread', units: 3 }, { id: 'lard', units: 2 }, { id: 'grain', units: 5 }, { id: 'vodka', units: 1 }]
+type PcTab = 'inbox' | 'shop' | 'market'
+
+export function SmartphoneScreen({ initialTab = 'inbox' }: { initialTab?: 'inbox' | 'shop' | 'market' }) {
+  const g = useGame(), tr = (key: string) => t(g.lang, key)
+  const [pcTab, setPcTab] = useState<PcTab>(initialTab)
+  const [cart, setCart] = useState<Record<ShopItem, number>>({ bread: 0, lard: 0, grain: 0, vodka: 0 })
+  const [saleQty, setSaleQty] = useState<Record<SaleGood, number>>({ meat: 0, milk: 0, cheese: 0, eggs: 0, girlEggs: 0, girlMilk: 0 })
+  const stockedGoods = sellableGoods.filter(good => g.stocks[good] > 0)
+  const total = products.reduce((n, p) => n + cart[p.id] * shopPrices[p.id], 0)
+  const change = (id: ShopItem, delta: number) => setCart(s => ({ ...s, [id]: Math.max(0, Math.min(99, s[id] + delta)) }))
+  const checkout = () => { if (total && total <= g.money) { g.purchase(cart); setCart({ bread: 0, lard: 0, grain: 0, vodka: 0 }) } }
+  const list = (good: SaleGood) => { const n = saleQty[good]; if (n > 0 && n <= g.stocks[good]) { g.listForSale(good, n); setSaleQty(s => ({ ...s, [good]: 0 })) } }
+  const chooseSaleQty = (good: SaleGood, amount: number) => setSaleQty(s => ({ ...s, [good]: Math.min(amount, g.stocks[good]) }))
+  return <div className="smartphone-page"><header className="smartphone-heading"><Smartphone size={25}/><div><span>{tr('alwaysWithYou')}</span><h1>{tr('smartphone')}</h1></div></header>
+    <div className="computer-page"><div className="computer-tabs"><button className={pcTab === 'inbox' ? 'active' : ''} onClick={() => setPcTab('inbox')}><ClipboardList size={17}/>{tr('stateInbox')}</button><button className={pcTab === 'shop' ? 'active' : ''} onClick={() => setPcTab('shop')}><ShoppingCart size={17}/>АТБЇБ</button><button className={pcTab === 'market' ? 'active' : ''} onClick={() => setPcTab('market')}><Package size={17}/>Промінь</button></div>
+      {pcTab === 'inbox' && <div className="pc-inbox"><p>{tr('monthlyPcHint')} · {tr('dayLabel')} {g.day}</p><DistributionScreen/></div>}
+      {pcTab === 'shop' && <div className="shop-page"><div className="shop-head"><div><span>{tr('officeComputer')}</span><h2>АТБЇБ</h2><p>{tr('shopHint')}</p></div><div><ShoppingCart/> {products.reduce((n,p) => n+cart[p.id],0)} · {total} ₴</div></div><div className="shop-layout"><div className="shop-products">{products.map(p => <article className="shop-product" key={p.id}><img className="product-photo" src={`${import.meta.env.BASE_URL}art/goods/${p.id}.webp`} alt=""/><h3>{tr(p.id)}</h3><p>+{p.units} {p.id === 'grain' ? tr('daysReserve') : p.id === 'vodka' ? tr('units') : tr('portions')}</p><strong>{shopPrices[p.id]} ₴</strong><div className="shop-stepper"><button onClick={() => change(p.id,-1)} aria-label={`${tr('decrease')} ${tr(p.id)}`}><Minus size={15}/></button><span>{cart[p.id]}</span><button onClick={() => change(p.id,1)} aria-label={`${tr('increase')} ${tr(p.id)}`}><Plus size={15}/></button></div></article>)}</div><aside className="shop-cart"><h3>{tr('cart')}</h3>{products.filter(p => cart[p.id]).map(p => <div key={p.id}>{tr(p.id)} × {cart[p.id]} <b>{cart[p.id]*shopPrices[p.id]} ₴</b></div>)}<hr/><strong>{tr('total')}: {total} ₴</strong><p>{tr('money')}: {g.money} ₴</p><button className="primary-action" disabled={!total || total > g.money} onClick={checkout}>{tr('checkout')}</button><small>{tr('instantDelivery')}</small></aside></div><ProstheticsShop/></div>}
+      {pcTab === 'market' && <div className="market-page"><div className="shop-head"><div><span>{tr('officeComputer')}</span><h2>Промінь</h2><p>{tr('marketHint')}</p></div><strong>{tr('totalSales')}: {g.totalSales} ₴</strong></div><div className="market-products">{stockedGoods.map(good => <article className="shop-product" key={good}><img className="product-photo" src={`${import.meta.env.BASE_URL}art/goods/${good}.webp`} alt=""/><h3>{tr(good)}</h3><p>{tr('available')}: {g.stocks[good]} {tr('units')}</p><strong>{salePrices[good]} ₴ / {tr('unit')}</strong><label>{tr('saleQuantity')}<input type="number" min="0" max={g.stocks[good]} value={Math.min(saleQty[good], g.stocks[good])} onChange={e => chooseSaleQty(good, Math.max(0, Math.floor(Number(e.target.value) || 0)))}/></label><div className="sale-quick-qty" role="group" aria-label={`${tr('saleQuantity')}: ${tr(good)}`}><button type="button" onClick={() => chooseSaleQty(good, 1)}>1</button><button type="button" onClick={() => chooseSaleQty(good, 5)}>5</button><button type="button" onClick={() => chooseSaleQty(good, g.stocks[good])}>{tr('saleMax')}</button></div><button disabled={saleQty[good] < 1 || saleQty[good] > g.stocks[good]} onClick={() => list(good)}>{tr('listForSale')} <ArrowRight size={14}/></button></article>)}{stockedGoods.length === 0 && <p className="market-empty">{tr('noGoodsToSell')}</p>}</div><div className="market-listings"><h3>{tr('activeListings')}</h3>{g.listings.length ? g.listings.map((x,i) => <p key={i}>{tr(x.good)} × {x.quantity} · {x.quantity*x.price} ₴</p>) : <p>{tr('noListings')}</p>}<small>{tr('saleNightHint')}</small></div></div>}
+    </div>
+  </div>
+}
+
+function ProstheticsShop() {
+  const g = useGame(), tr = (key: string) => t(g.lang, key)
+  return <section className="prosthetics-shop"><h3>{tr('prostheticsShop')}</h3><div className="prosthetics-grid">{prosthetics.map(item => <article className="shop-product" key={item.id}><h3>{item.name[g.lang]}</h3><p>{item.description[g.lang]}</p><strong>{item.price} ₴</strong><small>{tr('warehouseProsthetics')}: {g.prostheticStock[item.id] ?? 0}</small><button disabled={g.money < item.price} onClick={() => g.buyProsthetic(item.id)}>{tr('buyProsthetic')}</button></article>)}</div></section>
+}

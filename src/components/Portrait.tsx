@@ -1,10 +1,23 @@
 import type { Candidate, Lang } from '../types'
+import { useGame } from '../store/game'
+
+const portraitVariants: Record<string, { dirty: string; sleepwear: string }> = {
+  sofia: { dirty: '/art/portraits/sofia-dirty-work.webp', sleepwear: '/art/portraits/sofia-sleepwear.webp' },
+  vira: { dirty: '/art/portraits/vira-dirty-work.webp', sleepwear: '/art/portraits/vira-sleepwear.webp' },
+}
 
 export function Portrait({ person, lang, outfit = 'work', season = 'autumn', status = 'active' }: {
-  person: Candidate; lang: Lang; outfit?: 'work' | 'civilian'; season?: 'autumn' | 'winter'; status?: 'active' | 'rest'
+  person: Candidate; lang: Lang; outfit?: 'work' | 'civilian' | 'sleepwear'; season?: 'autumn' | 'winter'; status?: 'active' | 'rest'
 }) {
+  const phase = useGame(state => state.phase)
+  const job = useGame(state => state.assignments[person.id])
+  const working = useGame(state => !!state.workers[person.id]?.active)
+  const variants = portraitVariants[person.id]
+  const image = variants && outfit === 'sleepwear' ? variants.sleepwear
+    : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
+      : person.image
   return <div className={`portrait-stack season-${season} status-${status}`} role="img" aria-label={person.name[lang]}>
-    <img className="portrait-base" src={`${import.meta.env.BASE_URL}${person.image.replace(/^\//, '')}`} alt="" />
+    <img className="portrait-base" src={`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`} alt="" />
     {outfit === 'work' && person.image.endsWith('.svg') && <img className="portrait-outfit" src={`${import.meta.env.BASE_URL}portraits/workwear.svg`} alt="" />}
     {season === 'winter' && <span className="portrait-weather" aria-hidden="true">❄</span>}
     <span className="portrait-status" aria-hidden="true" />

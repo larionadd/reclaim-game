@@ -4,7 +4,7 @@ import { chromium } from 'playwright-core'
 const browser = await chromium.launch({ headless: true, executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' })
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
 await page.goto('http://127.0.0.1:5173/', { waitUntil: 'networkidle' })
-await page.getByRole('button', { name: 'ПК' }).first().click()
+await page.getByRole('button', { name: 'Смартфон' }).first().click()
 await page.getByRole('button', { name: /Запропонувати контракт/ }).first().click()
 await page.evaluate(() => { const save = JSON.parse(localStorage.getItem('reclaim-save-v1')); Object.assign(save.state.workers.alisa, { love: 75, friendship: 65, fear: 5 }); localStorage.setItem('reclaim-save-v1', JSON.stringify(save)) })
 await page.reload({ waitUntil: 'networkidle' })

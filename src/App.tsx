@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { BookOpen, CalendarDays, ClipboardList, Coins, Globe2, HeartPulse, Home, MapPin, Menu, Moon, Settings2, ShieldCheck, Stethoscope, Sun, Sunrise, Sunset, Users, Wheat } from 'lucide-react'
+import { BookOpen, CalendarDays, ClipboardList, Coins, Globe2, HeartPulse, Home, MapPin, Menu, Moon, Settings2, ShieldCheck, Smartphone, Stethoscope, Sun, Sunrise, Sunset, Users, Wheat } from 'lucide-react'
 import { FarmDashboard } from './components/FarmDashboard'
 import { ManorScreen } from './components/ManorScreen'
+import { SmartphoneScreen } from './components/SmartphoneScreen'
 import { MedicalScreen, PeopleScreen } from './components/LocationScreens'
 import { useGame } from './store/game'
 import { t } from './i18n'
@@ -10,12 +11,13 @@ import { GameEventDialog } from './components/GameJournal'
 import './App.css'
 import './new-ui.css'
 
-type View = 'manor' | 'overview' | 'people' | 'medical'
+type View = 'manor' | 'overview' | 'people' | 'medical' | 'smartphone'
 const menu: { id: View; icon: React.ReactNode; key: string }[] = [
   { id: 'manor', icon: <Home size={20}/>, key: 'home' },
   { id: 'overview', icon: <Wheat size={20}/>, key: 'farmType' },
   { id: 'people', icon: <Users size={20}/>, key: 'people' },
-  { id: 'medical', icon: <Stethoscope size={20}/>, key: 'vetPost' }
+  { id: 'medical', icon: <Stethoscope size={20}/>, key: 'vetPost' },
+  { id: 'smartphone', icon: <Smartphone size={20}/>, key: 'smartphone' }
 ]
 
 export default function App() {
@@ -23,8 +25,10 @@ export default function App() {
   const [view, setView] = useState<View>('manor')
   const [workplaceWorkerId, setWorkplaceWorkerId] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [smartphoneTab, setSmartphoneTab] = useState<'inbox' | 'shop' | 'market'>('inbox')
   const tr = (key: string) => t(g.lang, key)
   const open = (next: View) => { setView(next); setWorkplaceWorkerId(null); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const openSmartphone = (tab: 'inbox' | 'shop' | 'market' = 'inbox') => { setSmartphoneTab(tab); open('smartphone') }
   const openWorkplace = (workerId: string) => { setView('overview'); setWorkplaceWorkerId(workerId); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
   const visibleMenu = menu
@@ -44,9 +48,10 @@ export default function App() {
       <main className="game-content">
         {g.phase === 'morning' && <DailyReport/>}
         {view === 'manor' && <ManorScreen openFarm={() => open('overview')} openPeople={() => open('people')}/>}
-        {view === 'overview' && <FarmDashboard openManor={() => open('manor')} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
+        {view === 'overview' && <FarmDashboard openSmartphone={openSmartphone} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
         {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
+        {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>

@@ -4,7 +4,7 @@ const browser=await chromium.launch({headless:true,executablePath:'C:/Program Fi
 const page=await browser.newPage({viewport:{width:390,height:844}})
 page.on('pageerror',error=>{throw error})
 await page.goto('http://127.0.0.1:5173/reclaim-game/')
-await page.getByRole('button',{name:'ПК',exact:true}).click()
+await page.getByRole('button',{name:'Смартфон',exact:true}).click()
 await page.locator('.candidate-row').first().getByRole('button',{name:/Запропонувати контракт/}).click()
 await page.evaluate(()=>{const save=JSON.parse(localStorage.getItem('reclaim-save-v1'));const s=save.state;s.workers.mei={...s.workers.alisa, operations:[],prostheticInventory:[],equippedProsthetics:{},nickname:''};s.hired.push('mei');s.vetBuilt=true;s.vetDoctorId='mei';s.workers.alisa.savings=500;s.workers.alisa.modificationConsentAtSigning=true;s.prostheticStock={arm_left_standard:1,arm_left_grip:1};localStorage.setItem('reclaim-save-v1',JSON.stringify(save))})
 await page.reload()
