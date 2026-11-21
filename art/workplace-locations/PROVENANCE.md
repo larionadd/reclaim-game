@@ -1,12 +1,12 @@
 # Workplace location art
 
-Generated with the built-in image generation tool on 2026-11-21 for Reclaim. Each 720 × 480 WebP image shows a fictional adult worker performing a farm task. No external reference photos or named artist styles were used.
+Generated with the built-in image generation tool on 2026-11-21 for Reclaim. Each 720 × 480 WebP image shows one fictional adult woman working on the farm. No player character, second person, external reference photo, or named artist style was used.
 
 | File | Scene |
 | --- | --- |
-| `production.webp` | Cattle barn |
-| `maintenance.webp` | Feed store |
-| `layEggs.webp` | Henhouse |
-| `milking.webp` | Dairy station |
+| `production-v2.webp` | Cattle barn |
+| `maintenance-v2.webp` | Feed store |
+| `layEggs-v2.webp` | Henhouse |
+| `milking-v2.webp` | Dairy station |
 
-The prompts requested a cinematic painterly rural scene and excluded text, logos, nudity, violence, and sexual content.
+The prompts requested a mature sensual tone with fitted farm clothing and cinematic painterly rural scenes, and excluded text, logos, nudity, violence, and sexual acts.
