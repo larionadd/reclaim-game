@@ -548,5 +548,8 @@
   "story_officeAskConsent": "You proposed meeting in the office. They freely agreed to meet today.",
   "story_officeTender": "You spent time together in tender intimacy. The office door closed; the rest stayed between you.",
   "story_officePassionate": "You both chose a passionate meeting. The details remain private.",
-  "story_officeQuiet": "You stayed together in the quiet office. The closeness strengthened your bond."
+  "story_officeQuiet": "You stayed together in the quiet office. The closeness strengthened your bond.",
+  "chooseProsthesisAfterSurgery": "Choose a prosthesis after surgery",
+  "fitPurchasedProsthesis": "Fit purchased prosthesis",
+  "buyCompatibleProsthesis": "No compatible prosthesis is in storage. Buy one at ATBЇB."
 }

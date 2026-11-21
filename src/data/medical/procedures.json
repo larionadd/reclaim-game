@@ -225,9 +225,9 @@
     "id": "replacement_left_arm",
     "category": "modification",
     "name": {
-      "uk": "Заміна лівої руки",
-      "ru": "Замена левой руки",
-      "en": "Left arm replacement"
+      "uk": "Ампутація лівої руки",
+      "ru": "Ампутация левой руки",
+      "en": "Left arm amputation"
     },
     "costCredits": 160,
     "recoveryDays": 16,
@@ -246,9 +246,9 @@
     "id": "replacement_right_arm",
     "category": "modification",
     "name": {
-      "uk": "Заміна правої руки",
-      "ru": "Замена правой руки",
-      "en": "Right arm replacement"
+      "uk": "Ампутація правої руки",
+      "ru": "Ампутация правой руки",
+      "en": "Right arm amputation"
     },
     "costCredits": 160,
     "recoveryDays": 16,
@@ -267,9 +267,9 @@
     "id": "replacement_left_leg",
     "category": "modification",
     "name": {
-      "uk": "Заміна лівої ноги",
-      "ru": "Замена левой ноги",
-      "en": "Left leg replacement"
+      "uk": "Ампутація лівої ноги",
+      "ru": "Ампутация левой ноги",
+      "en": "Left leg amputation"
     },
     "costCredits": 175,
     "recoveryDays": 18,
@@ -288,9 +288,9 @@
     "id": "replacement_right_leg",
     "category": "modification",
     "name": {
-      "uk": "Заміна правої ноги",
-      "ru": "Замена правой ноги",
-      "en": "Right leg replacement"
+      "uk": "Ампутація правої ноги",
+      "ru": "Ампутация правой ноги",
+      "en": "Right leg amputation"
     },
     "costCredits": 175,
     "recoveryDays": 18,
