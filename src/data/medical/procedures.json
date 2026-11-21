@@ -28,7 +28,8 @@
     "disabilityRisk": 0.003,
     "fatalityRisk": 0.001,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/support_brace.svg"
   },
   {
     "id": "functional_prosthesis",
@@ -60,7 +61,8 @@
     "disabilityRisk": 0.01,
     "fatalityRisk": 0.002,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/functional_prosthesis.svg"
   },
   {
     "id": "diagnostic_neural_interface",
@@ -93,7 +95,8 @@
     "disabilityRisk": 0.02,
     "fatalityRisk": 0.004,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/diagnostic_neural_interface.svg"
   },
   {
     "id": "powered_arm",
@@ -126,7 +129,8 @@
     "disabilityRisk": 0.02,
     "fatalityRisk": 0.004,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/powered_arm.svg"
   },
   {
     "id": "synthetic_lung",
@@ -159,7 +163,8 @@
     "disabilityRisk": 0.025,
     "fatalityRisk": 0.005,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/synthetic_lung.svg"
   },
   {
     "id": "synthetic_heart",
@@ -192,7 +197,8 @@
     "disabilityRisk": 0.035,
     "fatalityRisk": 0.007,
     "repeatable": false,
-    "eligibility": "all"
+    "eligibility": "all",
+    "image": "/art/procedures/synthetic_heart.svg"
   },
   {
     "id": "replacement_eyes",
@@ -212,7 +218,8 @@
     "eligibility": "all",
     "effect": {
       "vision": 1
-    }
+    },
+    "image": "/art/procedures/replacement_eyes.svg"
   },
   {
     "id": "replacement_left_arm",
@@ -232,7 +239,8 @@
     "eligibility": "all",
     "effect": {
       "arm": 1
-    }
+    },
+    "image": "/art/procedures/replacement_left_arm.svg"
   },
   {
     "id": "replacement_right_arm",
@@ -252,7 +260,8 @@
     "eligibility": "all",
     "effect": {
       "arm": 1
-    }
+    },
+    "image": "/art/procedures/replacement_right_arm.svg"
   },
   {
     "id": "replacement_left_leg",
@@ -272,7 +281,8 @@
     "eligibility": "all",
     "effect": {
       "leg": 1
-    }
+    },
+    "image": "/art/procedures/replacement_left_leg.svg"
   },
   {
     "id": "replacement_right_leg",
@@ -292,7 +302,8 @@
     "eligibility": "all",
     "effect": {
       "leg": 1
-    }
+    },
+    "image": "/art/procedures/replacement_right_leg.svg"
   },
   {
     "id": "breast_replacement",
@@ -313,7 +324,8 @@
     "effect": {
       "chestCm": 3,
       "weightKg": 0.4
-    }
+    },
+    "image": "/art/procedures/breast_replacement.svg"
   },
   {
     "id": "breast_enlargement",
@@ -334,7 +346,8 @@
     "effect": {
       "chestCm": 4,
       "weightKg": 0.3
-    }
+    },
+    "image": "/art/procedures/breast_enlargement.svg"
   },
   {
     "id": "oviposition_uterus",
@@ -354,7 +367,8 @@
     "eligibility": "uterus",
     "effect": {
       "oviposition": 1
-    }
+    },
+    "image": "/art/procedures/oviposition_uterus.svg"
   },
   {
     "id": "lactation_hormones",
@@ -374,7 +388,8 @@
     "eligibility": "breast",
     "effect": {
       "lactation": 1
-    }
+    },
+    "image": "/art/procedures/lactation_hormones.svg"
   },
   {
     "id": "hair_growth_hormones",
@@ -394,7 +409,8 @@
     "eligibility": "all",
     "effect": {
       "hairGrowth": 1
-    }
+    },
+    "image": "/art/procedures/hair_growth_hormones.svg"
   },
   {
     "id": "hair_loss_hormones",
@@ -414,7 +430,8 @@
     "eligibility": "all",
     "effect": {
       "hairLoss": 1
-    }
+    },
+    "image": "/art/procedures/hair_loss_hormones.svg"
   },
   {
     "id": "weight_gain_hormones",
@@ -434,6 +451,7 @@
     "eligibility": "all",
     "effect": {
       "weightKg": 2
-    }
+    },
+    "image": "/art/procedures/weight_gain_hormones.svg"
   }
 ]

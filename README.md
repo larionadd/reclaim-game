@@ -30,4 +30,6 @@ The office intimacy proposal button opens when love or fear exceeds 80. A high-f
 
 The manor bedroom and office now have distinct generated interior artwork on their room cards and destination screens. Verify both at mobile width with `node scripts/manor-room-art-smoke.mjs`.
 
+All 18 clinic procedures now render as illustrated responsive cards; each image path lives in the procedure JSON. The illustrations are reproducible with `python scripts/generate_procedure_art.py`. Verify mobile image loading with `node scripts/clinic-card-art-smoke.mjs`.
+
 Local setup: Node.js 20.19+ or 22.12+, then `npm install` and `npm run dev`. See [GDD.md](./GDD.md) and [PORTRAIT_STANDARD.md](./PORTRAIT_STANDARD.md).

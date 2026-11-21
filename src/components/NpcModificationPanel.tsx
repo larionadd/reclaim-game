@@ -13,6 +13,15 @@ export function NpcModificationPanel({ id, worker, lang }: { id: string; worker:
     const accepted = worker.modificationDecision?.procedureId === procedure.id && worker.modificationDecision.accepted
     const refused = worker.modificationDecision?.procedureId === procedure.id && !worker.modificationDecision.accepted
     const risk = Math.round((procedure.fatalityRisk + procedure.disabilityRisk + procedure.complicationRisk) * 100)
-    return <article key={procedure.id}><strong>{procedure.name[lang]}</strong><small>{procedure.costCredits} ₴ · {procedure.recoveryDays} {tr('daysRecovery')}</small><small>{tr('operationRisk')}: {risk}% · {tr('deathRisk')}: {(procedure.fatalityRisk * 100).toFixed(1)}%</small><p>{!eligible ? count && !procedure.repeatable ? tr('operationDone') : tr('procedureUnavailable') : accepted ? tr('proposalAccepted') : refused ? tr('proposalRefused') : tr('proposalNotMade')}{count ? ` · ${tr('timesPerformed')}: ${count}` : ''}</p><div><button disabled={!eligible} onClick={() => propose(id, procedure.id)}>{tr('proposeOperation')}</button><button disabled={!eligible || !accepted || worker.savings < procedure.costCredits} onClick={() => perform(id, procedure.id)}>{tr('performOperation')}</button></div></article>
+    return <article className="procedure-card" key={procedure.id}>
+      <img className="procedure-art" src={`${import.meta.env.BASE_URL}${procedure.image.replace(/^\//, '')}`} alt="" loading="lazy"/>
+      <div className="procedure-card-body">
+        <strong>{procedure.name[lang]}</strong>
+        <div className="procedure-facts"><span>{procedure.costCredits} ₴</span><span>{procedure.recoveryDays} {tr('daysRecovery')}</span></div>
+        <small>{tr('operationRisk')}: {risk}% · {tr('deathRisk')}: {(procedure.fatalityRisk * 100).toFixed(1)}%</small>
+        <p>{!eligible ? count && !procedure.repeatable ? tr('operationDone') : tr('procedureUnavailable') : accepted ? tr('proposalAccepted') : refused ? tr('proposalRefused') : tr('proposalNotMade')}{count ? ` · ${tr('timesPerformed')}: ${count}` : ''}</p>
+        <div className="procedure-actions"><button disabled={!eligible} onClick={() => propose(id, procedure.id)}>{tr('proposeOperation')}</button><button disabled={!eligible || !accepted || worker.savings < procedure.costCredits} onClick={() => perform(id, procedure.id)}>{tr('performOperation')}</button></div>
+      </div>
+    </article>
   })}</div></section>
 }
