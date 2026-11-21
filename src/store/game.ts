@@ -99,7 +99,7 @@ interface GameState {
   setNickname: (id: string, nickname: string) => void
   setRation: (id: string, amount: number) => void; setWage: (id: string, amount: number) => void
   setFoodPlan: (id: string, food: HumanFood, amount: number) => void
-  setContract: (id: string, contract: Contract) => void
+  setContract: (id: string, contract: Contract) => void; setContractTerm: (id: string, term: ContractTerm) => void; renewContract: (id: string, term: ContractTerm) => void; terminateContract: (id: string) => void
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
   officeIntimacy: (id: string, action: 'officeAskConsent' | 'officeTender' | 'officePassionate' | 'officeQuiet') => void
@@ -180,8 +180,28 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   setContract: (id, contract) => set(s => {
     const w = s.workers[id]; if (!w?.alive || !w.active || w.contract === contract) return {}
-    const diet = { ...w.diet, bread: contract === 'foodOnly' ? 9 : 0, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }
-    return { workers: { ...s.workers, [id]: { ...w, contract, diet, ration: contract === 'foodOnly' ? 9 : 0, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0 } } }
+    const wage = contract === 'paid' ? Math.max(w.requestedWage, 8) : 0
+    return { workers: { ...s.workers, [id]: { ...w, contract, wage, agreedWage: wage } } }
+  }),
+  setContractTerm: (id, term) => set(s => {
+    const w = s.workers[id]
+    if (!w?.alive || !w.active || !([30, 90, 'lifetime'] as ContractTerm[]).includes(term)) return {}
+    return { workers: { ...s.workers, [id]: { ...w, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : s.day + term - 1 } } }
+  }),
+  renewContract: (id, term) => set(s => {
+    const w = s.workers[id]
+    if (!w?.alive || !([30, 90, 'lifetime'] as ContractTerm[]).includes(term)) return {}
+    if (w.active && w.contractEndsDay === null) return {}
+    const freeHousing = (housing: Housing) => occupied(s.workers, housing, id) < (housing === 'hut' ? s.huts * 2 : s.cages)
+    if (!w.active && (s.hired.filter(otherId => s.workers[otherId]?.alive && s.workers[otherId]?.active).length >= s.staffCapacity || (!freeHousing('hut') && !freeHousing('cage')))) return {}
+    const base = w.active ? Math.max(s.day, w.contractEndsDay ?? s.day) : s.day - 1
+    const housing = w.active || freeHousing(w.housing) ? w.housing : w.housing === 'hut' ? 'cage' : 'hut'
+    return { workers: { ...s.workers, [id]: { ...w, active: true, housing, hiredOnDay: w.active ? w.hiredOnDay : s.day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : base + term, lastDayOnSite: undefined } }, assignments: w.active ? s.assignments : { ...s.assignments, [id]: 'rest' as Job }, message: 'msgContractRenewed' }
+  }),
+  terminateContract: id => set(s => {
+    const w = s.workers[id]
+    if (!w?.alive || !w.active) return {}
+    return { workers: { ...s.workers, [id]: { ...w, active: false, contractEndsDay: s.day, lastDayOnSite: s.day } }, assignments: { ...s.assignments, [id]: 'rest' as Job }, vetDoctorId: s.vetDoctorId === id ? null : s.vetDoctorId, message: 'msgContractTerminated' }
   }),
   interact: (id, action) => set(s => {
     const w = s.workers[id]; if (!w?.alive || hasUnfittedLimb(w) || (!w.active && !['joke','adultJoke','flirt','romanceTalk','walk','hug','kiss','sex'].includes(action))) return {}
@@ -257,7 +277,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     return { ...changes, workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next, s.money, changes.reputation) }
   }),
   dismissEvent: () => set({ activeEvent: null }),
-  setWage: (id, amount) => set(s => s.workers[id]?.alive && s.workers[id]?.active && s.workers[id].contract === 'paid' ? { workers: { ...s.workers, [id]: { ...s.workers[id], wage: clamp(Math.round(amount), 0, 30) } } } : {}),
+  setWage: (id, amount) => set(s => s.workers[id]?.alive && s.workers[id]?.active && s.workers[id].contract === 'paid' && Number.isFinite(amount) ? { workers: { ...s.workers, [id]: { ...s.workers[id], wage: clamp(Math.round(amount), 0, 30), agreedWage: clamp(Math.round(amount), 0, 30) } } } : {}),
   setHousing: (id, housing) => set(s => {
     const w = s.workers[id]
     if (!w?.alive || !w.active || hasUnfittedLimb(w) || w.housing === housing || occupied(s.workers, housing, id) >= (housing === 'cage' ? s.cages : s.huts * 2)) return {}
