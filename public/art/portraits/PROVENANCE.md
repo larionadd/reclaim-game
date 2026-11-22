@@ -23,3 +23,8 @@ The clothing variants were edited from the corresponding base portraits with the
 ## Daria
 
 `daria.jpg`, `daria-lactation.jpg`, and `daria-enlargement.jpg` were supplied by the user on 2026-11-21 as the base portrait, the portrait after lactation treatment, and the portrait after breast enlargement, respectively. The files are stored unchanged.
+
+## Nicole
+
+`nicole.webp` was generated with the built-in ImageGen tool on 2026-11-22 as an original, clearly adult 24-year-old model portrait for the game. It does not use the supplied TEENMEGAWORLD image.
+
