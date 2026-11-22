@@ -18,8 +18,8 @@ try {
   await page.getByRole('button', { name: 'Викликати NPC' }).click()
   await page.locator('.call-cards button').first().click()
   assert.equal(await page.getByRole('button', { name: 'Запитати згоду' }).count(), 0)
-  assert.equal(await page.locator('.interaction-choice small').count(), 0)
-  assert.equal(await page.locator('.marker-legend').count(), 0)
+  assert.ok(await page.locator('.interaction-choice small').count() > 0)
+  assert.equal(await page.locator('.marker-legend').count(), 1)
   assert.equal(await page.getByRole('button', { name: 'Запропонувати близькість' }).isEnabled(), true)
   await page.getByRole('button', { name: 'Запропонувати близькість' }).click()
   let state = await page.evaluate(() => JSON.parse(localStorage.getItem('reclaim-save-v1')).state)
@@ -39,7 +39,7 @@ try {
   assert.equal(state.workers.alisa.fear, 81)
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
   assert.deepEqual(errors, [])
-  console.log('Office choices without request step or technical hints; fear does not unlock intimacy')
+  console.log('Office choices show technical hints without request step; fear does not unlock intimacy')
 } finally {
   await browser.close()
 }
