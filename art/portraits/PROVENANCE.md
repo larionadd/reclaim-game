@@ -23,3 +23,7 @@ The clothing variants were edited from the corresponding base portraits with the
 ## Daria
 
 `daria.jpg`, `daria-lactation.jpg`, and `daria-enlargement.jpg` were supplied by the user on 2026-11-21 as the base portrait, the portrait after lactation treatment, and the portrait after breast enlargement, respectively. The files are stored unchanged.
+
+## Nicole
+
+`nicole.jpg` was supplied by the user on 2026-11-22 as the replacement portrait for Nicole (the second of two alternatives). The image is stored unchanged. The earlier generated `nicole.webp` portrait was replaced.
