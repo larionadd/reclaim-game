@@ -647,5 +647,8 @@
   "trainingSpeed": "Speed",
   "trainingStrength": "Strength",
   "trainingCombat": "Combat",
-  "assignTrainingHint": "Assign an NPC to the camp from their character card."
+  "assignTrainingHint": "Assign an NPC to the camp from their character card.",
+  "shopCategories": "Product categories", "allGoods": "All goods", "foodCategory": "Food", "droneCategory": "Drone parts", "petCategory": "Dog supplies", "adultCategory": "Adult products",
+  "officeInventory": "Office items", "inStorage": "In storage", "inOffice": "In office", "placeInOffice": "Place", "removeFromOffice": "Remove",
+  "dogCrate": "Dog crate", "dogBed": "Dog bed", "leash": "Leash", "muzzle": "Muzzle", "internalVibrator": "Internal vibrator", "externalVibrator": "External vibrator", "analVibrator": "Anal vibrator", "dildo": "Dildo", "analPlug": "Anal plug", "gag": "Gag", "handcuffs": "Handcuffs"
 }

@@ -647,5 +647,8 @@
   "trainingSpeed": "Швидкість",
   "trainingStrength": "Сила",
   "trainingCombat": "Двобій",
-  "assignTrainingHint": "Призначте NPC до табору в картці персонажа."
+  "assignTrainingHint": "Призначте NPC до табору в картці персонажа.",
+  "shopCategories": "Категорії товарів", "allGoods": "Усі товари", "foodCategory": "Продукти", "droneCategory": "Деталі дронів", "petCategory": "Для собак", "adultCategory": "Товари для дорослих",
+  "officeInventory": "Речі в кабінеті", "inStorage": "На складі", "inOffice": "У кабінеті", "placeInOffice": "Додати", "removeFromOffice": "Прибрати",
+  "dogCrate": "Собача клітка", "dogBed": "Собаче ліжко", "leash": "Повідець", "muzzle": "Намордник", "internalVibrator": "Внутрішній вібратор", "externalVibrator": "Зовнішній вібратор", "analVibrator": "Анальний вібратор", "dildo": "Фалоімітатор", "analPlug": "Анальна пробка", "gag": "Кляп", "handcuffs": "Наручники"
 }

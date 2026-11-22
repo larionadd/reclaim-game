@@ -7,7 +7,7 @@ import { canHire } from '../mechanics/hiring'
 import { phaseMessage } from '../mechanics/events'
 import { candidates } from '../data/candidates'
 import { letterFor } from '../data/candidateLetters'
-import { farmGoods, humanFoods, foodCalories, atbibPrices, droneParts, droneSalePrice, salePrices, sellableGoods, type AtbibGood, type DronePart, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
+import { farmGoods, humanFoods, foodCalories, atbibPrices, droneParts, officeGoods, droneSalePrice, salePrices, sellableGoods, type AtbibGood, type DronePart, type OfficeGood, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
 import { canCallBedroom, canChooseIntimacy, canChooseOfficeIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
@@ -89,6 +89,7 @@ interface GameState {
   lang: Lang; day: number; phase: Phase; output: number; wellbeing: number; reputation: number
   money: number; food: number; feedDays: number; livestock: Livestock; staffCapacity: number; cages: number; huts: number; vodka: number; enterprises: string[]; enterpriseNames: Record<string,string>
   prostheticStock: Record<string, number>
+  officeStock: Record<OfficeGood, number>; officePlaced: Record<OfficeGood, number>
   partStock: Record<DronePart, number>; drones: number; storeListings: StoreListing[]; trainingPlans: Record<string, TrainingKind>
   stocks: FoodStocks; provenance: Provenance; listings: SaleListing[]; totalSales: number; vetBuilt: boolean; vetDoctorId: string | null
   lastReport: DayReport | null
@@ -113,6 +114,7 @@ interface GameState {
   setTraining: (id: string, kind: TrainingKind) => void; listInStore: (good: StoreGood, quantity: number, price: number) => void; removeStoreListing: (index: number) => void
   sellDrones: (quantity: number) => void
   purchase: (items: Partial<Record<ShopItem, number>>) => void; sleep: () => void; advance: () => void; reset: () => void
+  placeOfficeItem: (item: OfficeGood) => void; removeOfficeItem: (item: OfficeGood) => void
   listForSale: (good: SaleGood, quantity: number) => void; buildVet: () => void; appointVet: (id: string) => void
 }
 const order: Phase[] = ['morning', 'day', 'evening', 'night']
@@ -120,6 +122,7 @@ const initial = {
   lang: 'uk' as Lang, day: 1, phase: 'morning' as Phase, output: 0, wellbeing: 76, reputation: 58,
   money: 120, food: 18, feedDays: 8, livestock: { cattle: 18, sheep: 26, chickens: 120 }, staffCapacity: 1, cages: 1, huts: 0, vodka: 0, enterprises: ['farm'], enterpriseNames: { farm: 'Ферма' },
   prostheticStock: {} as Record<string, number>,
+  officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>,
   partStock: Object.fromEntries(droneParts.map(part => [part, 0])) as Record<DronePart, number>, drones: 0, storeListings: [] as StoreListing[], trainingPlans: {} as Record<string, TrainingKind>,
   stocks: { bread: 18, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0, girlEggs: 0, girlMilk: 0 }, provenance: { meat: {}, milk: {}, cheese: {}, eggs: {}, girlEggs: {}, girlMilk: {} } as Provenance, listings: [] as SaleListing[], totalSales: 0, vetBuilt: false, vetDoctorId: null as string | null, lastReport: null as DayReport | null, journal: [] as GameEvent[], activeEvent: null as GameEvent | null,
   hired: [] as string[], workers: {} as Record<string, Worker>, assignments: {} as Record<string, Job>, message: 'msgStart', actionPhaseUsed: null as Phase | null, actionDay: 1, actionCounts: {} as Record<string, number>
@@ -341,8 +344,12 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const stocks = { ...s.stocks, bread: s.stocks.bread + quantities.bread * 3, lard: s.stocks.lard + quantities.lard * 2 }
     const partStock = { ...s.partStock }
     for (const part of droneParts) partStock[part] = (partStock[part] ?? 0) + quantities[part]
-    return { money: s.money - total, food: stocks.bread + stocks.lard, stocks, partStock, feedDays: s.feedDays + quantities.grain * 5, vodka: s.vodka + quantities.vodka, message: 'msgOrder' }
+    const officeStock = { ...s.officeStock }
+    for (const item of officeGoods) officeStock[item] = (officeStock[item] ?? 0) + quantities[item]
+    return { money: s.money - total, food: stocks.bread + stocks.lard, stocks, partStock, officeStock, feedDays: s.feedDays + quantities.grain * 5, vodka: s.vodka + quantities.vodka, message: 'msgOrder' }
   }),
+  placeOfficeItem: item => set(s => officeGoods.includes(item) && (s.officeStock[item] ?? 0) > 0 ? { officeStock: { ...s.officeStock, [item]: s.officeStock[item] - 1 }, officePlaced: { ...s.officePlaced, [item]: (s.officePlaced[item] ?? 0) + 1 } } : {}),
+  removeOfficeItem: item => set(s => officeGoods.includes(item) && (s.officePlaced[item] ?? 0) > 0 ? { officePlaced: { ...s.officePlaced, [item]: s.officePlaced[item] - 1 }, officeStock: { ...s.officeStock, [item]: (s.officeStock[item] ?? 0) + 1 } } : {}),
   listForSale: (good, quantity) => set(s => {
     const count = Math.floor(quantity)
     if (!sellableGoods.includes(good) || count < 1 || count > s.stocks[good]) return {}
@@ -444,7 +451,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 18,
+  name: 'reclaim-save-v1', version: 19,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -474,7 +481,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 15) old = { ...initial, ...old, prostheticStock: {}, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => { const equippedProsthetics: Partial<Record<LimbSlot, string>> = {}; for (const [operationId, itemId] of Object.entries({ replacement_left_arm: 'arm_left_standard', replacement_right_arm: 'arm_right_standard', replacement_left_leg: 'leg_left_standard', replacement_right_leg: 'leg_right_standard' })) if (w.operations?.some(op => op.id === operationId && (!op.outcome || op.outcome === 'success'))) { const slot = prostheticFor(itemId)?.slot; if (slot) equippedProsthetics[slot] = itemId } return [id, { ...w, prostheticInventory: [], equippedProsthetics }] })) }
     if (version < 16) old = { ...initial, ...old, actionPhaseUsed: null, actionDay: old.day ?? 1, actionCounts: {}, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, routine: { ...defaultRoutine, ...w.routine }, diet: w.contract === 'foodOnly' && (w.diet?.bread ?? 0) === 4 && humanFoods.every(food => food === 'bread' || !w.diet?.[food]) ? { ...w.diet, bread: 9 } : w.diet }])) }
     if (version < 17) old = { ...initial, ...old, partStock: { ...initial.partStock }, drones: 0, storeListings: [], trainingPlans: {}, assignments: Object.fromEntries(Object.entries(old.assignments ?? {}).map(([id, job]) => [id, (job as string) === 'maintenance' ? 'rest' : job])) as Record<string, Job>, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, training: { speed: 0, strength: 0, combat: 0 } }])) }
-    if (version < 18) return { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, sexCounts: { conventional: 0, oral: 0, anal: 0 } }])) }
+    if (version < 18) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, sexCounts: { conventional: 0, oral: 0, anal: 0 } }])) }
+    if (version < 19) return { ...initial, ...old, officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number> }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,

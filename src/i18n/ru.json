@@ -647,5 +647,8 @@
   "trainingSpeed": "Скорость",
   "trainingStrength": "Сила",
   "trainingCombat": "Поединок",
-  "assignTrainingHint": "Назначьте NPC в лагерь в карточке персонажа."
+  "assignTrainingHint": "Назначьте NPC в лагерь в карточке персонажа.",
+  "shopCategories": "Категории товаров", "allGoods": "Все товары", "foodCategory": "Продукты", "droneCategory": "Детали дронов", "petCategory": "Для собак", "adultCategory": "Товары для взрослых",
+  "officeInventory": "Вещи в кабинете", "inStorage": "На складе", "inOffice": "В кабинете", "placeInOffice": "Добавить", "removeFromOffice": "Убрать",
+  "dogCrate": "Собачья клетка", "dogBed": "Собачья лежанка", "leash": "Поводок", "muzzle": "Намордник", "internalVibrator": "Внутренний вибратор", "externalVibrator": "Внешний вибратор", "analVibrator": "Анальный вибратор", "dildo": "Фаллоимитатор", "analPlug": "Анальная пробка", "gag": "Кляп", "handcuffs": "Наручники"
 }
