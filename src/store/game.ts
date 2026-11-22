@@ -7,7 +7,7 @@ import { canHire } from '../mechanics/hiring'
 import { phaseMessage } from '../mechanics/events'
 import { candidates } from '../data/candidates'
 import { letterFor } from '../data/candidateLetters'
-import { farmGoods, humanFoods, foodCalories, atbibPrices, droneParts, officeGoods, droneSalePrice, salePrices, sellableGoods, type AtbibGood, type DronePart, type OfficeGood, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
+import { farmGoods, humanFoods, foodCalories, atbibPrices, droneParts, officeGoods, adultToys, droneSalePrice, salePrices, sellableGoods, type AdultToy, type AtbibGood, type DronePart, type OfficeGood, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
 import { canCallBedroom, canChooseIntimacy, canChooseOfficeIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
@@ -32,12 +32,13 @@ export type Contract = 'paid' | 'foodOnly'
 export type ContractTerm = 30 | 90 | 'lifetime'
 export type ShopItem = AtbibGood
 export const shopPrices = atbibPrices
+export const vetDailyIncome = 25
 export type StoreGood = SaleGood | 'drone'
 export interface StoreListing { good: StoreGood; quantity: number; price: number }
 export type TrainingKind = 'run' | 'bag' | 'spar'
 export interface SaleListing { good: SaleGood; quantity: number; price: number; listedDay: number; contributors: Record<string, number> }
 export interface WorkerDayReport { id: string; healthBefore: number; healthAfter: number; paid: number; eaten: number; calories?: number; calorieNeed?: number; reasons: string[] }
-export interface DayReport { day: number; sales: number; produced: number; workers: WorkerDayReport[] }
+export interface DayReport { day: number; sales: number; vetIncome?: number; produced: number; workers: WorkerDayReport[] }
 export interface GameEvent { id: number; day: number; phase: Phase; workerId: string; action: string; storyKey: string; changes: Record<string, number>; detail?: string }
 export type Provenance = Record<SaleGood, Record<string, number>>
 export interface Worker {
@@ -108,6 +109,7 @@ interface GameState {
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
   officeIntimacy: (id: string, action: 'vaginalSex' | 'oralSex' | 'analSex') => void
+  useAdultToy: (id: string, item: AdultToy, room: 'bedroom' | 'office') => void
   workplaceAction: (id: string, action: WorkplaceAction) => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
   fine: (id: string, amount: number, reason: string) => void
@@ -264,10 +266,16 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   officeIntimacy: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
-    if (!w?.alive || hasUnfittedLimb(w) || !canChooseOfficeIntimacy(w, age) || !get().canUseAction(action)) return {}
+    if (!w?.alive || s.officeCagedNpcId === id || hasUnfittedLimb(w) || !canChooseOfficeIntimacy(w, age) || !get().canUseAction(action)) return {}
     const kind = action === 'vaginalSex' ? 'conventional' : action === 'oralSex' ? 'oral' : 'anal'
     const next = { ...w, love: clamp(w.love + 2, 0, 100), friendship: clamp(w.friendship + 1, 0, 100), sexCounts: { ...w.sexCounts, [kind]: (w.sexCounts?.[kind] ?? 0) + 1 } }
     return { workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next) }
+  }),
+  useAdultToy: (id, item, room) => set(s => {
+    const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
+    if (!w?.alive || !adultToys.includes(item) || (s.officeStock[item] ?? 0) + (s.officePlaced[item] ?? 0) < 1 || !canChooseIntimacy(w, age) || hasUnfittedLimb(w) || (room === 'bedroom' ? !canCallBedroom(w) : s.officeCagedNpcId === id) || !get().canUseAction('useAdultToy')) return {}
+    const next = { ...w, love: clamp(w.love + 1, 0, 100), friendship: clamp(w.friendship + 1, 0, 100) }
+    return { workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), useAdultToy: (s.actionDay === s.day ? s.actionCounts.useAdultToy ?? 0 : 0) + 1 }, ...eventUpdate(s, id, 'useAdultToy', w, next, s.money, s.reputation, item) }
   }),
   workplaceAction: (id, action) => set(s => {
     const w = s.workers[id], job = s.assignments[id]
@@ -469,9 +477,11 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       capacity -= sold; storeIncome += sold * listing.price
       return { ...listing, quantity: listing.quantity - sold }
     }).filter(listing => listing.quantity > 0)
-    set({ day: s.day + 1, phase: next, actionPhaseUsed: null, actionDay: s.day + 1, actionCounts: {}, output: s.output + producedUnits, wellbeing: clamp(result.wellbeing + wellbeingBonus + (s.vetBuilt && s.vetDoctorId && workers[s.vetDoctorId] && canWorkAtFarm(workers[s.vetDoctorId], s.day) ? 1 : 0), 0, 100), reputation,
-      food: stocks.bread + stocks.lard, stocks, partStock, drones, storeListings, provenance, listings: [], journal, totalSales: s.totalSales + saleIncome + storeIncome, lastReport: { day: s.day, sales: saleIncome + storeIncome, produced: producedUnits, workers: dayWorkers },
-      money: money + saleIncome + storeIncome + (s.enterprises.includes('depot') ? 18 : 0) + (s.enterprises.includes('plant') ? 36 : 0), feedDays: Math.max(0, s.feedDays - 1), workers, assignments,
+    const vetOperating = !!(s.vetBuilt && s.vetDoctorId && workers[s.vetDoctorId]?.alive && workers[s.vetDoctorId]?.active && !workers[s.vetDoctorId]?.punishedInCage && !workers[s.vetDoctorId]?.punishedKneeling && canWorkAtFarm(workers[s.vetDoctorId], s.day))
+    const vetIncome = vetOperating ? vetDailyIncome : 0
+    set({ day: s.day + 1, phase: next, actionPhaseUsed: null, actionDay: s.day + 1, actionCounts: {}, output: s.output + producedUnits, wellbeing: clamp(result.wellbeing + wellbeingBonus + (vetOperating ? 1 : 0), 0, 100), reputation,
+      food: stocks.bread + stocks.lard, stocks, partStock, drones, storeListings, provenance, listings: [], journal, totalSales: s.totalSales + saleIncome + storeIncome + vetIncome, lastReport: { day: s.day, sales: saleIncome + storeIncome + vetIncome, vetIncome, produced: producedUnits, workers: dayWorkers },
+      money: money + saleIncome + storeIncome + vetIncome, feedDays: Math.max(0, s.feedDays - 1), workers, assignments,
       message: anyFatality ? 'msgFatality' : anyInjury ? 'msgInjury' : 'msgReport' })
   },
   reset: () => set(initial)
