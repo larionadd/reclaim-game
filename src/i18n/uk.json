@@ -649,6 +649,6 @@
   "trainingCombat": "Двобій",
   "assignTrainingHint": "Призначте NPC до табору в картці персонажа.",
   "shopCategories": "Категорії товарів", "allGoods": "Усі товари", "foodCategory": "Продукти", "droneCategory": "Деталі дронів", "petCategory": "Для собак", "adultCategory": "Товари для дорослих",
-  "officeInventory": "Речі в кабінеті", "inStorage": "На складі", "inOffice": "У кабінеті", "placeInOffice": "Додати", "removeFromOffice": "Прибрати",
+  "officeInventory": "Речі в кабінеті", "bedroomInventory": "Речі в спальні", "inStorage": "На складі", "inOffice": "У кабінеті", "inBedroom": "У спальні", "placeInOffice": "Додати", "removeFromOffice": "Прибрати", "putInCrate": "Посадити в клітку", "releaseFromCrate": "Випустити з клітки", "crateOccupied": "Клітка зайнята іншим NPC.", "officeCrateHint": "Доступно, коли собача клітка стоїть у кабінеті.",
   "dogCrate": "Собача клітка", "dogBed": "Собаче ліжко", "leash": "Повідець", "muzzle": "Намордник", "internalVibrator": "Внутрішній вібратор", "externalVibrator": "Зовнішній вібратор", "analVibrator": "Анальний вібратор", "dildo": "Фалоімітатор", "analPlug": "Анальна пробка", "gag": "Кляп", "handcuffs": "Наручники"
 }

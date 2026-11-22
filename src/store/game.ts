@@ -89,7 +89,7 @@ interface GameState {
   lang: Lang; day: number; phase: Phase; output: number; wellbeing: number; reputation: number
   money: number; food: number; feedDays: number; livestock: Livestock; staffCapacity: number; cages: number; huts: number; vodka: number; enterprises: string[]; enterpriseNames: Record<string,string>
   prostheticStock: Record<string, number>
-  officeStock: Record<OfficeGood, number>; officePlaced: Record<OfficeGood, number>
+  officeStock: Record<OfficeGood, number>; officePlaced: Record<OfficeGood, number>; bedroomPlaced: Record<'dogCrate' | 'dogBed', number>; officeCagedNpcId: string | null
   partStock: Record<DronePart, number>; drones: number; storeListings: StoreListing[]; trainingPlans: Record<string, TrainingKind>
   stocks: FoodStocks; provenance: Provenance; listings: SaleListing[]; totalSales: number; vetBuilt: boolean; vetDoctorId: string | null
   lastReport: DayReport | null
@@ -114,7 +114,7 @@ interface GameState {
   setTraining: (id: string, kind: TrainingKind) => void; listInStore: (good: StoreGood, quantity: number, price: number) => void; removeStoreListing: (index: number) => void
   sellDrones: (quantity: number) => void
   purchase: (items: Partial<Record<ShopItem, number>>) => void; sleep: () => void; advance: () => void; reset: () => void
-  placeOfficeItem: (item: OfficeGood) => void; removeOfficeItem: (item: OfficeGood) => void
+  placeOfficeItem: (item: OfficeGood, room?: 'office' | 'bedroom') => void; removeOfficeItem: (item: OfficeGood, room?: 'office' | 'bedroom') => void; officeCageAction: (id: string, action: 'cage' | 'release') => void
   listForSale: (good: SaleGood, quantity: number) => void; buildVet: () => void; appointVet: (id: string) => void
 }
 const order: Phase[] = ['morning', 'day', 'evening', 'night']
@@ -123,6 +123,7 @@ const initial = {
   money: 120, food: 18, feedDays: 8, livestock: { cattle: 18, sheep: 26, chickens: 120 }, staffCapacity: 1, cages: 1, huts: 0, vodka: 0, enterprises: ['farm'], enterpriseNames: { farm: 'Ферма' },
   prostheticStock: {} as Record<string, number>,
   officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>,
+  bedroomPlaced: { dogCrate: 0, dogBed: 0 }, officeCagedNpcId: null as string | null,
   partStock: Object.fromEntries(droneParts.map(part => [part, 0])) as Record<DronePart, number>, drones: 0, storeListings: [] as StoreListing[], trainingPlans: {} as Record<string, TrainingKind>,
   stocks: { bread: 18, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0, girlEggs: 0, girlMilk: 0 }, provenance: { meat: {}, milk: {}, cheese: {}, eggs: {}, girlEggs: {}, girlMilk: {} } as Provenance, listings: [] as SaleListing[], totalSales: 0, vetBuilt: false, vetDoctorId: null as string | null, lastReport: null as DayReport | null, journal: [] as GameEvent[], activeEvent: null as GameEvent | null,
   hired: [] as string[], workers: {} as Record<string, Worker>, assignments: {} as Record<string, Job>, message: 'msgStart', actionPhaseUsed: null as Phase | null, actionDay: 1, actionCounts: {} as Record<string, number>
@@ -348,8 +349,22 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     for (const item of officeGoods) officeStock[item] = (officeStock[item] ?? 0) + quantities[item]
     return { money: s.money - total, food: stocks.bread + stocks.lard, stocks, partStock, officeStock, feedDays: s.feedDays + quantities.grain * 5, vodka: s.vodka + quantities.vodka, message: 'msgOrder' }
   }),
-  placeOfficeItem: item => set(s => officeGoods.includes(item) && (s.officeStock[item] ?? 0) > 0 ? { officeStock: { ...s.officeStock, [item]: s.officeStock[item] - 1 }, officePlaced: { ...s.officePlaced, [item]: (s.officePlaced[item] ?? 0) + 1 } } : {}),
-  removeOfficeItem: item => set(s => officeGoods.includes(item) && (s.officePlaced[item] ?? 0) > 0 ? { officePlaced: { ...s.officePlaced, [item]: s.officePlaced[item] - 1 }, officeStock: { ...s.officeStock, [item]: (s.officeStock[item] ?? 0) + 1 } } : {}),
+  placeOfficeItem: (item, room = 'office') => set(s => {
+    if (!officeGoods.includes(item) || (s.officeStock[item] ?? 0) < 1 || (room === 'bedroom' && item !== 'dogCrate' && item !== 'dogBed')) return {}
+    return room === 'office' ? { officeStock: { ...s.officeStock, [item]: s.officeStock[item] - 1 }, officePlaced: { ...s.officePlaced, [item]: (s.officePlaced[item] ?? 0) + 1 } } : { officeStock: { ...s.officeStock, [item]: s.officeStock[item] - 1 }, bedroomPlaced: { ...s.bedroomPlaced, [item]: s.bedroomPlaced[item as 'dogCrate' | 'dogBed'] + 1 } }
+  }),
+  removeOfficeItem: (item, room = 'office') => set(s => {
+    if (!officeGoods.includes(item) || (room === 'bedroom' && item !== 'dogCrate' && item !== 'dogBed')) return {}
+    if (room === 'office') return (s.officePlaced[item] ?? 0) > 0 ? { officePlaced: { ...s.officePlaced, [item]: s.officePlaced[item] - 1 }, officeStock: { ...s.officeStock, [item]: (s.officeStock[item] ?? 0) + 1 }, officeCagedNpcId: item === 'dogCrate' && s.officePlaced.dogCrate === 1 ? null : s.officeCagedNpcId } : {}
+    return s.bedroomPlaced[item as 'dogCrate' | 'dogBed'] > 0 ? { bedroomPlaced: { ...s.bedroomPlaced, [item]: s.bedroomPlaced[item as 'dogCrate' | 'dogBed'] - 1 }, officeStock: { ...s.officeStock, [item]: (s.officeStock[item] ?? 0) + 1 } } : {}
+  }),
+  officeCageAction: (id, action) => set(s => {
+    const worker = s.workers[id]
+    if (action === 'release') return s.officeCagedNpcId === id ? { officeCagedNpcId: null } : {}
+    const occupied = s.officeCagedNpcId && s.workers[s.officeCagedNpcId]?.alive && s.workers[s.officeCagedNpcId]?.active
+    if (!worker?.alive || !worker.active || occupied || (s.officePlaced.dogCrate ?? 0) < 1 || !get().canUseAction('officeCage')) return {}
+    return { officeCagedNpcId: id, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), officeCage: (s.actionDay === s.day ? s.actionCounts.officeCage ?? 0 : 0) + 1 } }
+  }),
   listForSale: (good, quantity) => set(s => {
     const count = Math.floor(quantity)
     if (!sellableGoods.includes(good) || count < 1 || count > s.stocks[good]) return {}
@@ -451,7 +466,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 19,
+  name: 'reclaim-save-v1', version: 20,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -482,9 +497,10 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 16) old = { ...initial, ...old, actionPhaseUsed: null, actionDay: old.day ?? 1, actionCounts: {}, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, routine: { ...defaultRoutine, ...w.routine }, diet: w.contract === 'foodOnly' && (w.diet?.bread ?? 0) === 4 && humanFoods.every(food => food === 'bread' || !w.diet?.[food]) ? { ...w.diet, bread: 9 } : w.diet }])) }
     if (version < 17) old = { ...initial, ...old, partStock: { ...initial.partStock }, drones: 0, storeListings: [], trainingPlans: {}, assignments: Object.fromEntries(Object.entries(old.assignments ?? {}).map(([id, job]) => [id, (job as string) === 'maintenance' ? 'rest' : job])) as Record<string, Job>, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, training: { speed: 0, strength: 0, combat: 0 } }])) }
     if (version < 18) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, sexCounts: { conventional: 0, oral: 0, anal: 0 } }])) }
-    if (version < 19) return { ...initial, ...old, officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number> }
+    if (version < 19) old = { ...initial, ...old, officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number> }
+    if (version < 20) return { ...initial, ...old, bedroomPlaced: { dogCrate: 0, dogBed: 0 }, officeCagedNpcId: null }
     return persisted as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
-    money: s.money, food: s.food, feedDays: s.feedDays, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, prostheticStock: s.prostheticStock, partStock: s.partStock, drones: s.drones, storeListings: s.storeListings, trainingPlans: s.trainingPlans, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, journal: s.journal, activeEvent: s.activeEvent, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message, actionPhaseUsed: s.actionPhaseUsed, actionDay: s.actionDay, actionCounts: s.actionCounts })
+    money: s.money, food: s.food, feedDays: s.feedDays, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, prostheticStock: s.prostheticStock, partStock: s.partStock, drones: s.drones, storeListings: s.storeListings, trainingPlans: s.trainingPlans, officeStock: s.officeStock, officePlaced: s.officePlaced, bedroomPlaced: s.bedroomPlaced, officeCagedNpcId: s.officeCagedNpcId, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, journal: s.journal, activeEvent: s.activeEvent, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message, actionPhaseUsed: s.actionPhaseUsed, actionDay: s.actionDay, actionCounts: s.actionCounts })
 }))
