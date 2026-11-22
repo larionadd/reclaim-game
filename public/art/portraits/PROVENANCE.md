@@ -26,5 +26,4 @@ The clothing variants were edited from the corresponding base portraits with the
 
 ## Nicole
 
-`nicole.webp` was generated with the built-in ImageGen tool on 2026-11-22 as an original, clearly adult 24-year-old model portrait for the game. It does not use the supplied TEENMEGAWORLD image.
-
+`nicole.jpg` was supplied by the user on 2026-11-22 as the replacement portrait for Nicole (the second of two alternatives). The image is stored unchanged. The earlier generated `nicole.webp` portrait was replaced.
