@@ -31,7 +31,7 @@ export function interactionRequirement(w: Worker, action: InteractionAction, mon
     case 'walk': return w.friendship < 35 && w.respect < 50 ? 'needsWalk' : null
     case 'hug': return w.friendship < 55 ? 'needsFriendship55' : w.fear >= 35 ? 'needsFearBelow35' : null
     case 'kiss': return w.friendship < 70 ? 'needsFriendship70' : w.love < 55 ? 'needsLove55' : w.fear >= 20 ? 'needsFearBelow20' : null
-    case 'sex': return w.love > 80 && w.friendship >= 60 && w.fear < 20 ? null : 'needsLoveOrFear81'
+    case 'sex': return w.love >= 80 && w.friendship >= 60 && w.fear < 20 ? null : 'needsLoveOrFear81'
   }
 }
 
