@@ -6,7 +6,7 @@ import { useGame } from '../store/game'
 import { t } from '../i18n'
 import { Portrait } from './Portrait'
 
-const intimacy: BedroomAction[] = ['gentleIntimacy', 'passionateIntimacy', 'privateNight']
+const intimacy: BedroomAction[] = ['gentleIntimacy', 'passionateIntimacy', 'privateNight', 'oralSex', 'analSex']
 const punishment: BedroomAction[] = ['reprimand', 'extraDuty']
 
 export function BedroomInteraction() {
