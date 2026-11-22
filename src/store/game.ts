@@ -107,7 +107,7 @@ interface GameState {
   setContract: (id: string, contract: Contract) => void; setContractTerm: (id: string, term: ContractTerm) => void; renewContract: (id: string, term: ContractTerm) => void; terminateContract: (id: string) => void
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
-  officeIntimacy: (id: string, action: 'officeTender' | 'officePassionate' | 'officeQuiet' | 'oralSex' | 'analSex') => void
+  officeIntimacy: (id: string, action: 'vaginalSex' | 'oralSex' | 'analSex') => void
   workplaceAction: (id: string, action: WorkplaceAction) => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
   fine: (id: string, amount: number, reason: string) => void
@@ -265,7 +265,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   officeIntimacy: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
     if (!w?.alive || hasUnfittedLimb(w) || !canChooseOfficeIntimacy(w, age) || !get().canUseAction(action)) return {}
-    const next = { ...w, love: clamp(w.love + (action === 'officeTender' ? 2 : action === 'officePassionate' ? 3 : 1), 0, 100), friendship: clamp(w.friendship + (action === 'officeQuiet' ? 3 : 1), 0, 100), sexCounts: action === 'oralSex' || action === 'analSex' ? { ...w.sexCounts, [action === 'oralSex' ? 'oral' : 'anal']: (w.sexCounts?.[action === 'oralSex' ? 'oral' : 'anal'] ?? 0) + 1 } : w.sexCounts }
+    const kind = action === 'vaginalSex' ? 'conventional' : action === 'oralSex' ? 'oral' : 'anal'
+    const next = { ...w, love: clamp(w.love + 2, 0, 100), friendship: clamp(w.friendship + 1, 0, 100), sexCounts: { ...w.sexCounts, [kind]: (w.sexCounts?.[kind] ?? 0) + 1 } }
     return { workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next) }
   }),
   workplaceAction: (id, action) => set(s => {
@@ -407,9 +408,9 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       let eaten = 0, consumedCalories = 0
       for (const food of humanFoods) { const amount = Math.min(worker.diet[food], stocks[food]); stocks[food] -= amount; eaten += amount; consumedCalories += amount * foodCalories[food]; if (farmGoods.includes(food as FarmGood)) provenance[food as FarmGood] = takeProvenance(provenance[food as FarmGood], amount).remaining }
       const paid = worker.contract === 'paid' && !disobedience[id] ? Math.min(worker.wage, money) : 0; money -= paid
-      const fed = consumedCalories > 0 ? consumedCalories >= calorieNeed(worker) : worker.contract === 'paid' && paid >= 12
+      const fed = consumedCalories > 0 ? consumedCalories >= calorieNeed(worker) : worker.contract === 'paid' && paid >= worker.agreedWage
       const nutritionRatio = consumedCalories / Math.max(1, calorieNeed(worker))
-      const healthChange = nutritionRatio === 0 ? -5 : nutritionRatio < .5 ? -3 : nutritionRatio < .8 ? -1 : nutritionRatio >= 1 ? 1 : 0
+      const healthChange = nutritionRatio === 0 && worker.contract === 'paid' && paid >= worker.agreedWage ? 0 : nutritionRatio === 0 ? -5 : nutritionRatio < .5 ? -3 : nutritionRatio < .8 ? -1 : nutritionRatio >= 1 ? 1 : 0
       const traits = conditionEffects(worker, fed, worker.contract === 'paid' && paid < worker.agreedWage, living[id])
       wellbeingBonus += traits.wellbeing
       const workChange = (worker.housing === 'cage' ? -1 : 1) + traits.health
