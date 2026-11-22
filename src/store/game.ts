@@ -98,7 +98,7 @@ interface GameState {
   hired: string[]; workers: Record<string, Worker>; assignments: Record<string, Job>; message: string
   actionPhaseUsed: Phase | null; actionDay: number; actionCounts: Record<string, number>
   canUseAction: (action: string) => boolean; setRoutine: (id: string, phase: Phase, activity: RoutineActivity) => void
-  toggleLang: () => void; hire: (id: string, contract?: Contract, term?: ContractTerm, offeredWage?: number) => void; assign: (id: string, job: Job) => void
+  toggleLang: () => void; hire: (id: string, contract?: Contract, term?: ContractTerm, offeredWage?: number, modifications?: boolean) => void; assign: (id: string, job: Job) => void
   setNickname: (id: string, nickname: string) => void
   setRation: (id: string, amount: number) => void; setWage: (id: string, amount: number) => void
   setFoodPlan: (id: string, food: HumanFood, amount: number) => void
@@ -151,14 +151,14 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   toggleLang: () => set(s => ({ lang: s.lang === 'uk' ? 'ru' : s.lang === 'ru' ? 'en' : 'uk' })),
   canUseAction: action => { const s = get(); return (s.actionDay !== s.day || s.actionPhaseUsed !== s.phase) && (s.actionDay !== s.day || (s.actionCounts[action] ?? 0) < 3) },
   setRoutine: (id, phase, activity) => set(s => { const w = s.workers[id]; return w?.alive && w.active ? { workers: { ...s.workers, [id]: { ...w, routine: { ...defaultRoutine, ...w.routine, [phase]: activity } } } } : {} }),
-  hire: (id, contract = 'paid', term = 30, offeredWage) => set(s => {
+  hire: (id, contract = 'paid', term = 30, offeredWage, modifications = false) => set(s => {
     const livingIds = s.hired.filter(workerId => s.workers[workerId]?.alive && s.workers[workerId]?.active)
     if (s.hired.includes(id) || !canHire(livingIds, id, s.staffCapacity) || !candidates.some(c => c.id === id && c.availableFromDay <= s.day)) return {}
     const letter = letterFor(id), offer = contract === 'paid' ? clamp(Math.floor(offeredWage ?? letter?.requestedWage ?? 12), 0, 30) : 0
     if (contract === 'paid' && offer < (letter?.minimumWage ?? 8)) return { message: 'msgOfferRejected' }
     const housing: Housing = occupied(s.workers, 'hut') < s.huts * 2 ? 'hut' : 'cage'
     if (occupied(s.workers, housing) >= (housing === 'hut' ? s.huts * 2 : s.cages)) return {}
-    return { hired: [...s.hired, id], workers: { ...s.workers, [id]: { ...defaultWorker(id, contract, s.day, term), wage: offer, agreedWage: offer, housing, defiance: clamp((letter?.defiance ?? 40) + Math.max(0, (letter?.requestedWage ?? 12) - offer) * 4, 0, 100), respect: clamp(25 + (offer >= (letter?.requestedWage ?? 12) ? 5 : -5), 0, 100) } }, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgHired' }
+    return { hired: [...s.hired, id], workers: { ...s.workers, [id]: { ...defaultWorker(id, contract, s.day, term), modificationConsentAtSigning: modifications, wage: offer, agreedWage: offer, housing, defiance: clamp((letter?.defiance ?? 40) + Math.max(0, (letter?.requestedWage ?? 12) - offer) * 4, 0, 100), respect: clamp(25 + (offer >= (letter?.requestedWage ?? 12) ? 5 : -5), 0, 100) } }, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgHired' }
   }),
   setNickname: (id, nickname) => set(s => {
     if (!s.workers[id]) return {}

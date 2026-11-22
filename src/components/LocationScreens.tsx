@@ -11,7 +11,6 @@ import { FoodPlan } from './FoodPlan'
 import { NpcPersonalDetails } from './NpcPersonalDetails'
 import { NpcModificationPanel } from './NpcModificationPanel'
 import { NpcEquipment } from './NpcEquipment'
-import { personalFor } from '../data/npcPersonal'
 import { letterFor } from '../data/candidateLetters'
 import { ContractSettings } from './ContractSettings'
 import { t } from '../i18n'
@@ -23,19 +22,28 @@ import { canVisitWorkplace } from '../mechanics/workplace'
 
 export function DistributionScreen() {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
-  const [contract, setContract] = useState<Contract>('paid')
-  const [term, setTerm] = useState<ContractTerm>(30)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const selected = candidates.find(c => c.id === selectedId)
   return <div className="location-page"><div className="location-heading"><div><span>{tr('stateIntake')}</span><h1>{tr('desk')}</h1></div><div className="location-counter"><Users size={22}/>{g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length} / {g.staffCapacity}</div></div>
-    <div className="contract-choice"><div><strong>{tr('contract')}</strong><small>{tr('contractChoiceHint')}</small></div><button className={contract === 'paid' ? 'active' : ''} onClick={() => setContract('paid')}>{tr('paid')}</button><button className={contract === 'foodOnly' ? 'active' : ''} onClick={() => setContract('foodOnly')}>{tr('foodOnly')}</button><label className="contract-term">{tr('contractTerm')}<select value={term} onChange={e => setTerm(e.target.value === 'lifetime' ? 'lifetime' : Number(e.target.value) as 30 | 90)}><option value={30}>30 {tr('days')}</option><option value={90}>90 {tr('days')}</option><option value="lifetime">{tr('lifetime')}</option></select></label></div>
-    <div className="candidate-list">{candidates.filter(c => c.availableFromDay <= g.day).map(c => { const hired = g.hired.includes(c.id), full = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length >= g.staffCapacity; return <article className="candidate-row" key={c.id}><Portrait person={c} lang={g.lang}/><div className="candidate-row-copy"><div className="candidate-row-head"><div><h2>{displayName(c, g.lang, g.workers[c.id]?.nickname)}</h2><span>{c.age} {tr('yearsOld')}</span></div><strong>★ {c.skill}</strong></div><p>{c.bio[g.lang]}</p><div className="candidate-row-tags"><span>{tr('language')}: {c.language}/5</span><span>{tr('motivation')}: {c.motivation}</span><span>{tr('height')}: {c.body.heightCm} {tr('cm')}</span><span>{tr('weight')}: {c.body.weightKg} {tr('kg')}</span><span>{tr('chest')}: {c.body.chestCm} {tr('cm')}</span><span>{tr('waist')}: {c.body.waistCm} {tr('cm')}</span><span>{tr('hips')}: {c.body.hipsCm} {tr('cm')}</span><span>{tr('modificationAtSigning')}: {tr(personalFor(c.id)?.modificationConsentAtSigning ? 'consentYes' : 'consentNo')}</span>{c.traits.map(id => <span key={id}>{traits[id]?.name[g.lang] ?? id}</span>)}</div><CandidateOffer id={c.id} contract={contract} term={term} hired={hired} full={full}/></div></article> })}</div>
+    <div className="candidate-list">{candidates.filter(c => c.availableFromDay <= g.day).map(c => { const hired = g.hired.includes(c.id), full = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length >= g.staffCapacity; return <article className="candidate-row" key={c.id}><Portrait person={c} lang={g.lang}/><div className="candidate-row-copy"><div className="candidate-row-head"><div><h2>{displayName(c, g.lang, g.workers[c.id]?.nickname)}</h2><span>{c.age} {tr('yearsOld')}</span></div><strong>★ {c.skill}</strong></div><p>{c.bio[g.lang]}</p><div className="candidate-row-tags"><span>{tr('language')}: {c.language}/5</span><span>{tr('motivation')}: {c.motivation}</span><span>{tr('height')}: {c.body.heightCm} {tr('cm')}</span><span>{tr('weight')}: {c.body.weightKg} {tr('kg')}</span><span>{tr('chest')}: {c.body.chestCm} {tr('cm')}</span><span>{tr('waist')}: {c.body.waistCm} {tr('cm')}</span><span>{tr('hips')}: {c.body.hipsCm} {tr('cm')}</span>{c.traits.map(id => <span key={id}>{traits[id]?.name[g.lang] ?? id}</span>)}</div>{letterFor(c.id) && <div className="candidate-letter"><strong>{tr('welcomeLetter')}</strong><p>{letterFor(c.id)?.letter[g.lang]}</p><small>{tr('desiredWage')}: {letterFor(c.id)?.requestedWage} ₴ / {tr('shift')}</small></div>}<div className="candidate-row-bottom"><button disabled={hired || full} onClick={() => setSelectedId(c.id)}>{hired ? tr('onStaff') : full ? tr('full') : tr('offer')} <ArrowRight size={15}/></button></div></div></article> })}</div>
+    {selected && <ContractOfferDialog key={selected.id} id={selected.id} onClose={() => setSelectedId(null)}/>} 
   </div>
 }
 
-function CandidateOffer({ id, contract, term, hired, full }: { id: string; contract: Contract; term: ContractTerm; hired: boolean; full: boolean }) {
+function ContractOfferDialog({ id, onClose }: { id: string; onClose: () => void }) {
   const g = useGame(), tr = (key: string) => t(g.lang, key), letter = letterFor(id)
-  const [offer, setOffer] = useState(letter?.requestedWage ?? 12), [rejected, setRejected] = useState(false)
-  const submit = () => { g.hire(id, contract, term, offer); setRejected(contract === 'paid' && offer < (letter?.minimumWage ?? 8)) }
-  return <div className="candidate-offer">{letter && <div className="candidate-letter"><strong>{tr('welcomeLetter')}</strong><p>{letter.letter[g.lang]}</p><small>{tr('desiredWage')}: {letter.requestedWage} ₴ / {tr('shift')}</small></div>}<div className="candidate-row-bottom">{contract === 'paid' ? <label>{tr('counterOffer')}<input type="number" min="0" max="30" value={offer} disabled={hired || full} onChange={e => { setOffer(Math.max(0, Math.min(30, Math.floor(Number(e.target.value) || 0)))); setRejected(false) }}/></label> : <small>{tr('foodOnly')}</small>}<button disabled={hired || full} onClick={submit}>{hired ? tr('onStaff') : full ? tr('full') : tr('offer')} <ArrowRight size={15}/></button></div>{rejected && <p className="offer-rejected">{tr('offerRefused')}</p>}</div>
+  const [contract, setContract] = useState<Contract>('paid')
+  const [term, setTerm] = useState<ContractTerm>(30)
+  const [offer, setOffer] = useState(letter?.requestedWage ?? 12)
+  const [modifications, setModifications] = useState(false)
+  const [rejected, setRejected] = useState(false)
+  const person = candidates.find(c => c.id === id)
+  const submit = () => {
+    if (contract === 'paid' && offer < (letter?.minimumWage ?? 8)) { setRejected(true); return }
+    g.hire(id, contract, term, offer, modifications)
+    if (useGame.getState().hired.includes(id)) onClose()
+  }
+  return <div className="contract-dialog-backdrop" onClick={onClose}><section className="contract-dialog" role="dialog" aria-modal="true" aria-label={tr('contractTerms')} onClick={e => e.stopPropagation()}><div className="contract-dialog-heading"><div><small>{tr('contractTerms')}</small><h2>{person ? displayName(person, g.lang) : id}</h2></div><button type="button" onClick={onClose} aria-label={tr('close')}>×</button></div><div className="contract-choice"><div><strong>{tr('contract')}</strong></div><button className={contract === 'paid' ? 'active' : ''} onClick={() => setContract('paid')}>{tr('paid')}</button><button className={contract === 'foodOnly' ? 'active' : ''} onClick={() => setContract('foodOnly')}>{tr('foodOnly')}</button></div><label className="contract-dialog-field">{tr('contractTerm')}<select value={term} onChange={e => setTerm(e.target.value === 'lifetime' ? 'lifetime' : Number(e.target.value) as 30 | 90)}><option value={30}>30 {tr('days')}</option><option value={90}>90 {tr('days')}</option><option value="lifetime">{tr('lifetime')}</option></select></label>{contract === 'paid' && <label className="contract-dialog-field">{tr('counterOffer')}<input type="number" min="0" max="30" value={offer} onChange={e => { setOffer(Math.max(0, Math.min(30, Math.floor(Number(e.target.value) || 0)))); setRejected(false) }}/></label>}<label className="contract-dialog-check"><input type="checkbox" checked={modifications} onChange={e => setModifications(e.target.checked)}/>{tr('contractModifications')}</label>{rejected && <p className="offer-rejected">{tr('offerRefused')}</p>}<div className="contract-dialog-actions"><button type="button" onClick={onClose}>{tr('cancel')}</button><button type="button" className="primary-action" onClick={submit}>{tr('confirmOffer')}</button></div></section></div>
 }
 
 export function PeopleScreen({ onCheckWorkplace }: { onCheckWorkplace: (id: string) => void }) {
