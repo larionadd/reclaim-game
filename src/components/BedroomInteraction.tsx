@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { candidates } from '../data/candidates'
 import { displayName } from '../mechanics/npcIdentity'
-import { canAskConsent, canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
+import { canCallBedroom, canChooseIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
 import { useGame } from '../store/game'
 import { t } from '../i18n'
 import { Portrait } from './Portrait'
@@ -16,13 +16,13 @@ export function BedroomInteraction() {
   const person = people.find(c => c.id === selectedId)
   const w = person ? g.workers[person.id] : undefined
 
-  if (!open) return <section className="manor-panel bedroom-call"><h2>{tr('bedroomCall')}</h2><p>{tr('bedroomCallHint')}</p><button onClick={() => setOpen(true)}>{tr('bedroomCall')}</button></section>
+  if (!open) return <section className="manor-panel bedroom-call"><h2>{tr('bedroomCall')}</h2><button onClick={() => setOpen(true)}>{tr('bedroomCall')}</button></section>
   return <section className="manor-panel bedroom-call"><div className="call-heading"><h2>{tr('bedroomCall')}</h2><button onClick={() => { setOpen(false); setSelectedId(null) }}>← {tr('bedroom')}</button></div>
     {!person || !w ? <><p>{tr('chooseBedroomGuest')}</p><div className="call-cards">{people.map(c => { const worker = g.workers[c.id]; return <button key={c.id} onClick={() => setSelectedId(c.id)}><Portrait person={c} lang={g.lang} outfit="sleepwear"/><span><strong>{displayName(c, g.lang, worker.nickname)}</strong><small>{tr('fear')}: {worker.fear} · {tr('love')}: {worker.love}</small><small>{worker.active ? tr('contractActive') : tr('formerWorker')}</small></span></button> })}</div>{!people.length && <p>{tr('noBedroomGuests')}</p>}</> : <>
       <button className="call-back" onClick={() => setSelectedId(null)}>← {tr('allWorkers')}</button><div className="called-worker"><Portrait person={person} lang={g.lang} outfit="sleepwear"/><div><h3>{displayName(person, g.lang, w.nickname)}</h3><p>{w.active ? tr('contractActive') : tr('formerWorker')}</p></div></div>
       <div className="relation-grid"><span>{tr('fear')}: {w.fear}</span><span>{tr('love')}: {w.love}</span><span>{tr('friendship')}: {w.friendship}</span><span>{tr('submission')}: {w.submission}</span></div>
-      <div className="interaction-group"><h3>{tr('bedroomIntimacy')}</h3><p>{tr('bedroomConsentRule')}</p><div><div className="interaction-choice"><button disabled={!canAskConsent(w, person.age) || w.intimacyConsentDay === g.day || !g.canUseAction('askConsent')} onClick={() => g.bedroomAction(person.id, 'askConsent')}>😇 {tr('askConsent')}</button><small>{tr('askConsentHint')}</small></div>{intimacy.map(action => <div className="interaction-choice" key={action}><button disabled={!canChooseIntimacy(w, person.age, g.day) || !g.canUseAction(action)} onClick={() => g.bedroomAction(person.id, action)}>😇 {tr(action)}</button><small>{tr('consentRequiredToday')}</small></div>)}</div></div>
-      <div className="interaction-group"><h3>{tr('bedroomPunishment')}</h3><div>{punishment.map(action => <div className="interaction-choice" key={action}><button disabled={!canPunishInBedroom(w) || !g.canUseAction(action)} onClick={() => g.bedroomAction(person.id, action)}>😈 {tr(action)}</button><small>{tr('punishmentFearHint')}</small></div>)}</div></div>
+      <div className="interaction-group"><h3>{tr('bedroomIntimacy')}</h3><div>{intimacy.map(action => <div className="interaction-choice" key={action}><button disabled={!canChooseIntimacy(w, person.age) || !g.canUseAction(action)} onClick={() => g.bedroomAction(person.id, action)}>{tr(action)}</button></div>)}</div></div>
+      <div className="interaction-group"><h3>{tr('bedroomPunishment')}</h3><div>{punishment.map(action => <div className="interaction-choice" key={action}><button disabled={!canPunishInBedroom(w) || !g.canUseAction(action)} onClick={() => g.bedroomAction(person.id, action)}>{tr(action)}</button></div>)}</div></div>
     </>}
   </section>
 }

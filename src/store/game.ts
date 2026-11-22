@@ -10,7 +10,7 @@ import { letterFor } from '../data/candidateLetters'
 import { farmGoods, humanFoods, foodCalories, atbibPrices, droneParts, droneSalePrice, salePrices, sellableGoods, type AtbibGood, type DronePart, type FarmGood, type FoodStocks, type HumanFood, type SaleGood } from '../data/goods'
 import { conditionEffects, productionForWorker, riskForWorker } from '../mechanics/farmProduction'
 import { interactionRequirement, type InteractionAction } from '../mechanics/interactions'
-import { canAskConsent, canAskOfficeConsent, canCallBedroom, canChooseIntimacy, canChooseOfficeIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
+import { canCallBedroom, canChooseIntimacy, canChooseOfficeIntimacy, canPunishInBedroom, type BedroomAction } from '../mechanics/bedroom'
 import { personalFor } from '../data/npcPersonal'
 import procedures from '../data/medical/procedures.json'
 import { canReceiveProcedure, resolveOperationOutcome } from '../mechanics/medicalOperations'
@@ -102,7 +102,7 @@ interface GameState {
   setContract: (id: string, contract: Contract) => void; setContractTerm: (id: string, term: ContractTerm) => void; renewContract: (id: string, term: ContractTerm) => void; terminateContract: (id: string) => void
   interact: (id: string, action: InteractionAction) => void; dismissEvent: () => void
   bedroomAction: (id: string, action: BedroomAction) => void
-  officeIntimacy: (id: string, action: 'officeAskConsent' | 'officeTender' | 'officePassionate' | 'officeQuiet') => void
+  officeIntimacy: (id: string, action: 'officeTender' | 'officePassionate' | 'officeQuiet') => void
   workplaceAction: (id: string, action: WorkplaceAction) => void
   setHousing: (id: string, housing: Housing) => void; reward: (id: string, amount: number) => void
   fine: (id: string, amount: number, reason: string) => void
@@ -205,7 +205,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   interact: (id, action) => set(s => {
     const w = s.workers[id]; if (!w?.alive || hasUnfittedLimb(w) || (!w.active && !['joke','adultJoke','flirt','romanceTalk','walk','hug','kiss','sex'].includes(action))) return {}
-    if (interactionRequirement(w, action, s.money, s.stocks.bread) || !get().canUseAction(action)) return {}
+    if (interactionRequirement(w, action, s.money, s.stocks.bread) || !get().canUseAction(action) || (action === 'sex' && (candidates.find(c => c.id === id)?.age ?? 0) < 18)) return {}
     const next = { ...w }, changes: Partial<GameState> = {}
     const add = (key: 'health' | 'respect' | 'fear' | 'friendship' | 'love' | 'debauchery' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
     switch (action) {
@@ -225,25 +225,23 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       case 'walk': add('friendship', 4); add('love', 1); break
       case 'hug': add('friendship', 3); add('love', 2); break
       case 'kiss': add('love', 3); break
-      case 'sex': if (w.fear > 80) { add('respect', -4); add('love', -6); next.trust = clamp(w.trust - 6, 0, 100); changes.reputation = clamp(s.reputation - 3, 0, 100) } break
+      case 'sex': add('love', 2); add('friendship', 1); break
     }
     changes.workers = { ...s.workers, [id]: next }
-    return { ...changes, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action === 'sex' && w.fear > 80 ? 'sexPressure' : action, w, next, changes.money, changes.reputation) }
+    return { ...changes, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next, changes.money, changes.reputation) }
   }),
   bedroomAction: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
     if (!w || !canCallBedroom(w) || !get().canUseAction(action)) return {}
     const intimate = action === 'gentleIntimacy' || action === 'passionateIntimacy' || action === 'privateNight'
-    if (action === 'askConsent' && (!canAskConsent(w, age) || w.intimacyConsentDay === s.day)) return {}
-    if (intimate && !canChooseIntimacy(w, age, s.day)) return {}
+    if (intimate && !canChooseIntimacy(w, age)) return {}
     if ((action === 'reprimand' || action === 'extraDuty') && !canPunishInBedroom(w)) return {}
     const next = { ...w }, changes: Partial<GameState> = {}
     const add = (key: 'trust' | 'respect' | 'fear' | 'friendship' | 'love' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
     switch (action) {
-      case 'askConsent': next.intimacyConsentDay = s.day; break
-      case 'gentleIntimacy': add('love', 2); add('friendship', 1); next.intimacyConsentDay = undefined; break
-      case 'passionateIntimacy': add('love', 3); add('trust', 1); next.intimacyConsentDay = undefined; break
-      case 'privateNight': add('love', 4); add('friendship', 2); next.intimacyConsentDay = undefined; break
+      case 'gentleIntimacy': add('love', 2); add('friendship', 1); break
+      case 'passionateIntimacy': add('love', 3); add('trust', 1); break
+      case 'privateNight': add('love', 4); add('friendship', 2); break
       case 'reprimand': add('fear', 3); add('submission', 2); add('respect', -4); add('trust', -2); changes.reputation = clamp(s.reputation - 1, 0, 100); break
       case 'extraDuty': add('fear', 4); add('submission', 3); add('respect', -5); changes.assignments = { ...s.assignments, [id]: 'production' }; changes.reputation = clamp(s.reputation - 2, 0, 100); break
     }
@@ -252,14 +250,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   officeIntimacy: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
-    if (!w?.alive || hasUnfittedLimb(w) || !canAskOfficeConsent(w, age) || !get().canUseAction(action)) return {}
-    if (action === 'officeAskConsent') {
-      if (w.intimacyConsentDay === s.day) return {}
-      const next = { ...w, intimacyConsentDay: s.day }
-      return { workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next) }
-    }
-    if (!canChooseOfficeIntimacy(w, age, s.day)) return {}
-    const next = { ...w, intimacyConsentDay: undefined, love: clamp(w.love + (action === 'officeTender' ? 2 : action === 'officePassionate' ? 3 : 1), 0, 100), friendship: clamp(w.friendship + (action === 'officeQuiet' ? 3 : 1), 0, 100) }
+    if (!w?.alive || hasUnfittedLimb(w) || !canChooseOfficeIntimacy(w, age) || !get().canUseAction(action)) return {}
+    const next = { ...w, love: clamp(w.love + (action === 'officeTender' ? 2 : action === 'officePassionate' ? 3 : 1), 0, 100), friendship: clamp(w.friendship + (action === 'officeQuiet' ? 3 : 1), 0, 100) }
     return { workers: { ...s.workers, [id]: next }, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), [action]: (s.actionDay === s.day ? s.actionCounts[action] ?? 0 : 0) + 1 }, ...eventUpdate(s, id, action, w, next) }
   }),
   workplaceAction: (id, action) => set(s => {
