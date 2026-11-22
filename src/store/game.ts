@@ -329,7 +329,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   buildCage: () => set(s => s.cages < 5 && s.money >= 90 ? { cages: s.cages + 1, staffCapacity: s.staffCapacity + 1, money: s.money - 90, message: 'msgHousingExpanded' } : {}),
   buildHut: () => set(s => s.money >= 180 ? { huts: s.huts + 1, staffCapacity: s.staffCapacity + 2, money: s.money - 180, message: 'msgHousingExpanded' } : {}),
   createEnterprise: (id, name) => set(s => {
-    const cost = id === 'depot' ? 500 : id === 'plant' ? 950 : id === 'droneAssembly' ? 450 : id === 'store' ? 300 : id === 'trainingCamp' ? 400 : Infinity
+    const cost = id === 'droneAssembly' ? 450 : id === 'store' ? 300 : id === 'trainingCamp' ? 400 : Infinity
     const cleanName = (id === 'store' ? name.trim() : name.trim() || (id === 'droneAssembly' ? 'Збірка дронів' : id === 'trainingCamp' ? 'Тренувальний табір' : '')).slice(0, 32)
     return s.money >= cost && !s.enterprises.includes(id) && cleanName.length >= 3 ? { money: s.money - cost, enterprises: [...s.enterprises, id], enterpriseNames: { ...s.enterpriseNames, [id]: cleanName } } : {}
   }),
@@ -476,7 +476,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 20,
+  name: 'reclaim-save-v1', version: 21,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -508,8 +508,14 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 17) old = { ...initial, ...old, partStock: { ...initial.partStock }, drones: 0, storeListings: [], trainingPlans: {}, assignments: Object.fromEntries(Object.entries(old.assignments ?? {}).map(([id, job]) => [id, (job as string) === 'maintenance' ? 'rest' : job])) as Record<string, Job>, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, training: { speed: 0, strength: 0, combat: 0 } }])) }
     if (version < 18) old = { ...initial, ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, w]) => [id, { ...w, sexCounts: { conventional: 0, oral: 0, anal: 0 } }])) }
     if (version < 19) old = { ...initial, ...old, officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number> }
-    if (version < 20) return { ...initial, ...old, bedroomPlaced: { dogCrate: 0, dogBed: 0 }, officeCagedNpcId: null }
-    return persisted as GameState
+    if (version < 20) old = { ...initial, ...old, bedroomPlaced: { dogCrate: 0, dogBed: 0 }, officeCagedNpcId: null }
+    if (version < 21) {
+      const enterprises = new Set(old.enterprises ?? ['farm'])
+      if (enterprises.delete('depot')) enterprises.add('droneAssembly')
+      if (enterprises.delete('plant')) enterprises.add('trainingCamp')
+      old = { ...old, enterprises: [...enterprises], enterpriseNames: { ...old.enterpriseNames, ...(enterprises.has('droneAssembly') && !old.enterpriseNames?.droneAssembly ? { droneAssembly: 'Збірка дронів' } : {}), ...(enterprises.has('trainingCamp') && !old.enterpriseNames?.trainingCamp ? { trainingCamp: 'Тренувальний табір' } : {}) } }
+    }
+    return old as GameState
   },
   partialize: s => ({ lang: s.lang, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
     money: s.money, food: s.food, feedDays: s.feedDays, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, prostheticStock: s.prostheticStock, partStock: s.partStock, drones: s.drones, storeListings: s.storeListings, trainingPlans: s.trainingPlans, officeStock: s.officeStock, officePlaced: s.officePlaced, bedroomPlaced: s.bedroomPlaced, officeCagedNpcId: s.officeCagedNpcId, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, journal: s.journal, activeEvent: s.activeEvent, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message, actionPhaseUsed: s.actionPhaseUsed, actionDay: s.actionDay, actionCounts: s.actionCounts })
