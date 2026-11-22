@@ -25,9 +25,9 @@ export type WorkerRoutine = Record<Phase, RoutineActivity>
 export const defaultRoutine: WorkerRoutine = { morning: 'rest', day: 'work', evening: 'rest', night: 'sleep' }
 export const calorieNeed = (worker: Worker) => Math.round((1500 + worker.body.weightKg * 10 + (worker.body.heightCm - 160) * 3) / 50) * 50
 export const plannedCalories = (worker: Worker) => humanFoods.reduce((sum, food) => sum + (worker.diet[food] ?? 0) * foodCalories[food], 0)
-export const currentActivity = (worker: Worker, phase: Phase, job: Job | undefined, day: number): RoutineActivity => worker.alive && worker.active && canWorkAtFarm(worker, day) && job && job !== 'rest' ? (worker.routine?.[phase] ?? defaultRoutine[phase]) : phase === 'night' ? 'sleep' : 'rest'
-export const currentStatus = (worker: Worker, phase: Phase, job: Job | undefined, day: number): string => phase === 'morning' && job && job !== 'rest' && currentActivity(worker, phase, job, day) === 'rest' && canWorkAtFarm(worker, day) ? 'activity_prepare' : `activity_${currentActivity(worker, phase, job, day)}`
-export const currentLocation = (worker: Worker, phase: Phase, job: Job | undefined, day: number, vet = false): string => currentActivity(worker, phase, job, day) === 'work' ? (vet ? 'vet' : job ?? 'rest') : worker.housing
+export const currentActivity = (worker: Worker, phase: Phase, job: Job | undefined, day: number): RoutineActivity => !worker.punishedInCage && worker.alive && worker.active && canWorkAtFarm(worker, day) && job && job !== 'rest' ? (worker.routine?.[phase] ?? defaultRoutine[phase]) : phase === 'night' ? 'sleep' : 'rest'
+export const currentStatus = (worker: Worker, phase: Phase, job: Job | undefined, day: number): string => worker.punishedInCage ? 'statusInCage' : phase === 'morning' && job && job !== 'rest' && currentActivity(worker, phase, job, day) === 'rest' && canWorkAtFarm(worker, day) ? 'activity_prepare' : `activity_${currentActivity(worker, phase, job, day)}`
+export const currentLocation = (worker: Worker, phase: Phase, job: Job | undefined, day: number, vet = false): string => worker.punishedInCage ? 'cage' : currentActivity(worker, phase, job, day) === 'work' ? (vet ? 'vet' : job ?? 'rest') : worker.housing
 export type Contract = 'paid' | 'foodOnly'
 export type ContractTerm = 30 | 90 | 'lifetime'
 export type ShopItem = AtbibGood
@@ -62,6 +62,7 @@ export interface Worker {
   defiance: number
   absenceCount: number
   housing: Housing
+  punishedInCage?: boolean
   savings: number
   modificationConsentAtSigning: boolean
   modificationDecision?: { procedureId: string; accepted: boolean; day: number }
@@ -167,7 +168,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   assign: (id, job) => set(s => {
     const w = s.workers[id]
-    if (s.phase !== 'morning' || !w?.alive || !w.active || (w.injuredUntilDay ?? 0) > s.day || s.vetDoctorId === id || (job !== 'rest' && hasUnfittedLimb(w))) return {}
+    if (s.phase !== 'morning' || !w?.alive || !w.active || w.punishedInCage || (w.injuredUntilDay ?? 0) > s.day || s.vetDoctorId === id || (job !== 'rest' && hasUnfittedLimb(w))) return {}
     if (!(['production', 'rest', 'layEggs', 'milking', 'droneAssembly', 'storeSales', 'training'] as Job[]).includes(job)) return {}
     if (job === 'layEggs' && !w.medicalEffects?.oviposition) return {}
     if (job === 'milking' && !w.medicalEffects?.lactation) return {}
@@ -210,7 +211,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   interact: (id, action) => set(s => {
     const w = s.workers[id]; if (!w?.alive || hasUnfittedLimb(w) || (!w.active && !['joke','adultJoke','flirt','romanceTalk','walk','hug','kiss','sex'].includes(action))) return {}
-    if (interactionRequirement(w, action, s.money, s.stocks.bread) || !get().canUseAction(action) || (action === 'sex' && (candidates.find(c => c.id === id)?.age ?? 0) < 18)) return {}
+    if (interactionRequirement(w, action, s.money, s.stocks.bread) || !get().canUseAction(action) || (action === 'sex' && (candidates.find(c => c.id === id)?.age ?? 0) < 18) || (action === 'punishCage' && w.housing !== 'cage' && occupied(s.workers, 'cage', id) >= s.cages)) return {}
     const next = { ...w }, changes: Partial<GameState> = {}
     const add = (key: 'health' | 'respect' | 'fear' | 'friendship' | 'love' | 'debauchery' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
     switch (action) {
@@ -223,6 +224,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       case 'standOrder': add('fear', 2); add('submission', 5); add('respect', -2); break
       case 'forceDance': add('fear', 4); add('submission', 7); add('friendship', -4); add('respect', -2); changes.reputation = clamp(s.reputation - 3, 0, 100); break
       case 'forceApology': add('fear', 3); add('submission', 5); add('respect', -6); break
+      case 'punishCage': next.housing = 'cage'; next.punishedInCage = true; add('fear', 5); add('respect', -8); changes.assignments = { ...s.assignments, [id]: 'rest' }; break
       case 'joke': add('friendship', 2); add('debauchery', 1); break
       case 'adultJoke': add('friendship', 3); add('debauchery', 3); break
       case 'flirt': add('friendship', 2); add('love', 3); add('debauchery', 2); break
@@ -279,7 +281,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   setHousing: (id, housing) => set(s => {
     const w = s.workers[id]
     if (!w?.alive || !w.active || hasUnfittedLimb(w) || w.housing === housing || occupied(s.workers, housing, id) >= (housing === 'cage' ? s.cages : s.huts * 2)) return {}
-    const next = { ...w, housing, trust: clamp(w.trust + (housing === 'hut' ? 5 : -8), 0, 100), respect: clamp(w.respect + (housing === 'hut' ? 5 : -8), 0, 100), friendship: clamp(w.friendship + (housing === 'hut' ? 3 : -3), 0, 100), fear: clamp(w.fear + (housing === 'hut' ? -2 : 5), 0, 100) }
+    const next = { ...w, housing, punishedInCage: false, trust: clamp(w.trust + (housing === 'hut' ? 5 : -8), 0, 100), respect: clamp(w.respect + (housing === 'hut' ? 5 : -8), 0, 100), friendship: clamp(w.friendship + (housing === 'hut' ? 3 : -3), 0, 100), fear: clamp(w.fear + (housing === 'hut' ? -2 : 5), 0, 100) }
     return { workers: { ...s.workers, [id]: next }, ...eventUpdate(s, id, housing === 'hut' ? 'moveToHut' : 'moveToCage', w, next) }
   }),
   reward: (id, amount) => set(s => s.workers[id]?.alive && s.workers[id]?.active && amount > 0 && amount <= 10 && s.money >= amount ? { money: s.money - amount, workers: { ...s.workers, [id]: { ...s.workers[id], savings: s.workers[id].savings + amount, totalReceivedFromPlayer: s.workers[id].totalReceivedFromPlayer + amount, trust: clamp(s.workers[id].trust + 2, 0, 100) } } } : {}),
