@@ -20,6 +20,7 @@ const features = [
   'changelogDoctorRoster',
   'changelogCrate',
   'changelogStats',
+  'changelogStarterEconomy',
 ] as const
 
 export function ChangelogScreen() {

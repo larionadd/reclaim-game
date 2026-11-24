@@ -868,5 +868,6 @@
   "reportStatusDogCrate": "Spent the day in a dog crate",
   "changelogCrate": "Housing cages and the manor dog crate are distinct: an NPC can work from a housing cage, but not while locked in the dog crate.",
   "needsTrust35": "Requires trust 35",
-  "changelogStats": "Kept essential physical, personal and contract stats; updated intimacy requirements."
+  "changelogStats": "Kept essential physical, personal and contract stats; updated intimacy requirements.",
+  "changelogStarterEconomy": "Starting capital increased to ₴500; early saves without sales receive a one-time top-up. Pig meat production has been balanced."
 }

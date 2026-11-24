@@ -50,7 +50,7 @@ try {
   assert.equal(state.lastReport.producedGoods.eggs, 4)
   assert.equal(state.lastReport.producedGoods.milk, 2)
   assert.equal(state.lastReport.producedGoods.cheese, 1)
-  assert.equal(state.lastReport.producedGoods.meat, 1)
+  assert.equal(state.lastReport.producedGoods.meat, 2)
   assert.deepEqual(errors, [])
   console.log('Livestock shop, feed consumption, worker gate and species production passed')
 } finally { await browser.close() }

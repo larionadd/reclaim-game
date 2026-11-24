@@ -141,9 +141,10 @@ interface GameState {
   listForSale: (good: SaleGood, quantity: number) => void; buildVet: () => void; appointVet: (id: string) => void
 }
 const order: Phase[] = ['morning', 'day', 'evening', 'night']
+const startingCapital = 500
 const initial = {
   lang: 'uk' as Lang, prologueSeen: false, playerName: 'Альфа', day: 1, phase: 'morning' as Phase, output: 0, wellbeing: 76, reputation: 58,
-  money: 120, food: 18, feedDays: 0, feedStock: { chickens: 0, pigs: 0, cattle: 0 }, livestock: { cattle: 0, pigs: 0, chickens: 0 }, staffCapacity: 1, cages: 1, barracks: 0, huts: 0, vodka: 0, enterprises: ['farm'], enterpriseNames: { farm: 'Ферма' },
+  money: startingCapital, food: 18, feedDays: 0, feedStock: { chickens: 0, pigs: 0, cattle: 0 }, livestock: { cattle: 0, pigs: 0, chickens: 0 }, staffCapacity: 1, cages: 1, barracks: 0, huts: 0, vodka: 0, enterprises: ['farm'], enterpriseNames: { farm: 'Ферма' },
   prostheticStock: {} as Record<string, number>,
   officeStock: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>, officePlaced: Object.fromEntries(officeGoods.map(id => [id, 0])) as Record<OfficeGood, number>,
   bedroomPlaced: Object.fromEntries(bedroomGoods.map(id => [id, 0])) as Record<BedroomGood, number>, officeCagedNpcId: null as string | null,
@@ -550,7 +551,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const productiveChickens = Math.min(fedChickens, farmWorkers.length * 8)
     const productivePigs = Math.min(fedPigs, farmWorkers.length * 2)
     const productiveCattle = Math.min(fedCattle, farmWorkers.length * 2)
-    const farmYield = { eggs: productiveChickens * 2, meat: s.day % 2 === 0 ? productivePigs : 0, milk: productiveCattle * 2, cheese: productiveCattle }
+    const farmYield = { eggs: productiveChickens * 2, meat: s.day % 2 === 0 ? productivePigs * 2 : 0, milk: productiveCattle * 2, cheese: productiveCattle }
     for (const good of farmGoods) {
       const quantity = farmYield[good]
       stocks[good] += quantity; producedUnits += quantity; producedGoods[good] += quantity
@@ -583,7 +584,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 30,
+  name: 'reclaim-save-v1', version: 31,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -650,6 +651,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       void _guilt; void _defiance; void _loyalty; void _respect; void _fear; void _friendship
       return [id, current]
     })) }
+    if (version < 31 && (old.day ?? 1) <= 7 && (old.totalSales ?? 0) === 0 && (old.money ?? 0) < 200) old = { ...old, money: startingCapital }
     return old as GameState
   },
   partialize: s => ({ lang: s.lang, prologueSeen: s.prologueSeen, playerName: s.playerName, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
