@@ -1,0 +1,13 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'ua.reclaim.game'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'ua.reclaim.game'
+        minSdk 24
+        targetSdk 28
+        versionCode 1
+        versionName '1.0'
+    }
+}

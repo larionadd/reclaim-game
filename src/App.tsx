@@ -9,10 +9,11 @@ import { t } from './i18n'
 import { DailyReport } from './components/DailyReport'
 import { GameEventDialog } from './components/GameJournal'
 import { NpcRequestDialog } from './components/NpcRequestDialog'
+import { SettingsScreen } from './components/SettingsScreen'
 import './App.css'
 import './new-ui.css'
 
-type View = 'manor' | 'enterprises' | 'people' | 'medical' | 'smartphone'
+type View = 'manor' | 'enterprises' | 'people' | 'medical' | 'smartphone' | 'settings'
 const menu: { id: View; icon: React.ReactNode; key: string }[] = [
   { id: 'manor', icon: <Home size={20}/>, key: 'home' },
   { id: 'enterprises', icon: <Wheat size={20}/>, key: 'enterprises' },
@@ -39,12 +40,12 @@ export default function App() {
       <div className="game-logo"><div className="logo-mark"><Wheat size={29}/></div><div><strong>RECLAIM</strong><small>{tr('rebuildingUkraine')}</small></div></div>
       <nav className="side-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
       <div className="side-rule"/><div className="nav-section-title">{tr('management')}</div>
-      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}</nav>
+      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}<button className={view === 'settings' ? 'selected' : ''} onClick={() => open('settings')}><Settings2 size={20}/><span>{tr('settings')}</span></button></nav>
       <div className="sidebar-footer"><span>{tr('sandbox')}</span><p>{tr('sideMotto')}</p><button onClick={g.toggleLang}><Globe2 size={17}/>{g.lang.toUpperCase()} ↔ {g.lang === 'uk' ? 'RU' : g.lang === 'ru' ? 'EN' : 'UK'}</button></div>
     </aside>
 
     <div className="game-main">
-      <header className="game-topbar"><div className="top-location"><button className="mobile-menu" onClick={() => setMenuOpen(x => !x)} aria-label={tr('nav')}><Menu size={22}/></button><span className="top-era">{tr('rebuildingUkraine')}</span><i/><span>{tr('season')}</span><i/><span><CalendarDays size={17}/>{tr('dayLabel')} {g.day}</span></div><div className="top-values"><span><ShieldCheck size={18}/>{tr('reputation')}: <b>{g.reputation}</b></span><span><Users size={18}/>{living}/{g.staffCapacity}</span><span><Coins size={18}/>{g.money}</span><button className="top-language" onClick={g.toggleLang} aria-label={tr('language')}><Globe2 size={18}/>{g.lang.toUpperCase()}</button><button className="top-settings" onClick={() => { if (window.confirm(`${tr('reset')}?`)) g.reset() }} aria-label={tr('reset')}><Settings2 size={20}/></button></div></header>
+      <header className="game-topbar"><div className="top-location"><button className="mobile-menu" onClick={() => setMenuOpen(x => !x)} aria-label={tr('nav')}><Menu size={22}/></button><span className="top-era">{tr('rebuildingUkraine')}</span><i/><span>{tr('season')}</span><i/><span><CalendarDays size={17}/>{tr('dayLabel')} {g.day}</span></div><div className="top-values"><span><ShieldCheck size={18}/>{tr('reputation')}: <b>{g.reputation}</b></span><span><Users size={18}/>{living}/{g.staffCapacity}</span><span><Coins size={18}/>{g.money}</span><button className="top-language" onClick={g.toggleLang} aria-label={tr('language')}><Globe2 size={18}/>{g.lang.toUpperCase()}</button></div></header>
       <div className="time-track"><div className="time-phases">{(['morning','day','evening','night'] as const).map((phase, index) => <span key={phase} className={g.phase === phase ? 'current' : ''}>{index === 0 ? <Sunrise/> : index === 1 ? <Sun/> : index === 2 ? <Sunset/> : <Moon/>}{tr(phase)}</span>)}</div><button className="quarter-top" onClick={g.advance}>{tr('nextPhase')} →</button></div>
       <main className="game-content">
         {g.phase === 'morning' && <DailyReport/>}
@@ -53,6 +54,7 @@ export default function App() {
         {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
         {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}
+        {view === 'settings' && <SettingsScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>

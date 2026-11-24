@@ -29,3 +29,5 @@ qa/
 *.sln
 *.sw?
 !public/art/prosthetics/*.png
+
+releases/
