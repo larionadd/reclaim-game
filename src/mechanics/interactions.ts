@@ -22,21 +22,19 @@ export function interactionRequirement(w: Worker, action: InteractionAction, mon
     case 'extraFood': return w.contract !== 'foodOnly' ? 'needsFoodContract' : bread < 1 ? 'needsBread' : null
     case 'fine': return w.contract !== 'paid' ? 'needsPaidContract' : w.savings < 1 ? 'needsSavings' : null
     case 'hit': case 'dismiss': case 'joke': return null
-    case 'standOrder': return w.fear < 20 ? 'needsFear20' : null
-    case 'forceDance': return w.fear < 35 ? 'needsFear35' : w.submission < 15 ? 'needsSubmission15' : null
-    case 'forceApology': return w.fear < 50 ? 'needsFear50' : w.submission < 30 ? 'needsSubmission30' : null
+    case 'standOrder': return null
+    case 'forceDance': return w.submission < 15 ? 'needsSubmission15' : null
+    case 'forceApology': return w.submission < 30 ? 'needsSubmission30' : null
     case 'punishCage': return w.punishedInCage ? 'alreadyInCage' : null
     case 'punishKneel': return w.punishedKneeling ? 'alreadyKneeling' : null
     case 'endKneeling': return w.punishedKneeling ? null : 'notKneeling'
-    case 'adultJoke': return w.friendship < 20 ? 'needsFriendship20' : w.debauchery < 25 ? 'needsDebauchery25' : w.fear >= 35 ? 'needsFearBelow35' : null
-    case 'flirt': return w.friendship < 35 ? 'needsFriendship35' : w.debauchery < 35 ? 'needsDebauchery35' : w.fear >= 25 ? 'needsFearBelow25' : null
-    case 'romanceTalk': return w.friendship < 45 ? 'needsFriendship45' : w.love < 15 ? 'needsLove15' : w.fear >= 25 ? 'needsFearBelow25' : null
-    case 'walk': return w.friendship < 35 && w.respect < 50 ? 'needsWalk' : null
-    case 'hug': return w.friendship < 55 ? 'needsFriendship55' : w.fear >= 35 ? 'needsFearBelow35' : null
-    case 'kiss': return w.friendship < 70 ? 'needsFriendship70' : w.love < 55 ? 'needsLove55' : w.fear >= 20 ? 'needsFearBelow20' : null
+    case 'adultJoke': return w.debauchery < 25 ? 'needsDebauchery25' : null
+    case 'flirt': return w.debauchery < 35 ? 'needsDebauchery35' : null
+    case 'romanceTalk': return w.love < 15 ? 'needsLove15' : null
+    case 'walk': return null
+    case 'hug': return w.trust < 35 ? 'needsTrust35' : null
+    case 'kiss': return w.love < 55 ? 'needsLove55' : null
   }
 }
 
-export const thresholdHints: Partial<Record<InteractionAction, string>> = {
-  standOrder: 'hintStandOrder', forceDance: 'hintForceDance', forceApology: 'hintForceApology', adultJoke: 'hintAdultJoke', flirt: 'hintFlirt', romanceTalk: 'hintRomanceTalk', walk: 'hintWalk', hug: 'hintHug', kiss: 'hintKiss'
-}
+export const thresholdHints: Partial<Record<InteractionAction, string>> = {}

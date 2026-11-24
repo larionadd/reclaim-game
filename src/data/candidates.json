@@ -18,9 +18,6 @@
       "en": "She used to work as a blogger. Now she is looking for work on the farm and learning new tasks."
     },
     "image": "/art/portraits/daria.jpg",
-    "skill": 1,
-    "language": 5,
-    "motivation": 70,
     "availableFromDay": 1,
     "traits": [
       "ambitious",
@@ -53,9 +50,6 @@
       "en": "She worked as a fashion model. After losing her contracts, she is looking for stable work and is ready to learn new tasks."
     },
     "image": "/art/portraits/nicole.jpg",
-    "skill": 2,
-    "language": 4,
-    "motivation": 72,
     "availableFromDay": 1,
     "traits": [
       "ambitious",
@@ -88,9 +82,6 @@
       "en": "A red-haired, green-eyed former performer looking for steady farm work. She is used to public attention but is still learning animal care."
     },
     "image": "/art/portraits/yulia-initial.jpg",
-    "skill": 1,
-    "language": 3,
-    "motivation": 68,
     "availableFromDay": 1,
     "traits": [
       "ambitious",
@@ -123,9 +114,6 @@
       "en": "She used to work as a model. Now she is looking for new work and is ready to learn farm tasks."
     },
     "image": "/art/portraits/diana.jpg",
-    "skill": 1,
-    "language": 4,
-    "motivation": 70,
     "availableFromDay": 1,
     "traits": [
       "ambitious",

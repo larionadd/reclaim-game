@@ -676,7 +676,7 @@
   "story_refuseDuty": "The worker reported but refused the assigned task. No output or pay was recorded for the shift.",
   "reportNoPayDiscipline": "No pay was accrued for the missed or refused shift",
   "hintSex": "Love ≥80, friendship ≥60, fear <20, age ≥18",
-  "intimacyRelationshipHint": "Age ≥18, love ≥80, friendship ≥60, fear <20.",
+  "intimacyRelationshipHint": "Age 18+; love >80 and debauchery >50, or submission >80 and debauchery >10.",
   "story_sex": "You both chose closeness. The rest of the evening remained between you.",
   "needsLoveOrFear81": "Requires love ≥80, friendship ≥60, and fear <20",
   "sexPressure": "Proposal under pressure",
@@ -866,5 +866,7 @@
   "changelogDoctorRoster": "Four NPCs remain; any worker can be a doctor. Bimbofication changes the chance of a successful operation.",
   "statusInDogCrate": "In dog crate",
   "reportStatusDogCrate": "Spent the day in a dog crate",
-  "changelogCrate": "Housing cages and the manor dog crate are distinct: an NPC can work from a housing cage, but not while locked in the dog crate."
+  "changelogCrate": "Housing cages and the manor dog crate are distinct: an NPC can work from a housing cage, but not while locked in the dog crate.",
+  "needsTrust35": "Requires trust 35",
+  "changelogStats": "Kept essential physical, personal and contract stats; updated intimacy requirements."
 }
