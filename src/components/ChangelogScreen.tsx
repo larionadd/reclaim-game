@@ -16,6 +16,7 @@ const features = [
   'changelogShopTabs',
   'changelogDailyPopup',
   'changelogPlayerName',
+  'changelogLivestock',
 ] as const
 
 export function ChangelogScreen() {
