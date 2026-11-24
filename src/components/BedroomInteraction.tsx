@@ -7,7 +7,7 @@ import { t } from '../i18n'
 import { Portrait } from './Portrait'
 import { AdultToyActions } from './AdultToyActions'
 
-const intimacy: BedroomAction[] = ['gentleIntimacy', 'passionateIntimacy', 'privateNight', 'oralSex', 'analSex']
+const intimacy: BedroomAction[] = ['oralSex', 'analSex']
 const punishment: BedroomAction[] = ['reprimand', 'extraDuty']
 
 export function BedroomInteraction() {

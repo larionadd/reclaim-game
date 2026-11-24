@@ -25,7 +25,7 @@ export const npcRequests: NpcRequest[] = [
   { id: 'futurePlans', accept: { trust: 4 }, decline: {} },
   { id: 'firstName', accept: { friendship: 2 }, decline: { respect: 1 } },
   { id: 'kissRequest', minLove: 31, adult: true, accept: { love: 3 }, decline: { trust: 1 } },
-  { id: 'privateNightRequest', minLove: 81, adult: true, accept: { love: 3, trust: 2 }, decline: { trust: 1 } },
+  { id: 'sharedGarden', minLove: 81, accept: { love: 3, trust: 2 }, decline: { trust: 1 } },
   { id: 'oralRequest', minLove: 81, adult: true, accept: { love: 2, trust: 2 }, decline: {} },
   { id: 'analRequest', minLove: 81, adult: true, accept: { trust: 3 }, decline: {} },
   { id: 'boundariesTalk', adult: true, accept: { trust: 4, love: 1 }, decline: { trust: 1 } },

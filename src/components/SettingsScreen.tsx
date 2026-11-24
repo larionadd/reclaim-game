@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-export function SettingsScreen() {
+export function SettingsScreen({ onNewGame }: { onNewGame: () => void }) {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
   const fileRef = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState('')
@@ -47,7 +47,7 @@ export function SettingsScreen() {
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   const requestImport = () => window.ReclaimAndroid ? window.ReclaimAndroid.importSave() : fileRef.current?.click()
-  const resetGame = () => { if (window.confirm(tr('resetConfirm'))) { g.reset(); setMessage(tr('saveReset')) } }
+  const resetGame = () => { if (window.confirm(tr('resetConfirm'))) { const lang = g.lang; g.reset(); g.setLang(lang); setMessage(tr('saveReset')); onNewGame() } }
 
   return <div className="settings-page"><header><h1>{tr('settings')}</h1><p>{tr('settingsIntro')}</p></header><section className="manor-panel"><h2>{tr('saveManagement')}</h2><p>{tr('autosaveHint')}</p><div className="settings-actions"><button onClick={saveNow}><Save size={18}/>{tr('saveNow')}</button><button onClick={exportSave}><Download size={18}/>{tr('saveExport')}</button><button onClick={requestImport}><Upload size={18}/>{tr('saveImport')}</button></div><input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={async event => { const file = event.target.files?.[0]; if (file) await importText(await file.text()); event.target.value = '' }}/>{message && <p role="status" className="settings-message">{message}</p>}</section><section className="manor-panel"><h2>{tr('newGame')}</h2><p>{tr('newGameHint')}</p><button className="settings-reset" onClick={resetGame}><RotateCcw size={18}/>{tr('reset')}</button></section></div>
 }

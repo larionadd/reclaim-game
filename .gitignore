@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 public/art/**/*.png
+!public/art/reclaim-logo.png
 qa-*.png
 concept-*.png
 .chrome-concept-profile/

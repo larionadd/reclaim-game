@@ -11,6 +11,8 @@ import { GameEventDialog } from './components/GameJournal'
 import { NpcRequestDialog } from './components/NpcRequestDialog'
 import { SettingsScreen } from './components/SettingsScreen'
 import { ChangelogScreen } from './components/ChangelogScreen'
+import { PrologueDialog } from './components/PrologueDialog'
+import { TitleScreen } from './components/TitleScreen'
 import './App.css'
 import './new-ui.css'
 
@@ -25,6 +27,7 @@ const menu: { id: View; icon: React.ReactNode; key: string }[] = [
 
 export default function App() {
   const g = useGame()
+  const [screen, setScreen] = useState<'title' | 'prologue' | 'game'>('title')
   const [view, setView] = useState<View>('manor')
   const [workplaceWorkerId, setWorkplaceWorkerId] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -36,9 +39,20 @@ export default function App() {
   const living = g.hired.filter(id => g.workers[id]?.alive && g.workers[id]?.active).length
   const visibleMenu = menu
 
+  const canContinue = (g.prologueSeen || g.day > 1 || g.hired.length > 0) && !!localStorage.getItem('reclaim-save-v1')
+  const newGame = () => {
+    if (canContinue && !window.confirm(tr('resetConfirm'))) return
+    const lang = g.lang
+    g.reset()
+    g.setLang(lang)
+    setScreen('prologue')
+  }
+  if (screen === 'title') return <TitleScreen canContinue={canContinue} onNewGame={newGame} onContinue={() => { g.finishPrologue(); setScreen('game') }} onLoaded={() => setScreen('game')}/>
+  if (screen === 'prologue') return <PrologueDialog onBegin={() => { g.finishPrologue(); setScreen('game') }}/>
+
   return <div className="game-shell">
     <aside className={`game-sidebar ${menuOpen ? 'open' : ''}`}>
-      <div className="game-logo"><div className="logo-mark"><Wheat size={29}/></div><div><strong>RECLAIM</strong><small>{tr('rebuildingUkraine')}</small></div></div>
+      <div className="game-logo"><div className="logo-mark"><Wheat size={29}/></div><div><img className="game-logo-wordmark" src={`${import.meta.env.BASE_URL}art/reclaim-logo.png`} alt="RECLAIM"/><small>{tr('rebuildingUkraine')}</small></div></div>
       <nav className="side-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
       <div className="side-rule"/><div className="nav-section-title">{tr('management')}</div>
       <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}<button className={view === 'settings' ? 'selected' : ''} onClick={() => open('settings')}><Settings2 size={20}/><span>{tr('settings')}</span></button><button className={view === 'changelog' ? 'selected' : ''} onClick={() => open('changelog')}><History size={20}/><span>{tr('changelog')}</span></button></nav>
@@ -55,7 +69,7 @@ export default function App() {
         {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
         {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}
-        {view === 'settings' && <SettingsScreen/>}
+        {view === 'settings' && <SettingsScreen onNewGame={() => setScreen('prologue')}/>}
         {view === 'changelog' && <ChangelogScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
