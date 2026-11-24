@@ -10,6 +10,8 @@ const features = [
   'changelogRelationships',
   'changelogEvents',
   'changelogSave',
+  'changelogNewNpc',
+  'changelogNpcStates',
 ] as const
 
 export function ChangelogScreen() {
@@ -17,11 +19,11 @@ export function ChangelogScreen() {
   const tr = (key: string) => t(lang, key)
 
   return <div className="changelog-page">
-    <header><span className="changelog-version">{tr('version')} 1.1</span><h1>{tr('changelog')}</h1></header>
-    <article className="manor-panel changelog-entry"><h2>{tr('changelogUpdate11')}</h2><ul><li>{tr('changelogTitleScreen')}</li><li>{tr('changelogPrologue')}</li><li>{tr('changelogNpcActions')}</li></ul></article>
+    <header><span className="changelog-version">{tr('version')} 0.1</span><h1>{tr('changelog')}</h1></header>
     <article className="manor-panel changelog-entry">
       <h2>{tr('changelogFirstRelease')}</h2>
       <p>{tr('changelogIntro')}</p>
+      <ul><li>{tr('changelogTitleScreen')}</li><li>{tr('changelogPrologue')}</li><li>{tr('changelogNpcActions')}</li></ul>
       <h3>{tr('changelogPlayable')}</h3>
       <ul>{features.map(key => <li key={key}>{tr(key)}</li>)}</ul>
     </article>

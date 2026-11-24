@@ -12,6 +12,7 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
   const phase = useGame(state => state.phase)
   const job = useGame(state => state.assignments[person.id])
   const working = useGame(state => !!state.workers[person.id]?.active)
+  const clothing = useGame(state => state.workers[person.id]?.clothing)
   const operations = useGame(state => state.workers[person.id]?.operations)
   const variants = portraitVariants[person.id]
   const dariaOperationImage = person.id === 'daria'
@@ -21,7 +22,7 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
         ? '/art/portraits/daria-lactation.jpg'
         : null
     : null
-  const image = dariaOperationImage ?? (variants && outfit === 'sleepwear'
+  const image = (person.id === 'yulia' && clothing === 'unclothed' ? '/art/portraits/yulia.jpg' : null) ?? dariaOperationImage ?? (variants && outfit === 'sleepwear'
     ? working && job && job !== 'rest' && (phase === 'evening' || phase === 'night') ? variants.dirtyUnderwear : variants.sleepwear
     : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
       : person.image)

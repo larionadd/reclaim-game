@@ -13,6 +13,7 @@ import { SettingsScreen } from './components/SettingsScreen'
 import { ChangelogScreen } from './components/ChangelogScreen'
 import { PrologueDialog } from './components/PrologueDialog'
 import { TitleScreen } from './components/TitleScreen'
+import { ArrivalDialog } from './components/ArrivalDialog'
 import './App.css'
 import './new-ui.css'
 
@@ -77,5 +78,6 @@ export default function App() {
     <nav className="bottom-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)} aria-label={tr(item.key)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
     <GameEventDialog/>
     <NpcRequestDialog/>
+    <ArrivalDialog/>
   </div>
 }

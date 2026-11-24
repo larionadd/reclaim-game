@@ -1,0 +1,12 @@
+.arrival-overlay{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;padding:18px;background:#080b08d9;backdrop-filter:blur(5px)}
+.arrival-dialog{width:min(760px,100%);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid #a18350;border-radius:12px;background:#20271d;color:#eee2c9;box-shadow:0 24px 80px #000c}
+.arrival-scene{display:block;width:100%;aspect-ratio:16/9;max-height:320px;object-fit:cover}
+.arrival-content,.contract-notice{padding:24px}
+.arrival-kicker{display:block;color:#dfb778;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.arrival-dialog h2{font:700 clamp(25px,4vw,35px) Georgia,serif;color:#f6e7c8;margin:9px 0 14px}
+.arrival-dialog p{font-size:15px;line-height:1.65;color:#e2d6bd;margin:12px 0 19px}
+.arrival-dialog .arrival-name{font:700 19px Georgia,serif;color:#eac686}
+.arrival-person{display:flex;align-items:center;gap:12px;margin:12px 0}.arrival-person .portrait-stack{width:60px;height:78px;flex:none}.arrival-person strong{font:700 19px Georgia,serif}
+.arrival-dialog button{display:block;margin:18px 0 0 auto;padding:10px 20px;border:1px solid #c39651;border-radius:6px;background:#755324;color:#fff0d0;cursor:pointer}
+.contract-notice{width:min(500px,100%)}
+@media(max-width:650px){.arrival-overlay{padding:0}.arrival-dialog{width:100%;max-height:100dvh;border-radius:0;border:0}.arrival-scene{max-height:220px}.arrival-content,.contract-notice{padding:20px}.arrival-dialog p{font-size:14px}}
