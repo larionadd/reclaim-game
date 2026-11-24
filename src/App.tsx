@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, CalendarDays, ClipboardList, Coins, Globe2, HeartPulse, Home, MapPin, Menu, Moon, Settings2, ShieldCheck, Smartphone, Stethoscope, Sun, Sunrise, Sunset, Users, Wheat } from 'lucide-react'
+import { BookOpen, CalendarDays, ClipboardList, Coins, Globe2, HeartPulse, History, Home, MapPin, Menu, Moon, Settings2, ShieldCheck, Smartphone, Stethoscope, Sun, Sunrise, Sunset, Users, Wheat } from 'lucide-react'
 import { EnterprisesScreen } from './components/EnterprisesScreen'
 import { ManorScreen } from './components/ManorScreen'
 import { SmartphoneScreen } from './components/SmartphoneScreen'
@@ -10,10 +10,11 @@ import { DailyReport } from './components/DailyReport'
 import { GameEventDialog } from './components/GameJournal'
 import { NpcRequestDialog } from './components/NpcRequestDialog'
 import { SettingsScreen } from './components/SettingsScreen'
+import { ChangelogScreen } from './components/ChangelogScreen'
 import './App.css'
 import './new-ui.css'
 
-type View = 'manor' | 'enterprises' | 'people' | 'medical' | 'smartphone' | 'settings'
+type View = 'manor' | 'enterprises' | 'people' | 'medical' | 'smartphone' | 'settings' | 'changelog'
 const menu: { id: View; icon: React.ReactNode; key: string }[] = [
   { id: 'manor', icon: <Home size={20}/>, key: 'home' },
   { id: 'enterprises', icon: <Wheat size={20}/>, key: 'enterprises' },
@@ -40,7 +41,7 @@ export default function App() {
       <div className="game-logo"><div className="logo-mark"><Wheat size={29}/></div><div><strong>RECLAIM</strong><small>{tr('rebuildingUkraine')}</small></div></div>
       <nav className="side-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
       <div className="side-rule"/><div className="nav-section-title">{tr('management')}</div>
-      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}<button className={view === 'settings' ? 'selected' : ''} onClick={() => open('settings')}><Settings2 size={20}/><span>{tr('settings')}</span></button></nav>
+      <nav className="side-nav secondary" aria-label={tr('management')}><button onClick={() => open('manor')}><ClipboardList size={20}/><span>{tr('office')}</span></button><button onClick={() => open('enterprises')}><MapPin size={20}/><span>{tr('enterprises')}</span></button>{g.vetBuilt && <button onClick={() => open('medical')}><HeartPulse size={20}/><span>{tr('vetPost')}</span></button>}<button className={view === 'settings' ? 'selected' : ''} onClick={() => open('settings')}><Settings2 size={20}/><span>{tr('settings')}</span></button><button className={view === 'changelog' ? 'selected' : ''} onClick={() => open('changelog')}><History size={20}/><span>{tr('changelog')}</span></button></nav>
       <div className="sidebar-footer"><span>{tr('sandbox')}</span><p>{tr('sideMotto')}</p><button onClick={g.toggleLang}><Globe2 size={17}/>{g.lang.toUpperCase()} ↔ {g.lang === 'uk' ? 'RU' : g.lang === 'ru' ? 'EN' : 'UK'}</button></div>
     </aside>
 
@@ -55,6 +56,7 @@ export default function App() {
         {view === 'medical' && <MedicalScreen/>}
         {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}
         {view === 'settings' && <SettingsScreen/>}
+        {view === 'changelog' && <ChangelogScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>
