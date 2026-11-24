@@ -869,5 +869,12 @@
   "changelogCrate": "Housing cages and the manor dog crate are distinct: an NPC can work from a housing cage, but not while locked in the dog crate.",
   "needsTrust35": "Requires trust 35",
   "changelogStats": "Kept essential physical, personal and contract stats; updated intimacy requirements.",
-  "changelogStarterEconomy": "Starting capital increased to ₴500; early saves without sales receive a one-time top-up. Pig meat production has been balanced."
+  "changelogStarterEconomy": "Starting capital increased to ₴500; early saves without sales receive a one-time top-up. Pig meat production has been balanced.",
+  "navPlaces": "Places",
+  "navOther": "More",
+  "officeCage": "Put in dog crate",
+  "officeRelease": "Release from dog crate",
+  "story_officeCage": "{player} rises from the desk and nods toward the metal dog cage standing in the corner of the office. {npc} shifts her gaze from the cage to {player} but does not move. He repeats the order. She walks over slowly, lowers herself to her knees and climbs inside, ducking her head under the low top. {player} closes the door, the latch clicks. The key turns in the lock. {npc} sits down on the floor of the cage, wrapping her arms around her knees. {player} pockets the key, returns to the desk and sits down. The office is quiet again, only the clock ticking.",
+  "story_officeRelease": "{player} unlocks the dog crate in the office. {npc} steps out and stands up.",
+  "changelogNavigationScenes": "Updated the navigation and header. Office actions now open in popups; added a dog crate scene using the player and NPC names."
 }

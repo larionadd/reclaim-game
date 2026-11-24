@@ -21,6 +21,7 @@ const features = [
   'changelogCrate',
   'changelogStats',
   'changelogStarterEconomy',
+  'changelogNavigationScenes',
 ] as const
 
 export function ChangelogScreen() {

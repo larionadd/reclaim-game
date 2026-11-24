@@ -456,10 +456,10 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   officeCageAction: (id, action) => set(s => {
     const worker = s.workers[id]
-    if (action === 'release') return s.officeCagedNpcId === id ? { officeCagedNpcId: null } : {}
+    if (action === 'release') return s.officeCagedNpcId === id && worker ? { officeCagedNpcId: null, ...eventUpdate(s, id, 'officeRelease', worker, worker) } : {}
     const occupied = s.officeCagedNpcId && s.workers[s.officeCagedNpcId]?.alive && s.workers[s.officeCagedNpcId]?.active
     if (!worker?.alive || !worker.active || occupied || (s.officePlaced.dogCrate ?? 0) < 1 || !get().canUseAction('officeCage')) return {}
-    return { officeCagedNpcId: id, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), officeCage: (s.actionDay === s.day ? s.actionCounts.officeCage ?? 0 : 0) + 1 } }
+    return { officeCagedNpcId: id, actionPhaseUsed: s.phase, actionDay: s.day, actionCounts: { ...(s.actionDay === s.day ? s.actionCounts : {}), officeCage: (s.actionDay === s.day ? s.actionCounts.officeCage ?? 0 : 0) + 1 }, ...eventUpdate(s, id, 'officeCage', worker, worker) }
   }),
   listForSale: (good, quantity) => set(s => {
     const count = Math.floor(quantity)
