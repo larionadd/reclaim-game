@@ -13,9 +13,15 @@ export function canReceiveProcedure(id: string, worker: Worker, procedure: Medic
   return true
 }
 
-export function resolveOperationOutcome(procedure: MedicalProcedure, roll: number): OperationOutcome {
-  if (roll < procedure.fatalityRisk) return 'death'
-  if (roll < procedure.fatalityRisk + procedure.disabilityRisk) return 'disability'
-  if (roll < procedure.fatalityRisk + procedure.disabilityRisk + procedure.complicationRisk) return 'complication'
-  return 'success'
+export const operationSuccessChance = (bimbofication: number): number => Math.max(0, 1 - Math.min(10, Math.max(0, bimbofication)) * .1)
+
+export function resolveOperationOutcome(procedure: MedicalProcedure, roll: number, bimbofication = 0): OperationOutcome {
+  const successChance = operationSuccessChance(bimbofication)
+  if (roll < successChance) return 'success'
+  const failureRoll = successChance < 1 ? (roll - successChance) / (1 - successChance) : 0
+  const riskTotal = procedure.fatalityRisk + procedure.disabilityRisk + procedure.complicationRisk
+  if (riskTotal <= 0) return 'complication'
+  if (failureRoll < procedure.fatalityRisk / riskTotal) return 'death'
+  if (failureRoll < (procedure.fatalityRisk + procedure.disabilityRisk) / riskTotal) return 'disability'
+  return 'complication'
 }

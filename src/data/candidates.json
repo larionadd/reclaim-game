@@ -1,283 +1,142 @@
 [
   {
-    "id": "alisa",
-    "age": 18,
+    "id": "daria",
+    "age": 25,
     "name": {
-      "uk": "Аліса Морозова",
-      "ru": "Алиса Морозова",
-      "en": "Alisa Morozova"
+      "uk": "Дарія",
+      "ru": "Дарья",
+      "en": "Daria"
     },
     "role": {
-      "uk": "Помічниця тваринника",
-      "ru": "Помощница животновода",
-      "en": "Livestock assistant"
+      "uk": "Колишня блогерка",
+      "ru": "Бывшая блогерка",
+      "en": "Former blogger"
     },
     "bio": {
-      "uk": "До війни жила з матір’ю у невеликому містечку. Після евакуації доглядала покинутих тварин у притулку. Їде за контрактом, щоб накопичити на навчання ветеринарії. Обережно ставиться до обіцянок і хоче бачити умови письмово.",
-      "ru": "До войны жила с матерью в небольшом городе. После эвакуации ухаживала за брошенными животными в приюте. Едет по контракту, чтобы накопить на обучение ветеринарии. Осторожно относится к обещаниям и хочет видеть условия письменно.",
-      "en": "She lived with her mother in a small town before the war. After evacuation, she cared for abandoned animals at a shelter. She wants to save for veterinary training and asks to see every term in writing."
+      "uk": "Раніше працювала блогеркою. Тепер шукає роботу на фермі й вчиться нових справ.",
+      "ru": "Раньше работала блогером. Теперь ищет работу на ферме и осваивает новые обязанности.",
+      "en": "She used to work as a blogger. Now she is looking for work on the farm and learning new tasks."
     },
-    "image": "/art/portraits/alisa.webp",
-    "skill": 2,
-    "language": 2,
-    "motivation": 73,
+    "image": "/art/portraits/daria.jpg",
+    "skill": 1,
+    "language": 5,
+    "motivation": 70,
     "availableFromDay": 1,
     "traits": [
-      "cautious",
-      "compassionate"
+      "ambitious",
+      "resilient"
     ],
     "body": {
-      "heightCm": 166,
-      "weightKg": 56,
-      "chestCm": 85,
-      "waistCm": 65,
-      "hipsCm": 91
-    }
-  },
-  {
-    "id": "ilyan",
-    "age": 19,
-    "name": {
-      "uk": "Ілля Руденко",
-      "ru": "Илья Руденко",
-      "en": "Ilya Rudenko"
-    },
-    "role": {
-      "uk": "Помічник механіка",
-      "ru": "Помощник механика",
-      "en": "Mechanic assistant"
-    },
-    "bio": {
-      "uk": "Виріс біля залізничного депо, де навчився ремонтувати насоси й генератори зі списаних деталей. Після війни підтримував роботу місцевої майстерні. Хоче заробити на власний набір інструментів і не любить наказів без пояснення.",
-      "ru": "Вырос у железнодорожного депо, где научился чинить насосы и генераторы из списанных деталей. После войны поддерживал местную мастерскую. Хочет заработать на инструменты и не любит приказов без объяснений.",
-      "en": "Raised near a rail depot, he learned to repair pumps and generators from discarded parts. He kept a local workshop running after the war. He wants his own tools and resists unexplained orders."
-    },
-    "image": "/art/portraits/ilyan.webp",
-    "skill": 3,
-    "language": 2,
-    "motivation": 61,
-    "availableFromDay": 1,
-    "traits": [
-      "inventive",
-      "stubborn"
-    ],
-    "body": {
-      "heightCm": 178,
-      "weightKg": 69,
-      "chestCm": 94,
+      "heightCm": 170,
+      "weightKg": 65,
+      "chestCm": 90,
       "waistCm": 75,
-      "hipsCm": 92
+      "hipsCm": 95
     }
   },
   {
-    "id": "mara",
-    "age": 29,
+    "id": "nicole",
+    "age": 24,
     "name": {
-      "ru": "Мара Вейл",
-      "en": "Mara Vale",
-      "uk": "Мара Вейл"
+      "uk": "Ніколь",
+      "ru": "Николь",
+      "en": "Nicole"
     },
     "role": {
-      "uk": "Зоотехнікиня",
-      "ru": "Зоотехник",
-      "en": "Livestock specialist"
+      "uk": "Модель",
+      "ru": "Модель",
+      "en": "Model"
     },
     "bio": {
-      "uk": "Працювала зоотехнікинею на господарстві, яке втратило більшість стада під час післявоєнної епідемії. Врятувала племінних корів і веде точні записи лікування. Уклала контракт, щоб підтримати молодшу сестру й отримати офіційний допуск до навчання.",
-      "ru": "Работала зоотехником на ферме, потерявшей большую часть стада во время послевоенной эпидемии. Спасла племенных коров и ведёт точные записи лечения. Заключила контракт, чтобы помогать младшей сестре и получить допуск к обучению.",
-      "en": "She worked as a livestock specialist on a farm devastated by a postwar epidemic. She saved the breeding cattle and kept careful treatment records. She signed a contract to support her younger sister and qualify for further training."
+      "uk": "Працювала моделлю. Після втрати контрактів шукає стабільну роботу та готова опановувати нові справи.",
+      "ru": "Работала моделью. После потери контрактов ищет стабильную работу и готова осваивать новые обязанности.",
+      "en": "She worked as a fashion model. After losing her contracts, she is looking for stable work and is ready to learn new tasks."
     },
-    "image": "/art/portraits/mara.webp",
-    "skill": 4,
-    "language": 3,
+    "image": "/art/portraits/nicole.jpg",
+    "skill": 2,
+    "language": 4,
     "motivation": 72,
     "availableFromDay": 1,
     "traits": [
-      "methodical",
-      "protective"
+      "ambitious",
+      "cautious"
     ],
     "body": {
-      "heightCm": 171,
-      "weightKg": 64,
-      "chestCm": 92,
-      "waistCm": 72,
-      "hipsCm": 98
+      "heightCm": 165,
+      "weightKg": 45,
+      "chestCm": 80,
+      "waistCm": 59,
+      "hipsCm": 83
     }
   },
   {
-    "id": "tomas",
-    "age": 38,
+    "id": "yulia",
+    "age": 30,
     "name": {
-      "uk": "Тимур Ковалевський",
-      "ru": "Тимур Ковалевский",
-      "en": "Timur Kovalevsky"
+      "uk": "Юлія",
+      "ru": "Юлия",
+      "en": "Yulia"
     },
     "role": {
-      "uk": "Досвідчений комірник",
-      "ru": "Опытный кладовщик",
-      "en": "Senior storekeeper"
+      "uk": "Колишня акторка фільмів для дорослих",
+      "ru": "Бывшая актриса фильмов для взрослых",
+      "en": "Former adult film performer"
     },
     "bio": {
-      "uk": "Дванадцять років вів облік продуктів і запчастин у зруйнованому промисловому районі. Його дружина й син живуть окремо; він хоче накопичити на спільне житло. Перевіряє кожну накладну і відстоює домовленості навіть перед керівником.",
-      "ru": "Двенадцать лет вёл учёт продуктов и деталей в разрушенном промышленном районе. Его жена и сын живут отдельно; он хочет накопить на общее жильё. Проверяет каждую накладную и отстаивает договорённости даже перед начальником.",
-      "en": "For twelve years he tracked food and spare parts in a damaged industrial district. His wife and son live elsewhere; he hopes to save for a shared home. He checks every delivery note and holds managers to their agreements."
+      "uk": "Рудоволоса, зеленоока акторка змінила професію й шукає стабільну роботу на фермі. До публічної уваги звикла, але догляду за худобою лише навчається.",
+      "ru": "Рыжеволосая, зеленоглазая актриса сменила профессию и ищет стабильную работу на ферме. К вниманию публики привыкла, но уходу за скотом только учится.",
+      "en": "A red-haired, green-eyed former performer looking for steady farm work. She is used to public attention but is still learning animal care."
     },
-    "image": "/art/portraits/tomas.webp",
-    "skill": 4,
-    "language": 4,
-    "motivation": 67,
-    "availableFromDay": 31,
-    "traits": [
-      "principled",
-      "resilient"
-    ],
-    "body": {
-      "heightCm": 181,
-      "weightKg": 82,
-      "chestCm": 103,
-      "waistCm": 88,
-      "hipsCm": 101
-    }
-  },
-  {
-    "id": "nora",
-    "age": 31,
-    "name": {
-      "ru": "Нора Сент",
-      "en": "Nora Sent",
-      "uk": "Нора Сент"
-    },
-    "role": {
-      "ru": "Медик",
-      "en": "Medic",
-      "uk": "Медикиня"
-    },
-    "bio": {
-      "ru": "Работала в полевом лазарете. Требует доступ к аптечке и журналу травм.",
-      "en": "Worked in a field clinic. Requires access to supplies and injury records.",
-      "uk": "Працювала в польовому шпиталі. Вимагає доступу до аптечки й журналу травм."
-    },
-    "image": "/art/portraits/nora.webp",
-    "skill": 4,
-    "language": 5,
-    "motivation": 78,
-    "availableFromDay": 61,
-    "traits": [
-      "resilient"
-    ],
-    "body": {
-      "heightCm": 168,
-      "weightKg": 61,
-      "chestCm": 89,
-      "waistCm": 70,
-      "hipsCm": 96
-    }
-  },
-  {
-    "id": "olena",
-    "age": 39,
-    "name": {
-      "uk": "Олена Кравець",
-      "ru": "Елена Кравец",
-      "en": "Elena Kravets"
-    },
-    "role": {
-      "uk": "Механікиня ферми",
-      "ru": "Механик фермы",
-      "en": "Farm mechanic"
-    },
-    "bio": {
-      "uk": "Налагоджує кормороздавачі та генератори. Хоче навчати молодших працівників.",
-      "ru": "Налаживает кормораздатчики и генераторы. Хочет обучать младших работников.",
-      "en": "Repairs feeders and generators. Wants to train junior workers."
-    },
-    "image": "/art/portraits/olena.webp",
-    "skill": 4,
-    "language": 4,
-    "motivation": 70,
-    "availableFromDay": 31,
-    "traits": [
-      "resilient"
-    ],
-    "body": {
-      "heightCm": 173,
-      "weightKg": 69,
-      "chestCm": 94,
-      "waistCm": 77,
-      "hipsCm": 99
-    }
-  },
-  {
-    "id": "serhii",
-    "age": 42,
-    "name": {
-      "uk": "Сергій Данін",
-      "ru": "Сергей Данин",
-      "en": "Sergei Danin"
-    },
-    "role": {
-      "uk": "Ветеринарний помічник",
-      "ru": "Ветеринарный помощник",
-      "en": "Veterinary assistant"
-    },
-    "bio": {
-      "uk": "Доглядає тварин і веде записи про здоров’я стада. Потребує чіткого графіка відпочинку.",
-      "ru": "Ухаживает за животными и ведёт записи о здоровье стада. Нуждается в чётком графике отдыха.",
-      "en": "Cares for animals and tracks herd health. Needs a clear rest schedule."
-    },
-    "image": "/art/portraits/serhii.webp",
-    "skill": 4,
+    "image": "/art/portraits/yulia-initial.jpg",
+    "skill": 1,
     "language": 3,
     "motivation": 68,
-    "availableFromDay": 31,
+    "availableFromDay": 1,
     "traits": [
+      "ambitious",
       "resilient"
     ],
     "body": {
-      "heightCm": 179,
-      "weightKg": 78,
-      "chestCm": 101,
-      "waistCm": 84,
-      "hipsCm": 98
+      "heightCm": 165,
+      "weightKg": 50,
+      "chestCm": 81,
+      "waistCm": 61,
+      "hipsCm": 89
     }
   },
   {
-    "id": "kateryna",
-    "age": 19,
-    "name": { "uk": "Катерина Лісова", "ru": "Екатерина Лесовая", "en": "Kateryna Lisova" },
-    "role": { "uk": "Помічниця тваринника", "ru": "Помощница животновода", "en": "Livestock assistant" },
-    "bio": { "uk": "Працювала у притулку для тварин після евакуації. Шукає постійну роботу й хоче навчитися доглядати велику отару.", "ru": "Работала в приюте для животных после эвакуации. Ищет постоянную работу и хочет научиться ухаживать за большой отарой.", "en": "She worked at an animal shelter after evacuation. She wants steady work and hopes to learn how to care for a large flock." },
-    "image": "/art/portraits/kateryna.webp",
-    "skill": 2, "language": 3, "motivation": 74, "availableFromDay": 1,
-    "traits": ["compassionate", "cautious"],
-    "body": { "heightCm": 165, "weightKg": 58, "chestCm": 86, "waistCm": 67, "hipsCm": 92 }
-  },
-  {
-    "id": "amara",
+    "id": "diana",
     "age": 23,
-    "name": { "uk": "Амара Окойє", "ru": "Амара Окойе", "en": "Amara Okoye" },
-    "role": { "uk": "Механікиня", "ru": "Механик", "en": "Mechanic" },
-    "bio": { "uk": "Після руйнування майстерні ремонтувала трактори для сусідніх господарств. Веде точний облік деталей і сперечається, коли ремонт відкладають.", "ru": "После разрушения мастерской ремонтировала тракторы для соседних хозяйств. Ведёт точный учёт деталей и спорит, когда ремонт откладывают.", "en": "After her workshop was destroyed, she repaired tractors for nearby farms. She keeps careful parts records and speaks up when repairs are delayed." },
-    "image": "/art/portraits/amara.webp",
-    "skill": 4, "language": 4, "motivation": 69, "availableFromDay": 1,
-    "traits": ["inventive", "principled"],
-    "body": { "heightCm": 172, "weightKg": 67, "chestCm": 91, "waistCm": 72, "hipsCm": 97 }
-  },
-  {
-    "id": "mei",
-    "age": 25,
-    "name": { "uk": "Мей Чен", "ru": "Мэй Чен", "en": "Mei Chen" },
-    "role": { "uk": "Медикиня", "ru": "Медик", "en": "Medic" },
-    "bio": { "uk": "Працювала у польовому медпункті й доглядала травмованих працівників. Наполягає на чистому інструменті та записі кожного випадку.", "ru": "Работала в полевом медпункте и ухаживала за травмированными работниками. Требует чистых инструментов и записи каждого случая.", "en": "She worked at a field aid post and cared for injured workers. She insists on clean instruments and a record of every case." },
-    "image": "/art/portraits/mei.webp",
-    "skill": 4, "language": 4, "motivation": 82, "availableFromDay": 1,
-    "traits": ["methodical", "compassionate"],
-    "body": { "heightCm": 162, "weightKg": 55, "chestCm": 84, "waistCm": 64, "hipsCm": 89 }
-  },
-  {"id": "sofia", "age": 20, "name": {"uk": "Софія Гринь", "ru": "София Гринь", "en": "Sofia Hryn"}, "role": {"uk": "Студентка агрономії", "ru": "Студентка агрономии", "en": "Agronomy student"}, "bio": {"uk": "Навчається на агрономку й взяла академічну перерву після евакуації. На фермі хоче вести облік кормів та практикуватися з тваринами. Записує результати кожної зміни.", "ru": "Учится на агронома и взяла академический отпуск после эвакуации. На ферме хочет вести учёт кормов и работать с животными. Записывает результаты каждой смены.", "en": "An agronomy student on leave after evacuation. She wants to track feed and gain practical experience with animals, recording the results of every shift."}, "image": "/art/portraits/sofia.webp", "skill": 2, "language": 4, "motivation": 77, "availableFromDay": 1, "traits": ["methodical", "compassionate"], "body": {"heightCm": 168, "weightKg": 60, "chestCm": 88, "waistCm": 69, "hipsCm": 95}},
-  {"id": "vira", "age": 18, "name": {"uk": "Віра Данилюк", "ru": "Вера Данилюк", "en": "Vira Danyliuk"}, "role": {"uk": "Акторка", "ru": "Актриса", "en": "Actress"}, "bio": {"uk": "Грала в молодіжному театрі, доки трупа не розпалася після евакуації. Шукає роботу на фермі; звикла виступати перед людьми, але догляду за тваринами лише навчається.", "ru": "Играла в молодёжном театре, пока труппа не распалась после эвакуации. Ищет работу на ферме; привыкла выступать перед людьми, но уходу за животными только учится.", "en": "She performed with a youth theatre before its company dissolved after evacuation. She seeks farm work; she is used to facing an audience but is still learning animal care."}, "image": "/art/portraits/vira.webp", "skill": 1, "language": 5, "motivation": 72, "availableFromDay": 1, "traits": ["ambitious", "resilient"], "body": {"heightCm": 164, "weightKg": 56, "chestCm": 85, "waistCm": 66, "hipsCm": 91}},
-  {"id": "daria", "age": 25, "name": {"uk": "Дарія", "ru": "Дарья", "en": "Daria"}, "role": {"uk": "Колишня блогерка", "ru": "Бывшая блогерка", "en": "Former blogger"}, "bio": {"uk": "Раніше працювала блогеркою. Тепер шукає роботу на фермі й вчиться нових справ.", "ru": "Раньше работала блогером. Теперь ищет работу на ферме и осваивает новые обязанности.", "en": "She used to work as a blogger. Now she is looking for work on the farm and learning new tasks."}, "image": "/art/portraits/daria.jpg", "skill": 1, "language": 5, "motivation": 70, "availableFromDay": 1, "traits": ["ambitious", "resilient"], "body": {"heightCm": 170, "weightKg": 65, "chestCm": 90, "waistCm": 75, "hipsCm": 95}},
-  {"id": "nicole", "age": 24, "name": {"uk": "Ніколь", "ru": "Николь", "en": "Nicole"}, "role": {"uk": "Модель", "ru": "Модель", "en": "Model"}, "bio": {"uk": "Працювала моделлю. Після втрати контрактів шукає стабільну роботу та готова опановувати нові справи.", "ru": "Работала моделью. После потери контрактов ищет стабильную работу и готова осваивать новые обязанности.", "en": "She worked as a fashion model. After losing her contracts, she is looking for stable work and is ready to learn new tasks."}, "image": "/art/portraits/nicole.jpg", "skill": 2, "language": 4, "motivation": 72, "availableFromDay": 1, "traits": ["ambitious", "cautious"], "body": {"heightCm": 165, "weightKg": 45, "chestCm": 80, "waistCm": 59, "hipsCm": 83}},
-  {"id": "yulia", "age": 30, "name": {"uk": "Юлія", "ru": "Юлия", "en": "Yulia"}, "role": {"uk": "Колишня акторка фільмів для дорослих", "ru": "Бывшая актриса фильмов для взрослых", "en": "Former adult film performer"}, "bio": {"uk": "Рудоволоса, зеленоока акторка змінила професію й шукає стабільну роботу на фермі. До публічної уваги звикла, але догляду за худобою лише навчається.", "ru": "Рыжеволосая, зеленоглазая актриса сменила профессию и ищет стабильную работу на ферме. К вниманию публики привыкла, но уходу за скотом только учится.", "en": "A red-haired, green-eyed former performer looking for steady farm work. She is used to public attention but is still learning animal care."}, "image": "/art/portraits/yulia-initial.jpg", "skill": 1, "language": 3, "motivation": 68, "availableFromDay": 1, "traits": ["ambitious", "resilient"], "body": {"heightCm": 165, "weightKg": 50, "chestCm": 81, "waistCm": 61, "hipsCm": 89}},
-  {"id": "diana", "age": 23, "name": {"uk": "Діана", "ru": "Диана", "en": "Diana"}, "role": {"uk": "Колишня модель", "ru": "Бывшая модель", "en": "Former model"}, "bio": {"uk": "Раніше працювала моделлю. Тепер шукає нову роботу й готова опановувати справи на фермі.", "ru": "Раньше работала моделью. Теперь ищет новую работу и готова осваивать дела на ферме.", "en": "She used to work as a model. Now she is looking for new work and is ready to learn farm tasks."}, "image": "/art/portraits/diana.jpg", "skill": 1, "language": 4, "motivation": 70, "availableFromDay": 1, "traits": ["ambitious", "cautious"], "body": {"heightCm": 170, "weightKg": 51, "chestCm": 84, "waistCm": 62, "hipsCm": 88}}
+    "name": {
+      "uk": "Діана",
+      "ru": "Диана",
+      "en": "Diana"
+    },
+    "role": {
+      "uk": "Колишня модель",
+      "ru": "Бывшая модель",
+      "en": "Former model"
+    },
+    "bio": {
+      "uk": "Раніше працювала моделлю. Тепер шукає нову роботу й готова опановувати справи на фермі.",
+      "ru": "Раньше работала моделью. Теперь ищет новую работу и готова осваивать дела на ферме.",
+      "en": "She used to work as a model. Now she is looking for new work and is ready to learn farm tasks."
+    },
+    "image": "/art/portraits/diana.jpg",
+    "skill": 1,
+    "language": 4,
+    "motivation": 70,
+    "availableFromDay": 1,
+    "traits": [
+      "ambitious",
+      "cautious"
+    ],
+    "body": {
+      "heightCm": 170,
+      "weightKg": 51,
+      "chestCm": 84,
+      "waistCm": 62,
+      "hipsCm": 88
+    }
+  }
 ]

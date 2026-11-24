@@ -35,6 +35,7 @@ export type ContractTerm = 30 | 90 | 'lifetime'
 export type ShopItem = AtbibGood
 export const shopPrices = atbibPrices
 export const vetDailyIncome = 25
+export const bimboLocked = (worker: Worker) => worker.bimbofication >= 10
 export type StoreGood = SaleGood | 'drone'
 export interface StoreListing { good: StoreGood; quantity: number; price: number }
 export type TrainingKind = 'run' | 'bag' | 'spar'
@@ -77,6 +78,8 @@ export interface Worker {
   alive: boolean
   injuredUntilDay?: number
   trust: number
+  loyalty: number
+  bimbofication: number
   respect: number; fear: number; friendship: number; love: number; debauchery: number; submission: number
   intimacyConsentDay?: number
   sexCounts: { conventional: number; oral: number; anal: number }
@@ -169,7 +172,7 @@ const eventUpdate = (s: GameState, id: string, action: string, before: Worker, a
   const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes, detail }
   return { journal: [...s.journal, event], activeEvent: event }
 }
-const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 9, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, routine: { ...defaultRoutine }, contract, ration: contract === 'paid' ? 0 : 9, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, sexCounts: { conventional: 0, oral: 0, anal: 0 }, clothing: 'clothed', analItem: null, handcuffed: false, intimacyInjury: { oral: 0, anal: 0, vaginal: 0 }, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], prostheticInventory: [], equippedProsthetics: {}, workDays: { production: 0, maintenance: 0 }, training: { speed: 0, strength: 0, combat: 0 } })
+const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 9, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, routine: { ...defaultRoutine }, contract, ration: contract === 'paid' ? 0 : 9, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, guilt: letterFor(id)?.guilt ?? 45, defiance: letterFor(id)?.defiance ?? 40, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, loyalty: 25, bimbofication: 0, respect: 25, fear: 10, friendship: 10, love: 0, debauchery: 20, submission: 5, sexCounts: { conventional: 0, oral: 0, anal: 0 }, clothing: 'clothed', analItem: null, handcuffed: false, intimacyInjury: { oral: 0, anal: 0, vaginal: 0 }, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], prostheticInventory: [], equippedProsthetics: {}, workDays: { production: 0, maintenance: 0 }, training: { speed: 0, strength: 0, combat: 0 } })
 const occupied = (workers: Record<string, Worker>, housing: Housing, except?: string) => Object.entries(workers).filter(([id, w]) => id !== except && w.alive && (w.active || w.arrivalDay !== undefined) && w.housing === housing).length
 const takeProvenance = (source: Record<string, number>, amount: number) => {
   const remaining = { ...source }, contributors: Record<string, number> = {}
@@ -391,7 +394,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   performOperation: (id, procedureId) => set(s => {
     const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
     if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || !s.workers[s.vetDoctorId] || !canWorkAtFarm(s.workers[s.vetDoctorId], s.day) || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits) return {}
-    const outcome = resolveOperationOutcome(procedure, Math.random())
+    const outcome = resolveOperationOutcome(procedure, Math.random(), s.workers[s.vetDoctorId].bimbofication)
     const trait = procedureId === 'functional_prosthesis' ? 'strong_legs' : procedureId === 'powered_arm' ? 'strong_arms' : null
     const success = outcome === 'success', fatal = outcome === 'death', disabled = outcome === 'disability'
     const effect = procedure.effect as unknown as Record<string, number>
@@ -466,8 +469,8 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const { remaining, contributors } = takeProvenance(s.provenance[good], count)
     return { stocks: { ...s.stocks, [good]: s.stocks[good] - count }, provenance: { ...s.provenance, [good]: remaining }, listings: [...s.listings, { good, quantity: count, price: salePrices[good], listedDay: s.day, contributors }], message: 'msgListed' }
   }),
-  buildVet: () => set(s => { if (s.vetBuilt || s.money < 200) return {}; const medic = candidates.find(c => c.role.en === 'Medic' && s.workers[c.id] && canWorkAtFarm(s.workers[c.id], s.day)); return { money: s.money - 200, vetBuilt: true, vetDoctorId: medic?.id ?? null, assignments: medic ? { ...s.assignments, [medic.id]: 'rest' as Job } : s.assignments, message: 'msgVetBuilt' } }),
-  appointVet: id => set(s => s.vetBuilt && candidates.find(c => c.id === id)?.role.en === 'Medic' && s.workers[id] && canWorkAtFarm(s.workers[id], s.day) ? { vetDoctorId: id, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgVetAppointed' } : {}),
+  buildVet: () => set(s => { if (s.vetBuilt || s.money < 200) return {}; return { money: s.money - 200, vetBuilt: true, vetDoctorId: null, message: 'msgVetBuilt' } }),
+  appointVet: id => set(s => s.vetBuilt && s.workers[id] && canWorkAtFarm(s.workers[id], s.day) ? { vetDoctorId: id, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgVetAppointed' } : {}),
   sleep: () => { const startDay = get().day; while (get().day === startDay && !get().reportPending && !get().pendingRequest && !get().pendingContractNotices.length && !get().arrivalNotices.length) get().advance() },
   advance: () => {
     if (get().reportPending || get().pendingRequest || get().pendingContractNotices.length || get().arrivalNotices.length) return
@@ -583,7 +586,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 28,
+  name: 'reclaim-save-v1', version: 29,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -629,8 +632,32 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     if (version < 26) old = { ...old, barracks: 0, playerName: 'Альфа' }
     if (version < 27) old = { ...old, reportPending: false }
     if (version < 28) old = { ...old, livestock: { cattle: 0, pigs: 0, chickens: 0 }, feedStock: { chickens: Math.max(0, old.feedDays ?? 0), pigs: 0, cattle: 0 }, feedDays: 0 }
+    if (version < 29) {
+      const allowed = new Set(candidates.map(candidate => candidate.id))
+      old = { ...old,
+        hired: (old.hired ?? []).filter(id => allowed.has(id)),
+        workers: Object.fromEntries(Object.entries(old.workers ?? {}).filter(([id]) => allowed.has(id)).map(([id, worker]) => [id, { ...worker, bimbofication: 0, loyalty: worker.trust ?? 25 }])),
+        assignments: Object.fromEntries(Object.entries(old.assignments ?? {}).filter(([id]) => allowed.has(id))),
+        vetDoctorId: old.vetDoctorId && allowed.has(old.vetDoctorId) ? old.vetDoctorId : null,
+        pendingRequest: old.pendingRequest && allowed.has(old.pendingRequest.workerId) ? old.pendingRequest : null,
+        pendingContractNotices: (old.pendingContractNotices ?? []).filter(id => allowed.has(id)),
+        arrivalNotices: (old.arrivalNotices ?? []).filter(id => allowed.has(id)),
+        journal: (old.journal ?? []).filter(event => allowed.has(event.workerId)),
+        activeEvent: old.activeEvent && allowed.has(old.activeEvent.workerId) ? old.activeEvent : null,
+        lastReport: old.lastReport ? { ...old.lastReport, workers: old.lastReport.workers.filter(row => allowed.has(row.id)) } : null,
+        officeCagedNpcId: old.officeCagedNpcId && allowed.has(old.officeCagedNpcId) ? old.officeCagedNpcId : null,
+      }
+    }
     return old as GameState
   },
   partialize: s => ({ lang: s.lang, prologueSeen: s.prologueSeen, playerName: s.playerName, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,
     money: s.money, food: s.food, feedDays: s.feedDays, feedStock: s.feedStock, livestock: s.livestock, staffCapacity: s.staffCapacity, cages: s.cages, barracks: s.barracks, huts: s.huts, vodka: s.vodka, enterprises: s.enterprises, enterpriseNames: s.enterpriseNames, prostheticStock: s.prostheticStock, partStock: s.partStock, drones: s.drones, storeListings: s.storeListings, trainingPlans: s.trainingPlans, officeStock: s.officeStock, officePlaced: s.officePlaced, bedroomPlaced: s.bedroomPlaced, officeCagedNpcId: s.officeCagedNpcId, stocks: s.stocks, provenance: s.provenance, listings: s.listings, totalSales: s.totalSales, vetBuilt: s.vetBuilt, vetDoctorId: s.vetDoctorId, lastReport: s.lastReport, reportPending: s.reportPending, journal: s.journal, activeEvent: s.activeEvent, pendingRequest: s.pendingRequest, pendingContractNotices: s.pendingContractNotices, arrivalNotices: s.arrivalNotices, hired: s.hired, workers: s.workers, assignments: s.assignments, message: s.message, actionPhaseUsed: s.actionPhaseUsed, actionDay: s.actionDay, actionCounts: s.actionCounts })
 }))
+
+useGame.subscribe(state => {
+  const locked = Object.entries(state.workers).filter(([, worker]) => bimboLocked(worker) && (worker.loyalty !== 100 || worker.respect !== 100 || worker.love !== 100 || worker.fear !== 0))
+  if (!locked.length) return
+  const workers = { ...state.workers }
+  for (const [id, worker] of locked) workers[id] = { ...worker, bimbofication: 10, loyalty: 100, respect: 100, love: 100, fear: 0 }
+  useGame.setState({ workers })
+})

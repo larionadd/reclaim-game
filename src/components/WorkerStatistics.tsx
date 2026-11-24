@@ -2,6 +2,7 @@ import type { Candidate, Lang } from '../types'
 import type { Worker } from '../store/game'
 import { useGame } from '../store/game'
 import { t } from '../i18n'
+import { operationSuccessChance } from '../mechanics/medicalOperations'
 
 export function WorkerStatistics({ candidate, worker, day, lang }: { candidate: Candidate; worker: Worker; day: number; lang: Lang }) {
   const setNickname = useGame(s => s.setNickname)
@@ -17,6 +18,7 @@ export function WorkerStatistics({ candidate, worker, day, lang }: { candidate: 
   return <div className="worker-statistics">
     <section className="worker-stat-card"><h3>{tr('nickname')}</h3><label>{tr('nicknameHint')}<input maxLength={24} value={worker.nickname} placeholder={candidate.name[lang]} onChange={e => setNickname(candidate.id, e.target.value)}/></label><small>{tr('legalName')}: {candidate.name[lang]}</small></section>
     <section className="worker-stat-card"><h3>{tr('bodyParameters')}</h3><div className="worker-stat-rows">{rows.map(([key, value]) => <div key={key}><span>{tr(key)}</span><strong>{value}</strong></div>)}</div><small>{tr('measurementsHint')}</small></section>
+    <section className="worker-stat-card"><h3>{tr('medicalAbility')}</h3><div className="worker-stat-rows"><div><span>{tr('bimbofication')}</span><strong>{worker.bimbofication}/10</strong></div><div><span>{tr('operationSuccessChance')}</span><strong>{Math.round(operationSuccessChance(worker.bimbofication) * 100)}%</strong></div><div><span>{tr('loyalty')}</span><strong>{worker.loyalty}/100</strong></div></div></section>
     <section className="worker-stat-card"><h3>{tr('sexStatistics')}</h3><div className="worker-stat-rows"><div><span>{tr('conventionalSex')}</span><strong>{worker.sexCounts?.conventional ?? 0}</strong></div><div><span>{tr('oralSex')}</span><strong>{worker.sexCounts?.oral ?? 0}</strong></div><div><span>{tr('analSex')}</span><strong>{worker.sexCounts?.anal ?? 0}</strong></div></div></section>
     <section className="worker-stat-card"><h3>{tr('npcStates')}</h3><div className="worker-stat-rows"><div><span>{tr('clothingState')}</span><strong>{tr(worker.clothing === 'unclothed' ? 'unclothed' : 'clothed')}</strong></div><div><span>{tr('analItemState')}</span><strong>{worker.analItem ? tr(worker.analItem) : tr('none')}</strong></div><div><span>{tr('handcuffsState')}</span><strong>{tr(worker.handcuffed ? 'handcuffed' : 'notHandcuffed')}</strong></div></div></section>
     <section className="worker-stat-card"><h3>{tr('intimacyInjury')}</h3><div className="worker-stat-rows"><div><span>{tr('oralInjury')}</span><strong>{worker.intimacyInjury?.oral ?? 0}%</strong></div><div><span>{tr('analInjury')}</span><strong>{worker.intimacyInjury?.anal ?? 0}%</strong></div><div><span>{tr('vaginalInjury')}</span><strong>{worker.intimacyInjury?.vaginal ?? 0}%</strong></div></div></section>

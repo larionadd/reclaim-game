@@ -18,6 +18,7 @@ import type { Phase } from '../types'
 import { AssignmentSelect } from './AssignmentSelect'
 import { Portrait } from './Portrait'
 import { canWorkAtFarm, hasUnfittedLimb } from '../mechanics/mobility'
+import { operationSuccessChance } from '../mechanics/medicalOperations'
 import { canVisitWorkplace } from '../mechanics/workplace'
 
 export function DistributionScreen() {
@@ -69,9 +70,9 @@ export function MedicalScreen() {
 
 function ClinicStaffControls() {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
-  const medics = candidates.filter(c => c.role.en === 'Medic' && g.workers[c.id] && canWorkAtFarm(g.workers[c.id], g.day))
+  const medics = candidates.filter(c => g.workers[c.id] && canWorkAtFarm(g.workers[c.id], g.day))
   return <section className="clinic-staff-controls">
     {!g.vetBuilt && <><p>{tr('clinicBuildPrompt')}</p><button disabled={g.money < 200} onClick={g.buildVet}>{tr('buildVetPost')} · 200 ₴</button></>}
-    {g.vetBuilt && <><label>{tr('appointDoctor')}<select value={g.vetDoctorId ?? ''} onChange={e => g.appointVet(e.target.value)} disabled={!medics.length}><option value="">{tr('chooseDoctor')}</option>{medics.map(c => <option key={c.id} value={c.id}>{displayName(c, g.lang, g.workers[c.id].nickname)}</option>)}</select></label>{!medics.length && <p>{tr('clinicHireMedic')}</p>}</>}
+    {g.vetBuilt && <><label>{tr('appointDoctor')}<select value={g.vetDoctorId ?? ''} onChange={e => g.appointVet(e.target.value)} disabled={!medics.length}><option value="">{tr('chooseDoctor')}</option>{medics.map(c => <option key={c.id} value={c.id}>{displayName(c, g.lang, g.workers[c.id].nickname)} · {Math.round(operationSuccessChance(g.workers[c.id].bimbofication) * 100)}%</option>)}</select></label>{!medics.length && <p>{tr('clinicHireMedic')}</p>}</>}
   </section>
 }
