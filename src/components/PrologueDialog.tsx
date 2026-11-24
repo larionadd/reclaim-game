@@ -5,6 +5,7 @@ import './PrologueDialog.css'
 
 export function PrologueDialog({ onBegin }: { onBegin: () => void }) {
   const lang = useGame(s => s.lang)
+  const playerName = useGame(s => s.playerName)
   const toggleLang = useGame(s => s.toggleLang)
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export function PrologueDialog({ onBegin }: { onBegin: () => void }) {
       <div className="prologue-copy">
         <div className="prologue-top"><span>RECLAIM</span><button type="button" onClick={toggleLang} aria-label="Change language">{lang.toUpperCase()} ↔ {lang === 'uk' ? 'RU' : lang === 'ru' ? 'EN' : 'UK'}</button></div>
         <h1 id="prologue-title">{content.title}</h1>
-        <div className="prologue-text">{content.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
+        <div className="prologue-text">{content.paragraphs.map((paragraph, index) => <p key={index}>{paragraph.replaceAll('Alpha', playerName)}</p>)}</div>
         <button className="prologue-begin" type="button" onClick={onBegin}>{content.begin} →</button>
       </div>
     </section>

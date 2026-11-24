@@ -12,6 +12,10 @@ const features = [
   'changelogSave',
   'changelogNewNpc',
   'changelogNpcStates',
+  'changelogBarrack',
+  'changelogShopTabs',
+  'changelogDailyPopup',
+  'changelogPlayerName',
 ] as const
 
 export function ChangelogScreen() {

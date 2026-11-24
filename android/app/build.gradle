@@ -7,7 +7,7 @@ android {
         applicationId 'ua.reclaim.game'
         minSdk 24
         targetSdk 28
-        versionCode 4
+        versionCode 5
         versionName '0.1'
     }
 }

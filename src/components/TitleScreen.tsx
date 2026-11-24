@@ -11,11 +11,13 @@ const languages: { id: Lang; label: string }[] = [
   { id: 'en', label: 'English' }
 ]
 
-export function TitleScreen({ canContinue, onNewGame, onContinue, onLoaded }: { canContinue: boolean; onNewGame: () => void; onContinue: () => void; onLoaded: () => void }) {
+export function TitleScreen({ canContinue, onNewGame, onContinue, onLoaded }: { canContinue: boolean; onNewGame: (name: string) => void; onContinue: () => void; onLoaded: () => void }) {
   const lang = useGame(s => s.lang)
   const setLang = useGame(s => s.setLang)
   const fileRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState('')
+  const [naming, setNaming] = useState(false)
+  const [playerName, setPlayerName] = useState('Альфа')
   const tr = (key: string) => t(lang, key)
 
   useEffect(() => {
@@ -60,8 +62,9 @@ export function TitleScreen({ canContinue, onNewGame, onContinue, onLoaded }: { 
         <span>{tr('splashLanguage')}</span>
         <div>{languages.map(language => <button type="button" key={language.id} className={lang === language.id ? 'selected' : ''} aria-pressed={lang === language.id} onClick={() => setLang(language.id)}>{language.label}</button>)}</div>
       </div>
+      {naming && <form className="player-name-form" onSubmit={event => { event.preventDefault(); onNewGame(playerName) }}><label htmlFor="player-name">{tr('playerName')}</label><input id="player-name" maxLength={32} value={playerName} onChange={event => setPlayerName(event.target.value)} autoFocus/><button type="submit" className="primary">{tr('beginGame')}</button></form>}
       <nav className="title-screen-actions" aria-label={tr('splashMenu')}>
-        <button type="button" className="primary" onClick={onNewGame}>{tr('newGame')}</button>
+        {!naming && <button type="button" className="primary" onClick={() => setNaming(true)}>{tr('newGame')}</button>}
         <button type="button" disabled={!canContinue} onClick={onContinue}>{tr('continueGame')}</button>
         <button type="button" onClick={requestImport}>{tr('loadGame')}</button>
       </nav>

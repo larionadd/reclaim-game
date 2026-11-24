@@ -41,11 +41,12 @@ export default function App() {
   const visibleMenu = menu
 
   const canContinue = (g.prologueSeen || g.day > 1 || g.hired.length > 0) && !!localStorage.getItem('reclaim-save-v1')
-  const newGame = () => {
+  const newGame = (name: string) => {
     if (canContinue && !window.confirm(tr('resetConfirm'))) return
     const lang = g.lang
     g.reset()
     g.setLang(lang)
+    g.setPlayerName(name)
     setScreen('prologue')
   }
   if (screen === 'title') return <TitleScreen canContinue={canContinue} onNewGame={newGame} onContinue={() => { g.finishPrologue(); setScreen('game') }} onLoaded={() => setScreen('game')}/>
@@ -64,20 +65,20 @@ export default function App() {
       <header className="game-topbar"><div className="top-location"><button className="mobile-menu" onClick={() => setMenuOpen(x => !x)} aria-label={tr('nav')}><Menu size={22}/></button><span className="top-era">{tr('rebuildingUkraine')}</span><i/><span>{tr('season')}</span><i/><span><CalendarDays size={17}/>{tr('dayLabel')} {g.day}</span></div><div className="top-values"><span><ShieldCheck size={18}/>{tr('reputation')}: <b>{g.reputation}</b></span><span><Users size={18}/>{living}/{g.staffCapacity}</span><span><Coins size={18}/>{g.money}</span><button className="top-language" onClick={g.toggleLang} aria-label={tr('language')}><Globe2 size={18}/>{g.lang.toUpperCase()}</button></div></header>
       <div className="time-track"><div className="time-phases">{(['morning','day','evening','night'] as const).map((phase, index) => <span key={phase} className={g.phase === phase ? 'current' : ''}>{index === 0 ? <Sunrise/> : index === 1 ? <Sun/> : index === 2 ? <Sunset/> : <Moon/>}{tr(phase)}</span>)}</div><button className="quarter-top" onClick={g.advance}>{tr('nextPhase')} →</button></div>
       <main className="game-content">
-        {g.phase === 'morning' && <DailyReport/>}
         {view === 'manor' && <ManorScreen openFarm={() => open('enterprises')} openPeople={() => open('people')}/>}
         {view === 'enterprises' && <EnterprisesScreen openSmartphone={openSmartphone} openPeople={() => open('people')} workplaceWorkerId={workplaceWorkerId} closeWorkplace={() => setWorkplaceWorkerId(null)}/>}
         {view === 'people' && <PeopleScreen onCheckWorkplace={openWorkplace}/>}
         {view === 'medical' && <MedicalScreen/>}
         {view === 'smartphone' && <SmartphoneScreen initialTab={smartphoneTab}/>}
-        {view === 'settings' && <SettingsScreen onNewGame={() => setScreen('prologue')}/>}
+        {view === 'settings' && <SettingsScreen onNewGame={() => setScreen('title')}/>}
         {view === 'changelog' && <ChangelogScreen/>}
       </main>
       <footer className="game-footer"><span><BookOpen size={15}/>{tr('program')}</span><span>{tr('dayLabel')} {g.day} · {tr(g.phase)}</span></footer>
     </div>
     <nav className="bottom-nav" aria-label={tr('nav')}>{visibleMenu.map(item => <button key={item.id} className={view === item.id ? 'selected' : ''} onClick={() => open(item.id)} aria-label={tr(item.key)}>{item.icon}<span>{tr(item.key)}</span></button>)}</nav>
-    <GameEventDialog/>
-    <NpcRequestDialog/>
-    <ArrivalDialog/>
+    <DailyReport/>
+    {!g.reportPending && <GameEventDialog/>}
+    {!g.reportPending && <NpcRequestDialog/>}
+    {!g.reportPending && <ArrivalDialog/>}
   </div>
 }

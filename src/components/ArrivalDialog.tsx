@@ -29,7 +29,7 @@ export function ArrivalDialog() {
       <span className="arrival-kicker">{tr('dayLabel')} {g.day}</span>
       <h2 id="arrival-title">{tr('arrivalTitle')}</h2>
       {person && <div className="arrival-person"><Portrait person={person} lang={g.lang}/><strong>{name}</strong></div>}
-      <p>{tr('arrivalScene')}</p>
+      <p>{tr('arrivalScene').replaceAll('Alpha', g.playerName)}</p>
       <button autoFocus onClick={g.dismissArrivalNotice}>{tr('continue')}</button>
     </div>
   </section></div>

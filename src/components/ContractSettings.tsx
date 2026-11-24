@@ -7,8 +7,8 @@ export function ContractSettings({ id, worker, lang }: { id: string; worker: Wor
   const game = useGame(), tr = (key: string) => t(lang, key)
   const [renewTerm, setRenewTerm] = useState<ContractTerm>(worker.contractTerm)
   const activeCount = game.hired.filter(workerId => game.workers[workerId]?.alive && game.workers[workerId]?.active).length
-  const occupied = (housing: 'hut' | 'cage') => Object.entries(game.workers).filter(([workerId, other]) => workerId !== id && other.alive && other.active && other.housing === housing).length
-  const hasHousing = occupied('hut') < game.huts * 2 || occupied('cage') < game.cages
+  const occupied = (housing: 'hut' | 'barrack' | 'cage') => Object.entries(game.workers).filter(([workerId, other]) => workerId !== id && other.alive && (other.active || other.arrivalDay !== undefined) && other.housing === housing).length
+  const hasHousing = occupied('hut') < game.huts * 2 || occupied('barrack') < game.barracks * 4 || occupied('cage') < game.cages
   const canRenew = worker.alive && (worker.active || (activeCount < game.staffCapacity && hasHousing))
   const term = worker.active ? worker.contractTerm : renewTerm
   const chooseTerm = (value: string) => {
