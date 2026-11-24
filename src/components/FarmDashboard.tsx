@@ -14,7 +14,7 @@ const phases: Phase[] = ['morning', 'day', 'evening', 'night']
 
 export function FarmDashboard({ openSmartphone, openPeople, workplaceWorkerId, closeWorkplace }: { openSmartphone: (tab?: 'inbox' | 'shop' | 'market') => void; openPeople: () => void; workplaceWorkerId?: string | null; closeWorkplace?: () => void }) {
   const g = useGame(), tr = (key: string) => t(g.lang, key)
-  const staff = candidates.filter(c => g.workers[c.id]?.alive && g.workers[c.id]?.active && g.vetDoctorId !== c.id && ['production','layEggs','milking'].includes(g.assignments[c.id]))
+  const staff = candidates.filter(c => g.workers[c.id]?.alive && g.workers[c.id]?.active && g.vetDoctorId !== c.id && g.officeCagedNpcId !== c.id && ['production','layEggs','milking'].includes(g.assignments[c.id]))
   const farmWorkerPresent = staff.some(c => g.assignments[c.id] === 'production')
   const producedGoods = sellableGoods.filter(good => good === 'girlEggs' ? staff.some(c => g.assignments[c.id] === 'layEggs' && g.workers[c.id].medicalEffects?.oviposition) : good === 'girlMilk' ? staff.some(c => g.assignments[c.id] === 'milking' && g.workers[c.id].medicalEffects?.lactation) : good === 'eggs' ? farmWorkerPresent && g.livestock.chickens > 0 && g.feedStock.chickens > 0 : good === 'meat' ? farmWorkerPresent && g.livestock.pigs > 0 && g.feedStock.pigs > 0 : farmWorkerPresent && g.livestock.cattle > 0 && g.feedStock.cattle > 0)
   return <div className="farm-page">

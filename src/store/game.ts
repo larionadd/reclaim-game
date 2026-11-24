@@ -27,9 +27,9 @@ export type WorkerRoutine = Record<Phase, RoutineActivity>
 export const defaultRoutine: WorkerRoutine = { morning: 'rest', day: 'work', evening: 'rest', night: 'sleep' }
 export const calorieNeed = (worker: Worker) => Math.round((1500 + worker.body.weightKg * 10 + (worker.body.heightCm - 160) * 3) / 50) * 50
 export const plannedCalories = (worker: Worker) => humanFoods.reduce((sum, food) => sum + (worker.diet[food] ?? 0) * foodCalories[food], 0)
-export const currentActivity = (worker: Worker, phase: Phase, job: Job | undefined, day: number): RoutineActivity => !worker.punishedInCage && !worker.punishedKneeling && worker.alive && worker.active && canWorkAtFarm(worker, day) && job && job !== 'rest' ? (worker.routine?.[phase] ?? defaultRoutine[phase]) : phase === 'night' ? 'sleep' : 'rest'
-export const currentStatus = (worker: Worker, phase: Phase, job: Job | undefined, day: number): string => worker.punishedInCage ? 'statusInCage' : worker.punishedKneeling ? 'statusKneeling' : phase === 'morning' && job && job !== 'rest' && currentActivity(worker, phase, job, day) === 'rest' && canWorkAtFarm(worker, day) ? 'activity_prepare' : `activity_${currentActivity(worker, phase, job, day)}`
-export const currentLocation = (worker: Worker, phase: Phase, job: Job | undefined, day: number, vet = false): string => worker.punishedInCage ? 'cage' : currentActivity(worker, phase, job, day) === 'work' ? (vet ? 'vet' : job ?? 'rest') : worker.housing
+export const currentActivity = (worker: Worker, phase: Phase, job: Job | undefined, day: number, inDogCrate = false): RoutineActivity => !inDogCrate && !worker.punishedInCage && !worker.punishedKneeling && worker.alive && worker.active && canWorkAtFarm(worker, day) && job && job !== 'rest' ? (worker.routine?.[phase] ?? defaultRoutine[phase]) : phase === 'night' ? 'sleep' : 'rest'
+export const currentStatus = (worker: Worker, phase: Phase, job: Job | undefined, day: number, inDogCrate = false): string => inDogCrate ? 'statusInDogCrate' : worker.punishedInCage ? 'statusInCage' : worker.punishedKneeling ? 'statusKneeling' : phase === 'morning' && job && job !== 'rest' && currentActivity(worker, phase, job, day) === 'rest' && canWorkAtFarm(worker, day) ? 'activity_prepare' : `activity_${currentActivity(worker, phase, job, day)}`
+export const currentLocation = (worker: Worker, phase: Phase, job: Job | undefined, day: number, vet = false, inDogCrate = false): string => inDogCrate ? 'dogCrate' : worker.punishedInCage ? 'cage' : currentActivity(worker, phase, job, day) === 'work' ? (vet ? 'vet' : job ?? 'rest') : worker.housing
 export type Contract = 'paid' | 'foodOnly'
 export type ContractTerm = 30 | 90 | 'lifetime'
 export type ShopItem = AtbibGood
@@ -208,7 +208,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   assign: (id, job) => set(s => {
     const w = s.workers[id]
-    if (s.phase !== 'morning' || !w?.alive || !w.active || w.punishedInCage || w.punishedKneeling || (w.injuredUntilDay ?? 0) > s.day || s.vetDoctorId === id || (job !== 'rest' && hasUnfittedLimb(w))) return {}
+    if (s.phase !== 'morning' || !w?.alive || !w.active || w.punishedInCage || w.punishedKneeling || s.officeCagedNpcId === id || (w.injuredUntilDay ?? 0) > s.day || s.vetDoctorId === id || (job !== 'rest' && hasUnfittedLimb(w))) return {}
     if (!(['production', 'rest', 'layEggs', 'milking', 'droneAssembly', 'storeSales', 'training'] as Job[]).includes(job)) return {}
     if (job === 'layEggs' && !w.medicalEffects?.oviposition) return {}
     if (job === 'milking' && !w.medicalEffects?.lactation) return {}
@@ -337,7 +337,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   workplaceAction: (id, action) => set(s => {
     const w = s.workers[id], job = s.assignments[id]
-    if (!canVisitWorkplace(w, job, s.day, s.phase, s.vetDoctorId === id) || !get().canUseAction(action)) return {}
+    if (s.officeCagedNpcId === id || !canVisitWorkplace(w, job, s.day, s.phase, s.vetDoctorId === id) || !get().canUseAction(action)) return {}
     if (action === 'inspectWork' ? w.workplaceInspectedDay === s.day : w.workplaceResponseDay === s.day) return {}
     const next: Worker = { ...w }, changes: Partial<GameState> = {}
     if (action === 'punishWork' || action === 'threatenWork') next.guaranteedShiftsLeft = Math.max(3, w.guaranteedShiftsLeft ?? 0)
@@ -383,7 +383,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   proposeModification: (id, procedureId) => set(s => {
     const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
-    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || !s.workers[s.vetDoctorId] || !canWorkAtFarm(s.workers[s.vetDoctorId], s.day)) return {}
+    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || s.officeCagedNpcId === s.vetDoctorId || !s.workers[s.vetDoctorId] || !canWorkAtFarm(s.workers[s.vetDoctorId], s.day)) return {}
     const accepted = w.modificationConsentAtSigning || (w.love >= 70 && w.fear < 35) || (w.debauchery >= 70 && w.trust >= 55 && w.fear < 35)
     const pressured = !accepted && w.fear >= 70
     const next: Worker = { ...w, modificationDecision: { procedureId, accepted, day: s.day }, trust: pressured ? clamp(w.trust - 8, 0, 100) : w.trust }
@@ -393,7 +393,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   }),
   performOperation: (id, procedureId) => set(s => {
     const w = s.workers[id], procedure = procedures.find(p => p.id === procedureId)
-    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || !s.workers[s.vetDoctorId] || !canWorkAtFarm(s.workers[s.vetDoctorId], s.day) || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits) return {}
+    if (!w || !procedure || !canReceiveProcedure(id, w, procedure, s.day) || !s.vetBuilt || !s.vetDoctorId || s.officeCagedNpcId === s.vetDoctorId || !s.workers[s.vetDoctorId] || !canWorkAtFarm(s.workers[s.vetDoctorId], s.day) || w.modificationDecision?.procedureId !== procedureId || !w.modificationDecision.accepted || w.savings < procedure.costCredits) return {}
     const outcome = resolveOperationOutcome(procedure, Math.random(), s.workers[s.vetDoctorId].bimbofication)
     const trait = procedureId === 'functional_prosthesis' ? 'strong_legs' : procedureId === 'powered_arm' ? 'strong_arms' : null
     const success = outcome === 'success', fatal = outcome === 'death', disabled = outcome === 'disability'
@@ -470,13 +470,13 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     return { stocks: { ...s.stocks, [good]: s.stocks[good] - count }, provenance: { ...s.provenance, [good]: remaining }, listings: [...s.listings, { good, quantity: count, price: salePrices[good], listedDay: s.day, contributors }], message: 'msgListed' }
   }),
   buildVet: () => set(s => { if (s.vetBuilt || s.money < 200) return {}; return { money: s.money - 200, vetBuilt: true, vetDoctorId: null, message: 'msgVetBuilt' } }),
-  appointVet: id => set(s => s.vetBuilt && s.workers[id] && canWorkAtFarm(s.workers[id], s.day) ? { vetDoctorId: id, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgVetAppointed' } : {}),
+  appointVet: id => set(s => s.vetBuilt && s.officeCagedNpcId !== id && s.workers[id] && canWorkAtFarm(s.workers[id], s.day) ? { vetDoctorId: id, assignments: { ...s.assignments, [id]: 'rest' }, message: 'msgVetAppointed' } : {}),
   sleep: () => { const startDay = get().day; while (get().day === startDay && !get().reportPending && !get().pendingRequest && !get().pendingContractNotices.length && !get().arrivalNotices.length) get().advance() },
   advance: () => {
     if (get().reportPending || get().pendingRequest || get().pendingContractNotices.length || get().arrivalNotices.length) return
     const s = get(), next = order[(order.indexOf(s.phase) + 1) % 4]
     if (s.phase !== 'night') { set({ phase: next, message: phaseMessage[next], actionPhaseUsed: null }); set(current => ({ pendingRequest: chooseNpcRequest(current) })); return }
-    const planned = Object.fromEntries(Object.entries(s.assignments).filter(([id]) => s.workers[id]?.alive && s.workers[id]?.active && id !== s.vetDoctorId).map(([id, job]) => [id, !s.workers[id].punishedInCage && !s.workers[id].punishedKneeling && canWorkAtFarm(s.workers[id], s.day) && order.some(phase => (s.workers[id].routine?.[phase] ?? defaultRoutine[phase]) === 'work') ? job : 'rest'])) as Record<string, Job>
+    const planned = Object.fromEntries(Object.entries(s.assignments).filter(([id]) => s.workers[id]?.alive && s.workers[id]?.active && id !== s.vetDoctorId).map(([id, job]) => [id, s.officeCagedNpcId !== id && !s.workers[id].punishedInCage && !s.workers[id].punishedKneeling && canWorkAtFarm(s.workers[id], s.day) && order.some(phase => (s.workers[id].routine?.[phase] ?? defaultRoutine[phase]) === 'work') ? job : 'rest'])) as Record<string, Job>
     const disobedience: Record<string, Disobedience> = {}
     const living = Object.fromEntries(Object.entries(planned).map(([id, job]) => { const result = resolveDisobedience(s.workers[id], job, Math.random()); disobedience[id] = result; return [id, result ? 'rest' : job] })) as Record<string, Job>
     const result = resolveDay(Object.fromEntries(Object.entries(living).map(([id, job]) => [id, job === 'layEggs' || job === 'milking' ? 'production' : job])) as Record<string, Job>, s.wellbeing, s.reputation)
@@ -504,7 +504,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       const traits = conditionEffects(worker, fed, worker.contract === 'paid' && paid < worker.agreedWage, living[id])
       wellbeingBonus += traits.wellbeing
       const workChange = (worker.housing === 'cage' ? -1 : worker.housing === 'hut' ? 1 : 0) + traits.health
-      const vetWorking = !!(s.vetBuilt && s.vetDoctorId && s.workers[s.vetDoctorId] && canWorkAtFarm(s.workers[s.vetDoctorId], s.day))
+      const vetWorking = !!(s.vetBuilt && s.vetDoctorId && s.officeCagedNpcId !== s.vetDoctorId && s.workers[s.vetDoctorId] && canWorkAtFarm(s.workers[s.vetDoctorId], s.day))
       const risk = riskForWorker(worker, teamHasProtector, productionCount) * (vetWorking ? .9 : 1)
       const incidentRoll = living[id] === 'production' || living[id] === 'layEggs' || living[id] === 'milking' ? Math.random() : 1
       const fatal = incidentRoll < .001
@@ -538,7 +538,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       if (worker.analItem) reasons.push('reportAnalItem')
       if (fatal) reasons.push('reportFatality')
       if (disobedience[id]) journal.push({ id: (journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: 'night', workerId: id, action: disobedience[id], storyKey: `story_${disobedience[id]}`, changes: { defiance: workers[id].defiance - worker.defiance } })
-      const statuses = [worker.clothing === 'unclothed' ? 'reportStatusUnclothed' : null, worker.analItem === 'analPlug' ? 'reportStatusAnalPlug' : worker.analItem === 'analVibrator' ? 'reportStatusAnalVibrator' : null, worker.handcuffed ? 'reportStatusHandcuffed' : null, worker.punishedKneeling ? 'reportStatusKneeling' : null, worker.punishedInCage || worker.housing === 'cage' || s.officeCagedNpcId === id ? 'reportStatusCaged' : null].filter((status): status is string => status !== null)
+      const statuses = [worker.clothing === 'unclothed' ? 'reportStatusUnclothed' : null, worker.analItem === 'analPlug' ? 'reportStatusAnalPlug' : worker.analItem === 'analVibrator' ? 'reportStatusAnalVibrator' : null, worker.handcuffed ? 'reportStatusHandcuffed' : null, worker.punishedKneeling ? 'reportStatusKneeling' : null, worker.punishedInCage || worker.housing === 'cage' ? 'reportStatusCaged' : null, s.officeCagedNpcId === id ? 'reportStatusDogCrate' : null].filter((status): status is string => status !== null)
       dayWorkers.push({ id, healthBefore: worker.health, healthAfter: health, debaucheryBefore: worker.debauchery, debaucheryAfter: workers[id].debauchery, paid, eaten, calories: consumedCalories, calorieNeed: calorieNeed(worker), reasons, statuses })
       if (!workers[id].active || hasUnfittedLimb(workers[id])) assignments[id] = 'rest'
       if (fatal) { anyFatality = true; reputation = clamp(reputation - 15, 0, 100); assignments[id] = 'rest' }
@@ -574,7 +574,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       capacity -= sold; storeIncome += sold * listing.price
       return { ...listing, quantity: listing.quantity - sold }
     }).filter(listing => listing.quantity > 0)
-    const vetOperating = !!(s.vetBuilt && s.vetDoctorId && workers[s.vetDoctorId]?.alive && workers[s.vetDoctorId]?.active && !workers[s.vetDoctorId]?.punishedInCage && !workers[s.vetDoctorId]?.punishedKneeling && canWorkAtFarm(workers[s.vetDoctorId], s.day))
+    const vetOperating = !!(s.vetBuilt && s.vetDoctorId && s.officeCagedNpcId !== s.vetDoctorId && workers[s.vetDoctorId]?.alive && workers[s.vetDoctorId]?.active && !workers[s.vetDoctorId]?.punishedInCage && !workers[s.vetDoctorId]?.punishedKneeling && canWorkAtFarm(workers[s.vetDoctorId], s.day))
     const vetIncome = vetOperating ? vetDailyIncome : 0
     const arrivingIds = s.hired.filter(id => workers[id]?.alive && workers[id].arrivalDay === s.day + 1)
     for (const id of arrivingIds) workers[id] = { ...workers[id], active: true, arrivalDay: undefined }

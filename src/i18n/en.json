@@ -803,9 +803,9 @@
   "inBedroom": "In bedroom",
   "placeInOffice": "Place",
   "removeFromOffice": "Remove",
-  "putInCrate": "Put in crate",
-  "releaseFromCrate": "Release from crate",
-  "crateOccupied": "The crate is occupied by another NPC.",
+  "putInCrate": "Put in dog crate",
+  "releaseFromCrate": "Release from dog crate",
+  "crateOccupied": "The dog crate is occupied by another NPC.",
   "officeCrateHint": "Available when a dog crate is placed in the office.",
   "dogCrate": "Dog crate",
   "productDetails": "Description and specifications",
@@ -863,5 +863,8 @@
   "bimbofication": "Bimbofication",
   "medicalAbility": "Medical ability",
   "operationSuccessChance": "Operation success chance",
-  "changelogDoctorRoster": "Four NPCs remain; any worker can be a doctor. Bimbofication changes the chance of a successful operation."
+  "changelogDoctorRoster": "Four NPCs remain; any worker can be a doctor. Bimbofication changes the chance of a successful operation.",
+  "statusInDogCrate": "In dog crate",
+  "reportStatusDogCrate": "Spent the day in a dog crate",
+  "changelogCrate": "Housing cages and the manor dog crate are distinct: an NPC can work from a housing cage, but not while locked in the dog crate."
 }
