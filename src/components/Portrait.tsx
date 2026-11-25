@@ -32,7 +32,7 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
         ? '/art/portraits/daria-lactation.jpg'
         : null
     : null
-  const image = (person.id === 'yulia' ? yuliaPortrait(currentDay, firstArrivalDay, clothing, operations) : person.id === 'diana' ? dianaPortrait(currentDay, firstArrivalDay, working, housing, operations, inOwnCage) : person.id === 'polina' ? inOwnCage ? '/art/portraits/polina-cage.png' : polinaPortrait(currentDay, operations) : null) ?? dariaOperationImage ?? (variants && outfit === 'sleepwear'
+  const image = (person.id === 'yulia' ? inOwnCage ? phase === 'morning' ? '/art/portraits/yulia-cage-morning.png' : '/art/portraits/yulia-cage.png' : yuliaPortrait(currentDay, firstArrivalDay, clothing, operations) : person.id === 'diana' ? dianaPortrait(currentDay, firstArrivalDay, working, housing, operations, inOwnCage) : person.id === 'polina' ? inOwnCage ? '/art/portraits/polina-cage.png' : polinaPortrait(currentDay, operations) : null) ?? dariaOperationImage ?? (variants && outfit === 'sleepwear'
     ? working && job && job !== 'rest' && (phase === 'evening' || phase === 'night') ? variants.dirtyUnderwear : variants.sleepwear
     : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
       : person.image)

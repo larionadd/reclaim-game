@@ -264,7 +264,7 @@
   "stateIntake": "STATE OFFER",
   "contractChoiceHint": "Terms are shown before signing.",
   "personnel": "PERSONNEL FILES",
-  "peopleIntro": "People currently working in your enterprises.",
+  "peopleIntro": "Your workers and those due to arrive after signing a contract.",
   "deceased": "Deceased",
   "bonusFive": "Bonus +5",
   "fineOne": "Fine −1",
@@ -879,5 +879,6 @@
   "changelogNavigationScenes": "Updated the navigation and header. Office actions now open in popups; added a dog crate scene using the player and NPC names.",
   "changelogYuliaPortraits": "Added four stages of Yulia’s portrait: after one week, after one month, after successful breast enlargement or lactation therapy, and one month after that change.",
   "changelogDianaPortraits": "Added five Diana portrait stages: after one week, after one month, after successful breast or lactation treatment, one month later, and while living in a cage.",
-  "changelogPolinaPortraits": "Added Polina and five portraits. Her cage housing portrait appears in her personnel file when she is at home."
+  "changelogPolinaPortraits": "Added Polina and five portraits. Her cage housing portrait appears in her personnel file when she is at home.",
+  "changelogPendingWorkers": "Signed workers now appear immediately in personnel files with an awaiting arrival status. Added morning and daytime cage portraits for Yulia."
 }
