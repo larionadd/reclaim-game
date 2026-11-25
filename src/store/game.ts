@@ -48,6 +48,7 @@ export type Provenance = Record<SaleGood, Record<string, number>>
 export interface Worker {
   nickname: string
   hiredOnDay: number
+  firstArrivalDay: number
   contractTerm: ContractTerm
   contractEndsDay: number | null
   lastDayOnSite?: number
@@ -170,7 +171,7 @@ const eventUpdate = (s: GameState, id: string, action: string, before: Worker, a
   const event: GameEvent = { id: (s.journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: s.phase, workerId: id, action, storyKey: `story_${action}`, changes, detail }
   return { journal: [...s.journal, event], activeEvent: event }
 }
-const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 9, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, routine: { ...defaultRoutine }, contract, ration: contract === 'paid' ? 0 : 9, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, bimbofication: 0, love: 0, debauchery: 20, submission: 5, sexCounts: { conventional: 0, oral: 0, anal: 0 }, clothing: 'clothed', analItem: null, handcuffed: false, intimacyInjury: { oral: 0, anal: 0, vaginal: 0 }, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], prostheticInventory: [], equippedProsthetics: {}, workDays: { production: 0, maintenance: 0 }, training: { speed: 0, strength: 0, combat: 0 } })
+const defaultWorker = (id: string, contract: Contract = 'paid', day = 1, term: ContractTerm = 30): Worker => ({ nickname: '', hiredOnDay: day, firstArrivalDay: day, contractTerm: term, contractEndsDay: term === 'lifetime' ? null : day + term - 1, active: true, totalEarnedForPlayer: 0, totalReceivedFromPlayer: 0, body: { ...(candidates.find(c => c.id === id)?.body ?? { heightCm: 170, weightKg: 65, chestCm: 90, waistCm: 75, hipsCm: 95 }) }, diet: { bread: contract === 'paid' ? 0 : 9, lard: 0, meat: 0, milk: 0, cheese: 0, eggs: 0 }, routine: { ...defaultRoutine }, contract, ration: contract === 'paid' ? 0 : 9, wage: contract === 'paid' ? 12 : 0, agreedWage: contract === 'paid' ? 12 : 0, wageDebt: 0, requestedWage: letterFor(id)?.requestedWage ?? 12, absenceCount: 0, housing: 'cage', savings: 0, modificationConsentAtSigning: personalFor(id)?.modificationConsentAtSigning ?? false, health: 76, alive: true, trust: 25, bimbofication: 0, love: 0, debauchery: 20, submission: 5, sexCounts: { conventional: 0, oral: 0, anal: 0 }, clothing: 'clothed', analItem: null, handcuffed: false, intimacyInjury: { oral: 0, anal: 0, vaginal: 0 }, traits: candidates.find(c => c.id === id)?.traits ?? [], operations: [], prostheticInventory: [], equippedProsthetics: {}, workDays: { production: 0, maintenance: 0 }, training: { speed: 0, strength: 0, combat: 0 } })
 const occupied = (workers: Record<string, Worker>, housing: Housing, except?: string) => Object.entries(workers).filter(([id, w]) => id !== except && w.alive && (w.active || w.arrivalDay !== undefined) && w.housing === housing).length
 const takeProvenance = (source: Record<string, number>, amount: number) => {
   const remaining = { ...source }, contributors: Record<string, number> = {}
@@ -584,7 +585,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   },
   reset: () => set(initial)
 }), {
-  name: 'reclaim-save-v1', version: 31,
+  name: 'reclaim-save-v1', version: 32,
   migrate: (persisted, version) => {
     let old = persisted as Partial<GameState>
     if (version < 4) {
@@ -652,6 +653,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       return [id, current]
     })) }
     if (version < 31 && (old.day ?? 1) <= 7 && (old.totalSales ?? 0) === 0 && (old.money ?? 0) < 200) old = { ...old, money: startingCapital }
+    if (version < 32) old = { ...old, workers: Object.fromEntries(Object.entries(old.workers ?? {}).map(([id, worker]) => [id, { ...worker, firstArrivalDay: worker.hiredOnDay ?? old.day ?? 1 }])) }
     return old as GameState
   },
   partialize: s => ({ lang: s.lang, prologueSeen: s.prologueSeen, playerName: s.playerName, day: s.day, phase: s.phase, output: s.output, wellbeing: s.wellbeing, reputation: s.reputation,

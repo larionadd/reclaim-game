@@ -1,5 +1,6 @@
 import type { Candidate, Lang } from '../types'
 import { useGame } from '../store/game'
+import { yuliaPortrait } from '../mechanics/yuliaPortrait'
 
 const portraitVariants: Record<string, { dirty: string; sleepwear: string; dirtyUnderwear: string }> = {
   sofia: { dirty: '/art/portraits/sofia-dirty-work.webp', sleepwear: '/art/portraits/sofia-sleepwear.webp', dirtyUnderwear: '/art/portraits/sofia-dirty-underwear.webp' },
@@ -13,6 +14,8 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
   const job = useGame(state => state.assignments[person.id])
   const working = useGame(state => !!state.workers[person.id]?.active)
   const clothing = useGame(state => state.workers[person.id]?.clothing)
+  const firstArrivalDay = useGame(state => state.workers[person.id]?.firstArrivalDay)
+  const currentDay = useGame(state => state.day)
   const operations = useGame(state => state.workers[person.id]?.operations)
   const variants = portraitVariants[person.id]
   const dariaOperationImage = person.id === 'daria'
@@ -22,7 +25,7 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
         ? '/art/portraits/daria-lactation.jpg'
         : null
     : null
-  const image = (person.id === 'yulia' && clothing === 'unclothed' ? '/art/portraits/yulia.jpg' : null) ?? dariaOperationImage ?? (variants && outfit === 'sleepwear'
+  const image = (person.id === 'yulia' ? yuliaPortrait(currentDay, firstArrivalDay, clothing, operations) : null) ?? dariaOperationImage ?? (variants && outfit === 'sleepwear'
     ? working && job && job !== 'rest' && (phase === 'evening' || phase === 'night') ? variants.dirtyUnderwear : variants.sleepwear
     : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
       : person.image)
