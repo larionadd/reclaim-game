@@ -8,9 +8,10 @@ export function dianaPortrait(
   active: boolean | undefined,
   housing: Worker['housing'] | undefined,
   operations: Worker['operations'] | undefined,
+  inOwnCage = false,
 ): string {
   if (firstArrivalDay === undefined || day < firstArrivalDay) return `${path}diana.jpg`
-  if (active && housing === 'cage') return `${path}diana-cage.png`
+  if (active && housing === 'cage' && inOwnCage) return `${path}diana-cage.png`
 
   const qualifyingDays = (operations ?? [])
     .filter(operation => ['breast_enlargement', 'lactation_hormones'].includes(operation.id) && (!operation.outcome || operation.outcome === 'success'))

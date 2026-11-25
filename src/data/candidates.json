@@ -126,5 +126,20 @@
       "waistCm": 62,
       "hipsCm": 88
     }
+  },
+  {
+    "id": "polina",
+    "age": 33,
+    "name": { "uk": "Поліна", "ru": "Полина", "en": "Polina" },
+    "role": { "uk": "Колишня ведуча весіль", "ru": "Бывшая ведущая свадеб", "en": "Former wedding host" },
+    "bio": {
+      "uk": "Працювала ведучою на весіллях. Шукає стабільну роботу та готова освоїти справи на фермі.",
+      "ru": "Работала ведущей на свадьбах. Ищет стабильную работу и готова освоить дела на ферме.",
+      "en": "She used to host weddings. She is looking for steady work and is ready to learn farm tasks."
+    },
+    "image": "/art/portraits/polina-initial.jpg",
+    "availableFromDay": 1,
+    "traits": ["ambitious", "resilient"],
+    "body": { "heightCm": 170, "weightKg": 56, "chestCm": 95, "waistCm": 65, "hipsCm": 94 }
   }
 ]

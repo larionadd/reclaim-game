@@ -158,5 +158,15 @@
       "ru": "Раньше работала моделью, теперь ищу новую работу. Готова учиться уходу за фермой; прошу 13 ₴ за смену.",
       "en": "I used to work as a model. I am ready to learn farm work and ask 13 ₴ per shift."
     }
+  },
+  {
+    "id": "polina",
+    "requestedWage": 14,
+    "minimumWage": 10,
+    "letter": {
+      "uk": "Я працювала ведучою на весіллях. Готова вчитися фермерської роботи; прошу 14 ₴ за зміну.",
+      "ru": "Я работала ведущей на свадьбах. Готова учиться работе на ферме; прошу 14 ₴ за смену.",
+      "en": "I used to host weddings. I am ready to learn farm work and ask 14 ₴ per shift."
+    }
   }
 ]

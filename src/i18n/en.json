@@ -878,5 +878,6 @@
   "story_officeRelease": "{player} unlocks the dog crate in the office. {npc} steps out and stands up.",
   "changelogNavigationScenes": "Updated the navigation and header. Office actions now open in popups; added a dog crate scene using the player and NPC names.",
   "changelogYuliaPortraits": "Added four stages of Yulia’s portrait: after one week, after one month, after successful breast enlargement or lactation therapy, and one month after that change.",
-  "changelogDianaPortraits": "Added five Diana portrait stages: after one week, after one month, after successful breast or lactation treatment, one month later, and while living in a cage."
+  "changelogDianaPortraits": "Added five Diana portrait stages: after one week, after one month, after successful breast or lactation treatment, one month later, and while living in a cage.",
+  "changelogPolinaPortraits": "Added Polina and five portraits. Her cage housing portrait appears in her personnel file when she is at home."
 }

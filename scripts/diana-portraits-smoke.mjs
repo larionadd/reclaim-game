@@ -8,19 +8,20 @@ try {
   const results = await page.evaluate(async () => {
     const { dianaPortrait } = await import('/reclaim-game/src/mechanics/dianaPortrait.ts')
     const cases = [
-      [1, undefined, false, 'cage', [], 'diana.jpg'],
-      [1, 2, false, 'cage', [], 'diana.jpg'],
-      [2, 2, true, 'cage', [], 'diana-cage.png'],
-      [8, 1, true, 'hut', [], 'diana-week.jpg'],
-      [31, 1, true, 'hut', [], 'diana-month.jpg'],
-      [32, 1, true, 'hut', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], 'diana-modified.png'],
-      [62, 1, true, 'hut', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], 'diana-modified-month.png'],
-      [62, 1, true, 'hut', [{ id: 'lactation_hormones', day: 60, outcome: 'success' }], 'diana-modified.png'],
-      [62, 1, true, 'hut', [{ id: 'breast_enlargement', day: 60, outcome: 'complication' }], 'diana-month.jpg'],
-      [62, 1, true, 'cage', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], 'diana-cage.png'],
+      [1, undefined, false, 'cage', [], false, 'diana.jpg'],
+      [1, 2, false, 'cage', [], false, 'diana.jpg'],
+      [2, 2, true, 'cage', [], true, 'diana-cage.png'],
+      [2, 2, true, 'cage', [], false, 'diana.jpg'],
+      [8, 1, true, 'hut', [], false, 'diana-week.jpg'],
+      [31, 1, true, 'hut', [], false, 'diana-month.jpg'],
+      [32, 1, true, 'hut', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], false, 'diana-modified.png'],
+      [62, 1, true, 'hut', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], false, 'diana-modified-month.png'],
+      [62, 1, true, 'hut', [{ id: 'lactation_hormones', day: 60, outcome: 'success' }], false, 'diana-modified.png'],
+      [62, 1, true, 'hut', [{ id: 'breast_enlargement', day: 60, outcome: 'complication' }], false, 'diana-month.jpg'],
+      [62, 1, true, 'cage', [{ id: 'breast_enlargement', day: 32, outcome: 'success' }], true, 'diana-cage.png'],
     ]
-    return Promise.all(cases.map(async ([day, arrival, active, housing, operations, expected]) => {
-      const path = dianaPortrait(day, arrival, active, housing, operations)
+    return Promise.all(cases.map(async ([day, arrival, active, housing, operations, inOwnCage, expected]) => {
+      const path = dianaPortrait(day, arrival, active, housing, operations, inOwnCage)
       const image = new Image()
       image.src = `/reclaim-game${path}`
       await image.decode()

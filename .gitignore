@@ -14,6 +14,7 @@ public/art/**/*.png
 !public/art/reclaim-logo.png
 !public/art/portraits/yulia*.png
 !public/art/portraits/diana*.png
+!public/art/portraits/polina*.png
 qa-*.png
 concept-*.png
 .chrome-concept-profile/
