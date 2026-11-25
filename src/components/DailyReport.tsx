@@ -8,8 +8,10 @@ export function DailyReport() {
   const g = useGame(), report = g.lastReport, tr = (key: string) => t(g.lang, key)
   if (!report || !g.reportPending) return null
   const goods = sellableGoods.filter(good => (report.producedGoods?.[good] ?? 0) > 0)
+  const injuries = report.workers.filter(row => row.injury || row.reasons.includes('reportInjury'))
   return <div className="daily-report-overlay"><section className="daily-report" role="dialog" aria-modal="true" aria-labelledby="daily-report-title">
     <header><span>{tr('endOfDay')}</span><h2 id="daily-report-title">{tr('dailyReport')} · {tr('dayLabel')} {report.day}</h2></header>
+    {injuries.map(row => { const person = candidates.find(candidate => candidate.id === row.id), worker = g.workers[row.id], until = row.injury?.recoverByDay ?? worker?.injuredUntilDay ?? g.day; return <section className="injury-alert report-injury-alert" role="status" key={row.id}><strong>{person ? displayName(person, g.lang, worker?.nickname) : row.id} · {row.injury ? tr(`injury_${row.injury.kind}`) : tr('injured')}</strong><span>{row.injury ? tr(`injurySource_${row.injury.source}`) : tr('injuryUnknown')}</span><span>{row.injury ? `${tr('injuryEffect')}: −${row.injury.healthLoss}% · ` : ''}{tr('injuryCannotWork')}</span><b>{tr('injuryDaysRemaining')}: {Math.max(0, until - g.day)} · {tr('injuryRestUntil')} {until}</b></section> })}
     <div className="report-overview">
       <div><span>{tr('reportProduction')}</span><strong>{report.produced}</strong></div>
       <div><span>{tr('reportSales')}</span><strong>{report.sales} ₴</strong></div>

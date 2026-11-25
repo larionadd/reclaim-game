@@ -904,5 +904,6 @@
   "changelogDianaPortraits": "Added five Diana portrait stages: after one week, after one month, after successful breast or lactation treatment, one month later, and while living in a cage.",
   "changelogPolinaPortraits": "Added Polina and five portraits. Her cage housing portrait appears in her personnel file when she is at home.",
   "changelogPendingWorkers": "Signed workers now appear immediately in personnel files with an awaiting arrival status. Added morning and daytime cage portraits for Yulia.",
-  "changelogInjuryDetails": "Daily reports now show injury type, circumstances, health loss, and recovery time. Added enlarged portraits and vaginal sex in the bedroom."
+  "changelogInjuryDetails": "Daily reports now show injury type, circumstances, health loss, and recovery time. Added enlarged portraits and vaginal sex in the bedroom.",
+  "changelogInjuryBanner": "Injury details and remaining recovery days now appear in red at the top of personnel files and daily reports."
 }
