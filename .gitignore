@@ -13,6 +13,7 @@ dist-ssr
 public/art/**/*.png
 !public/art/reclaim-logo.png
 !public/art/portraits/yulia*.png
+!public/art/portraits/diana*.png
 qa-*.png
 concept-*.png
 .chrome-concept-profile/

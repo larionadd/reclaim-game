@@ -23,6 +23,7 @@ const features = [
   'changelogStarterEconomy',
   'changelogNavigationScenes',
   'changelogYuliaPortraits',
+  'changelogDianaPortraits',
 ] as const
 
 export function ChangelogScreen() {
