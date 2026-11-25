@@ -40,7 +40,8 @@ export type StoreGood = SaleGood | 'drone'
 export interface StoreListing { good: StoreGood; quantity: number; price: number }
 export type TrainingKind = 'run' | 'bag' | 'spar'
 export interface SaleListing { good: SaleGood; quantity: number; price: number; listedDay: number; contributors: Record<string, number> }
-export interface WorkerDayReport { id: string; healthBefore: number; healthAfter: number; debaucheryBefore: number; debaucheryAfter: number; paid: number; eaten: number; calories?: number; calorieNeed?: number; reasons: string[]; statuses: string[] }
+export interface WorkerInjury { kind: 'bruise' | 'sprain' | 'cut'; source: 'production' | 'layEggs' | 'milking'; day: number; recoverByDay: number; healthLoss: number }
+export interface WorkerDayReport { id: string; healthBefore: number; healthAfter: number; debaucheryBefore: number; debaucheryAfter: number; paid: number; eaten: number; calories?: number; calorieNeed?: number; reasons: string[]; statuses: string[]; healthFactors?: { key: string; delta: number }[]; injury?: WorkerInjury }
 export interface DayReport { day: number; sales: number; vetIncome?: number; produced: number; producedGoods: Record<SaleGood, number>; dronesProduced: number; feedBefore: number; feedAfter: number; feedByTypeBefore?: FeedStock; feedByTypeAfter?: FeedStock; moneyBefore: number; moneyAfter: number; foodAfter: { bread: number; lard: number }; workers: WorkerDayReport[] }
 export interface GameEvent { id: number; day: number; phase: Phase; workerId: string; action: string; storyKey: string; changes: Record<string, number>; detail?: string }
 export interface PendingNpcRequest { workerId: string; requestId: string }
@@ -76,6 +77,7 @@ export interface Worker {
   health: number
   alive: boolean
   injuredUntilDay?: number
+  injury?: WorkerInjury
   trust: number
   bimbofication: number
   love: number; debauchery: number; submission: number
@@ -282,14 +284,14 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
   bedroomAction: (id, action) => set(s => {
     const w = s.workers[id], age = candidates.find(c => c.id === id)?.age ?? 0
     if (!w || !canCallBedroom(w) || !get().canUseAction(action)) return {}
-    const intimate = action === 'oralSex' || action === 'analSex'
+    const intimate = action === 'vaginalSex' || action === 'oralSex' || action === 'analSex'
     if (intimate && !canChooseIntimacy(w, age)) return {}
     if ((action === 'reprimand' || action === 'extraDuty') && !canPunishInBedroom(w)) return {}
     const next = { ...w }, changes: Partial<GameState> = {}
     if (action === 'reprimand' || action === 'extraDuty') next.guaranteedShiftsLeft = Math.max(3, w.guaranteedShiftsLeft ?? 0)
     const add = (key: 'trust' | 'love' | 'submission', n: number) => { next[key] = clamp(next[key] + n, 0, 100) }
     switch (action) {
-      case 'oralSex': case 'analSex': add('love', 2); add('trust', 1); next.sexCounts = { ...w.sexCounts, [action === 'oralSex' ? 'oral' : 'anal']: (w.sexCounts?.[action === 'oralSex' ? 'oral' : 'anal'] ?? 0) + 1 }; next.intimacyInjury = { ...w.intimacyInjury, [action === 'oralSex' ? 'oral' : 'anal']: clamp((w.intimacyInjury?.[action === 'oralSex' ? 'oral' : 'anal'] ?? 0) + 10, 0, 100) }; break
+      case 'vaginalSex': case 'oralSex': case 'analSex': { const kind = action === 'vaginalSex' ? 'conventional' : action === 'oralSex' ? 'oral' : 'anal'; const injuryKind = action === 'vaginalSex' ? 'vaginal' : action === 'oralSex' ? 'oral' : 'anal'; add('love', 2); add('trust', 1); next.sexCounts = { ...w.sexCounts, [kind]: (w.sexCounts?.[kind] ?? 0) + 1 }; next.intimacyInjury = { ...w.intimacyInjury, [injuryKind]: clamp((w.intimacyInjury?.[injuryKind] ?? 0) + 10, 0, 100) }; break }
       case 'reprimand': add('submission', 2); add('trust', -4); changes.reputation = clamp(s.reputation - 1, 0, 100); break
       case 'extraDuty': add('submission', 3); add('trust', -5); changes.assignments = { ...s.assignments, [id]: 'production' }; changes.reputation = clamp(s.reputation - 2, 0, 100); break
     }
@@ -398,7 +400,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
     const success = outcome === 'success', fatal = outcome === 'death', disabled = outcome === 'disability'
     const effect = procedure.effect as unknown as Record<string, number>
     const bodyDelta = success ? { weightKg: effect.weightKg ?? 0, chestCm: effect.chestCm ?? 0 } : {}
-    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day, outcome }], traits: success && trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, body: applyProcedureMeasurements(w.body, bodyDelta), medicalEffects: success ? { lactation: (w.medicalEffects?.lactation ?? false) || procedureId === 'lactation_hormones', oviposition: (w.medicalEffects?.oviposition ?? false) || procedureId === 'oviposition_uterus', hair: procedureId === 'hair_growth_hormones' ? 'growth' : procedureId === 'hair_loss_hormones' ? 'loss' : w.medicalEffects?.hair ?? 'normal' } : w.medicalEffects, prostheticInventory: w.prostheticInventory ?? [], equippedProsthetics: w.equippedProsthetics ?? {}, disabled: w.disabled || disabled, alive: !fatal, active: !fatal && w.active, lastDayOnSite: fatal ? s.day : w.lastDayOnSite, injuredUntilDay: fatal ? undefined : s.day + procedure.recoveryDays + (outcome === 'complication' ? 5 : disabled ? 14 : 0), health: fatal ? 0 : disabled ? Math.min(w.health, 20) : clamp(w.health - (outcome === 'complication' ? 15 : 3), 0, 100), modificationDecision: undefined }
+    const next: Worker = { ...w, savings: w.savings - procedure.costCredits, operations: [...w.operations, { id: procedureId, day: s.day, outcome }], traits: success && trait && !w.traits.includes(trait) ? [...w.traits, trait] : w.traits, body: applyProcedureMeasurements(w.body, bodyDelta), medicalEffects: success ? { lactation: (w.medicalEffects?.lactation ?? false) || procedureId === 'lactation_hormones', oviposition: (w.medicalEffects?.oviposition ?? false) || procedureId === 'oviposition_uterus', hair: procedureId === 'hair_growth_hormones' ? 'growth' : procedureId === 'hair_loss_hormones' ? 'loss' : w.medicalEffects?.hair ?? 'normal' } : w.medicalEffects, prostheticInventory: w.prostheticInventory ?? [], equippedProsthetics: w.equippedProsthetics ?? {}, disabled: w.disabled || disabled, alive: !fatal, active: !fatal && w.active, lastDayOnSite: fatal ? s.day : w.lastDayOnSite, injuredUntilDay: fatal ? undefined : s.day + procedure.recoveryDays + (outcome === 'complication' ? 5 : disabled ? 14 : 0), injury: undefined, health: fatal ? 0 : disabled ? Math.min(w.health, 20) : clamp(w.health - (outcome === 'complication' ? 15 : 3), 0, 100), modificationDecision: undefined }
     const reputation = clamp(s.reputation - (fatal ? 15 : disabled ? 8 : outcome === 'complication' ? 2 : 0), 0, 100)
     const action = fatal ? 'operationFatal' : disabled ? 'operationDisability' : outcome === 'complication' ? 'operationComplication' : 'operationComplete'
     return { workers: { ...s.workers, [id]: next }, assignments: { ...s.assignments, [id]: 'rest' }, reputation, ...eventUpdate(s, id, action, w, next, s.money, reputation, procedureId) }
@@ -502,12 +504,14 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       const healthChange = nutritionRatio === 0 && worker.contract === 'paid' && paid >= worker.agreedWage ? 0 : nutritionRatio === 0 ? -5 : nutritionRatio < .5 ? -3 : nutritionRatio < .8 ? -1 : nutritionRatio >= 1 ? 1 : 0
       const traits = conditionEffects(worker, fed, worker.contract === 'paid' && paid < worker.agreedWage, living[id])
       wellbeingBonus += traits.wellbeing
-      const workChange = (worker.housing === 'cage' ? -1 : worker.housing === 'hut' ? 1 : 0) + traits.health
+      const housingChange = worker.housing === 'cage' ? -1 : worker.housing === 'hut' ? 1 : 0
+      const workChange = housingChange + traits.health
       const vetWorking = !!(s.vetBuilt && s.vetDoctorId && s.officeCagedNpcId !== s.vetDoctorId && s.workers[s.vetDoctorId] && canWorkAtFarm(s.workers[s.vetDoctorId], s.day))
       const risk = riskForWorker(worker, teamHasProtector, productionCount) * (vetWorking ? .9 : 1)
       const incidentRoll = living[id] === 'production' || living[id] === 'layEggs' || living[id] === 'milking' ? Math.random() : 1
       const fatal = incidentRoll < .001
       const injured = !fatal && incidentRoll < risk
+      const injury: WorkerInjury | undefined = injured ? { kind: incidentRoll < risk / 3 ? 'bruise' : incidentRoll < risk * 2 / 3 ? 'sprain' : 'cut', source: living[id] as WorkerInjury['source'], day: s.day, recoverByDay: s.day + 2, healthLoss: 12 } : undefined
       const unclothedWork = worker.clothing === 'unclothed' && living[id] !== 'rest'
       const health = clamp(worker.health + healthChange + workChange - (injured ? 12 : 0) - (unclothedWork ? 2 : 0) - (worker.analItem ? 1 : 0), 0, 100)
       const wageShortfall = worker.contract === 'paid' && !disobedience[id] ? Math.max(0, worker.agreedWage - paid) : 0
@@ -528,7 +532,7 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
         if (plan === 'bag') training.strength = clamp(training.strength + 1, 0, 100)
       }
       const baseline = candidates.find(c => c.id === id)?.body ?? worker.body
-      workers[id] = { ...worker, workDays, training, traits: [...worker.traits, ...gained], debauchery: clamp(worker.debauchery + Number(!!worker.analItem), 0, 100), guaranteedShiftsLeft: planned[id] !== 'rest' && !disobedience[id] ? Math.max(0, (worker.guaranteedShiftsLeft ?? 0) - order.filter(phase => (worker.routine?.[phase] ?? defaultRoutine[phase]) === 'work').length) : worker.guaranteedShiftsLeft, body: updateBodyForDay(worker.body, baseline, nutritionRatio, worker.housing), savings: worker.savings + paid, totalReceivedFromPlayer: worker.totalReceivedFromPlayer + paid, wageDebt: worker.wageDebt + wageShortfall, absenceCount: worker.absenceCount + Number(!!disobedience[id]), trust: clamp(worker.trust - (wageShortfall ? 4 : 0) + (worker.housing === 'cage' ? -3 : worker.housing === 'hut' ? 1 : 0) + traits.trust, 0, 100), health, alive: !fatal, active: !fatal && (worker.contractEndsDay === null || s.day < worker.contractEndsDay), lastDayOnSite: fatal || worker.contractEndsDay === s.day ? s.day : worker.lastDayOnSite, injuredUntilDay: injured ? s.day + 2 : worker.injuredUntilDay }
+      workers[id] = { ...worker, workDays, training, traits: [...worker.traits, ...gained], debauchery: clamp(worker.debauchery + Number(!!worker.analItem), 0, 100), guaranteedShiftsLeft: planned[id] !== 'rest' && !disobedience[id] ? Math.max(0, (worker.guaranteedShiftsLeft ?? 0) - order.filter(phase => (worker.routine?.[phase] ?? defaultRoutine[phase]) === 'work').length) : worker.guaranteedShiftsLeft, body: updateBodyForDay(worker.body, baseline, nutritionRatio, worker.housing), savings: worker.savings + paid, totalReceivedFromPlayer: worker.totalReceivedFromPlayer + paid, wageDebt: worker.wageDebt + wageShortfall, absenceCount: worker.absenceCount + Number(!!disobedience[id]), trust: clamp(worker.trust - (wageShortfall ? 4 : 0) + (worker.housing === 'cage' ? -3 : worker.housing === 'hut' ? 1 : 0) + traits.trust, 0, 100), health, alive: !fatal, active: !fatal && (worker.contractEndsDay === null || s.day < worker.contractEndsDay), lastDayOnSite: fatal || worker.contractEndsDay === s.day ? s.day : worker.lastDayOnSite, injuredUntilDay: injured ? s.day + 2 : worker.injuredUntilDay, injury: injury ?? worker.injury }
       const reasons = [worker.housing === 'cage' ? 'reportCage' : worker.housing === 'barrack' ? 'reportBarrack' : 'reportHut', disobedience[id] ? (disobedience[id] === 'unauthorizedAbsence' ? 'reportAbsence' : 'reportRefusal') : living[id] === 'rest' ? 'reportRest' : 'reportWork']
       if (worker.contract === 'foodOnly') reasons.push(consumedCalories < calorieNeed(worker) * .8 ? 'reportHungry' : 'reportFed')
       else reasons.push(disobedience[id] ? 'reportNoPayDiscipline' : paid < worker.agreedWage ? 'reportUnderpaid' : 'reportPaid')
@@ -538,7 +542,15 @@ export const useGame = create<GameState>()(persist((set, get) => ({ ...initial,
       if (fatal) reasons.push('reportFatality')
       if (disobedience[id]) journal.push({ id: (journal.at(-1)?.id ?? 0) + 1, day: s.day, phase: 'night', workerId: id, action: disobedience[id], storyKey: `story_${disobedience[id]}`, changes: {} })
       const statuses = [worker.clothing === 'unclothed' ? 'reportStatusUnclothed' : null, worker.analItem === 'analPlug' ? 'reportStatusAnalPlug' : worker.analItem === 'analVibrator' ? 'reportStatusAnalVibrator' : null, worker.handcuffed ? 'reportStatusHandcuffed' : null, worker.punishedKneeling ? 'reportStatusKneeling' : null, worker.punishedInCage || worker.housing === 'cage' ? 'reportStatusCaged' : null, s.officeCagedNpcId === id ? 'reportStatusDogCrate' : null].filter((status): status is string => status !== null)
-      dayWorkers.push({ id, healthBefore: worker.health, healthAfter: health, debaucheryBefore: worker.debauchery, debaucheryAfter: workers[id].debauchery, paid, eaten, calories: consumedCalories, calorieNeed: calorieNeed(worker), reasons, statuses })
+      const healthFactors = [
+        { key: 'healthFoodEffect', delta: healthChange },
+        { key: worker.housing === 'cage' ? 'healthCageEffect' : worker.housing === 'hut' ? 'healthHutEffect' : 'healthBarrackEffect', delta: housingChange },
+        { key: 'healthTraitEffect', delta: traits.health },
+        { key: 'healthWorkInjuryEffect', delta: injured ? -12 : 0 },
+        { key: 'healthUnclothedEffect', delta: unclothedWork ? -2 : 0 },
+        { key: 'healthAnalItemEffect', delta: worker.analItem ? -1 : 0 },
+      ].filter(effect => effect.delta !== 0)
+      dayWorkers.push({ id, healthBefore: worker.health, healthAfter: health, debaucheryBefore: worker.debauchery, debaucheryAfter: workers[id].debauchery, paid, eaten, calories: consumedCalories, calorieNeed: calorieNeed(worker), reasons, statuses, healthFactors, injury })
       if (!workers[id].active || hasUnfittedLimb(workers[id])) assignments[id] = 'rest'
       if (fatal) { anyFatality = true; reputation = clamp(reputation - 15, 0, 100); assignments[id] = 'rest' }
       if (injured) { anyInjury = true; reputation = clamp(reputation - 3, 0, 100); assignments[id] = 'rest' }

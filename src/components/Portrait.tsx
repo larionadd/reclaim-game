@@ -3,15 +3,17 @@ import { currentLocation, useGame } from '../store/game'
 import { yuliaPortrait } from '../mechanics/yuliaPortrait'
 import { dianaPortrait } from '../mechanics/dianaPortrait'
 import { polinaPortrait } from '../mechanics/polinaPortrait'
+import { t } from '../i18n'
 
 const portraitVariants: Record<string, { dirty: string; sleepwear: string; dirtyUnderwear: string }> = {
   sofia: { dirty: '/art/portraits/sofia-dirty-work.webp', sleepwear: '/art/portraits/sofia-sleepwear.webp', dirtyUnderwear: '/art/portraits/sofia-dirty-underwear.webp' },
   vira: { dirty: '/art/portraits/vira-dirty-work.webp', sleepwear: '/art/portraits/vira-sleepwear.webp', dirtyUnderwear: '/art/portraits/vira-dirty-underwear.webp' },
 }
 
-export function Portrait({ person, lang, outfit = 'work', season = 'autumn', status = 'active', profile = false }: {
-  person: Candidate; lang: Lang; outfit?: 'work' | 'civilian' | 'sleepwear'; season?: 'autumn' | 'winter'; status?: 'active' | 'rest'; profile?: boolean
+export function Portrait({ person, lang, outfit = 'work', season = 'autumn', status = 'active', profile = false, zoomable = false }: {
+  person: Candidate; lang: Lang; outfit?: 'work' | 'civilian' | 'sleepwear'; season?: 'autumn' | 'winter'; status?: 'active' | 'rest'; profile?: boolean; zoomable?: boolean
 }) {
+  const [zoomed, setZoomed] = useState(false)
   const phase = useGame(state => state.phase)
   const job = useGame(state => state.assignments[person.id])
   const worker = useGame(state => state.workers[person.id])
@@ -36,10 +38,13 @@ export function Portrait({ person, lang, outfit = 'work', season = 'autumn', sta
     ? working && job && job !== 'rest' && (phase === 'evening' || phase === 'night') ? variants.dirtyUnderwear : variants.sleepwear
     : variants && outfit === 'work' && working && job && job !== 'rest' && (phase === 'day' || phase === 'evening') ? variants.dirty
       : person.image)
-  return <div className={`portrait-stack season-${season} status-${status}`} role="img" aria-label={person.name[lang]}>
-    <img className="portrait-base" src={`${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`} alt="" />
+  const imageUrl = `${import.meta.env.BASE_URL}${image.replace(/^\//, '')}`
+  return <><div className={`portrait-stack season-${season} status-${status}${zoomable ? ' portrait-zoomable' : ''}`} role={zoomable ? 'button' : 'img'} tabIndex={zoomable ? 0 : undefined} aria-label={person.name[lang]} onClick={zoomable ? () => setZoomed(true) : undefined} onKeyDown={zoomable ? event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setZoomed(true) } } : undefined}>
+    <img className="portrait-base" src={imageUrl} alt="" />
     {outfit === 'work' && person.image.endsWith('.svg') && <img className="portrait-outfit" src={`${import.meta.env.BASE_URL}portraits/workwear.svg`} alt="" />}
     {season === 'winter' && <span className="portrait-weather" aria-hidden="true">❄</span>}
     <span className="portrait-status" aria-hidden="true" />
-  </div>
+  </div>{zoomed && createPortal(<div className="portrait-lightbox" role="dialog" aria-modal="true" aria-label={person.name[lang]} onClick={() => setZoomed(false)}><button className="portrait-lightbox-close" autoFocus aria-label={t(lang, 'close')} onClick={() => setZoomed(false)}>×</button><img src={imageUrl} alt={person.name[lang]} onClick={event => event.stopPropagation()}/></div>, document.body)}</>
 }
+import { useState } from 'react'
+import { createPortal } from 'react-dom'

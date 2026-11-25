@@ -26,6 +26,7 @@ const features = [
   'changelogDianaPortraits',
   'changelogPolinaPortraits',
   'changelogPendingWorkers',
+  'changelogInjuryDetails',
 ] as const
 
 export function ChangelogScreen() {
