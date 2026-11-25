@@ -38,9 +38,15 @@ try {
     })
     await page.locator('.event-dialog').waitFor()
     assert.ok((await page.locator('.event-dialog').textContent()).includes('Марко відмикає собачу клітку'))
+    await page.locator('.event-dialog button').click()
     assert.equal(await page.locator('.sidebar-footer').getByText(/кінцевого дня/).count(), 0)
     assert.equal(await page.locator('.game-topbar').getByText(/Відбудова України/).count(), 0)
     assert.equal(await page.locator('.game-sidebar').getByText(/Відбудова України/).count(), 0)
+    if (width === 390) {
+      await page.locator('.mobile-menu').click()
+      const languageButton = await page.locator('.sidebar-footer button').boundingBox()
+      assert.ok(languageButton && languageButton.y + languageButton.height < 780)
+    }
     if (width === 1280) {
       assert.equal(await page.locator('.game-sidebar .side-nav button').count(), 7)
       assert.equal(await page.locator('.game-sidebar .side-nav button').filter({ hasText: 'Кабінет' }).count(), 0)
